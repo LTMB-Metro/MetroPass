@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "842355690044",
+    "project_id": "metropass-1aaa7",
+    "storage_bucket": "metropass-1aaa7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:842355690044:android:da57af2019fe40268ad139",
+        "android_client_info": {
+          "package_name": "com.example.metropass"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVM7Ta_SLsTIsWKYUZBz7X5IM8tIgrnOc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
