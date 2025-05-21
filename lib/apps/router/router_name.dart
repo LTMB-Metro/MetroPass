@@ -7,4 +7,5 @@ class RouterName {
   static const String changePassword = 'changePassword';
   static const String profile = 'proFlieScreen';
   static const String admin = 'admin';
+  static const String verification = 'Verification';
 }
