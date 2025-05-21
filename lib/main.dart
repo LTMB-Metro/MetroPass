@@ -13,6 +13,6 @@ Future<void> main() async {
     systemNavigationBarColor: Colors.transparent, // Làm trong suốt hoặc đổi thành màu nền
     systemNavigationBarDividerColor: Colors.transparent,
   ));
-  //await Firebase.initializeApp();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
