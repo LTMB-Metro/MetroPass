@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:metropass/pages/home/home_page.dart';
 import 'package:metropass/pages/welcome/welcome_page.dart';
 import 'package:metropass/apps/router/router_name.dart';
 
@@ -11,7 +12,7 @@ class RouterCustum{
       path: '/',
       name: RouterName.welcome,
       builder: (BuildContext context, GoRouterState state) {
-        return const WelcomePage();
+        return const HomePage();
       },
       // routes: <RouteBase>[
       //   GoRoute(
