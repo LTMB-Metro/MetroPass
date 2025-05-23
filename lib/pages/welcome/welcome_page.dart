@@ -1,69 +1,103 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../themes/colors/colors.dart';
+import '../login/login.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
 
-  Future<void> addSampleTickets() async {
-    final ticketRef = FirebaseFirestore.instance.collection('tickets');
-
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final nextMonth = DateTime(now.year, now.month + 1, 1);
-
-    // Vé lượt
-    await ticketRef.add({
-      'user_id': 'user_001',
-      'ticket_type': 'single',
-      'start_station_code': 'BT',
-      'end_station_code': 'ST',
-      'start_time': Timestamp.fromDate(now.add(const Duration(hours: 1))),
-      'booking_time': Timestamp.now(),
-      'status': 'active',
-      'price': 15000,
-      'qr_code_url': 'https://example.com/qr/single-ticket.png'
-    });
-
-    // Vé ngày
-    await ticketRef.add({
-      'user_id': 'user_002',
-      'ticket_type': 'daily',
-      'valid_from': Timestamp.fromDate(today),
-      'valid_until': Timestamp.fromDate(
-        today.add(const Duration(hours: 23, minutes: 59, seconds: 59)),
-      ),
-      'status': 'active',
-      'price': 30000,
-      'qr_code_url': 'https://example.com/qr/daily-ticket.png'
-    });
-
-    // Vé tháng
-    await ticketRef.add({
-      'user_id': 'user_003',
-      'ticket_type': 'monthly',
-      'valid_from': Timestamp.fromDate(DateTime(now.year, now.month, 1)),
-      'valid_until': Timestamp.fromDate(
-        DateTime(nextMonth.year, nextMonth.month, 0, 23, 59, 59),
-      ),
-      'status': 'active',
-      'price': 300000,
-      'qr_code_url': 'https://example.com/qr/monthly-ticket.png'
-    });
-
-    print('✅ Đã thêm 3 loại vé mẫu');
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () async {
-          await addSampleTickets();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Đã thêm 3 vé mẫu vào Firestore')),
-          );
-        },
-        child: const Text('Thêm 3 vé mẫu'),
+    return Scaffold(
+      // Set background with linear gradient
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(MyColor.pr2),
+              Color(MyColor.white),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        // Logo
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                const SizedBox(height: 40),
+                Image.asset(
+                  'assets/images/logo.png',
+                  height: 30,
+                ),
+                const Spacer(),
+                // Welcome image
+                Container(
+                  width: 280,
+                  height: 280,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(MyColor.pr7),
+                  ),
+                  child: Center(
+                    child: Image.asset(
+                      'assets/images/welcome.png',
+                      width: 260,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 25),
+                // Text
+                Text(
+                  'Ga gần - Vé sẵn',
+                  style: TextStyle(
+                    color: Color(MyColor.pr8),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  'Không chờ đợi - Không lo âu',
+                  style: TextStyle(color: Color(MyColor.pr8), fontSize: 16),
+                ),
+                const Spacer(),
+                // Button start
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 40),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: _buildStartButton(context),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Start button widget with custom styling
+  Widget _buildStartButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Color(MyColor.pr8),
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      child: const Text(
+        'Bắt đầu',
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
       ),
     );
   }

@@ -14,6 +14,7 @@ class HomePage extends StatelessWidget {
         statusBarIconBrightness: Brightness.light
       ),
       child: Scaffold(
+        extendBody: true,
         body: SingleChildScrollView(
           child: Stack(
             children: [
@@ -38,32 +39,35 @@ class HomePage extends StatelessWidget {
                   const SizedBox(height: 200),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        buildhelp(
-                          context, 
-                          AssetImage('assets/images/help.png'), 
-                          'MetroPass có nhiều loại vé khác nhau cho bạn lựa chọn', 
-                          WelcomePage()
-                        ),
-                        buildhelp(
-                          context, 
-                          AssetImage('assets/images/help2.png'),
-                          'MetroPass sẽ cung cấp cho bạn thông tin về các tuyến Metro', 
-                          WelcomePage()
-                        )
-                      ],
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 10),
+                      child: Row(
+                        children: [
+                          buildhelp(
+                            context, 
+                            AssetImage('assets/images/help.png'), 
+                            'MetroPass có nhiều loại vé khác nhau cho bạn lựa chọn', 
+                            WelcomePage()
+                          ),
+                          buildhelp(
+                            context, 
+                            AssetImage('assets/images/help2.png'),
+                            'MetroPass sẽ cung cấp cho bạn thông tin về các tuyến Metro', 
+                            WelcomePage()
+                          )
+                        ],
+                      ),
                     ),
-                  )
+                  ),
+                  const SizedBox(height: 30,)
                 ],
               ),
-      
               Positioned(
                 top: 312,
                 left: 17,
                 right: 17,
                 child: Container(
-                  height: 227,
+                  padding: EdgeInsets.only(bottom: 10),
                   decoration: BoxDecoration(
                     color: Color(MyColor.pr1),
                     borderRadius: BorderRadius.circular(24),
@@ -76,7 +80,7 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 26),
+                    padding: EdgeInsets.symmetric(horizontal: 0),
                     child: Column(
                       children: [
                         const SizedBox(height: 5,),
@@ -84,17 +88,37 @@ class HomePage extends StatelessWidget {
                           'assets/images/logo.png'
                         ),
                         const SizedBox(height: 24,),
-                        Wrap(
-                          alignment: WrapAlignment.center,
-                          spacing: 53,
-                          runSpacing: 24,
+                        Row(
                           children: [
-                            buildIcon(context, Image.asset('assets/images/ticket1.png'), 'Đặt vé', WelcomePage()),
-                            buildIcon(context, Image.asset('assets/images/ticket2.png'), 'Vé của tôi', WelcomePage()),
-                            buildIcon(context, Image.asset('assets/images/ticket3.png'), 'Thông tin', WelcomePage()),
-                            buildIcon(context, Image.asset('assets/images/map1.png'), 'Lộ trình', WelcomePage()),
-                            buildIcon(context, Image.asset('assets/images/map2.png'), 'Bản đồ', WelcomePage()),
-                            buildIcon(context, Image.asset('assets/images/profile.png'), 'Tài khoản', WelcomePage()),
+                            Expanded(
+                              flex: 1,
+                              child: buildIcon(context, Image.asset('assets/images/ticket1.png'), 'Đặt vé', WelcomePage()),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: buildIcon(context, Image.asset('assets/images/ticket2.png'), 'Vé của tôi', WelcomePage()),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: buildIcon(context, Image.asset('assets/images/ticket3.png'), 'Thông tin', WelcomePage()),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24,),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: buildIcon(context, Image.asset('assets/images/map1.png'), 'Lộ trình', WelcomePage()),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: buildIcon(context, Image.asset('assets/images/map2.png'), 'Bản đồ', WelcomePage()),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: buildIcon(context, Image.asset('assets/images/profile.png'), 'Tài khoản', WelcomePage()),
+                            ),
                           ],
                         )
                       ],
@@ -116,29 +140,25 @@ class HomePage extends StatelessWidget {
           MaterialPageRoute(builder: (_) => targetpage )
         );
       },
-      child: Container(
-        width: 66,
-        height: 66,
-        child: Column(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Color(MyColor.pr3),
-                borderRadius: BorderRadius.circular(50)
-              ),
-              child: image,
+      child: Column(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: Color(MyColor.pr3),
+              borderRadius: BorderRadius.circular(50)
             ),
-            const SizedBox(height: 4,),
-            Text(lable,
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(MyColor.black)
-              ),
-            )
-          ],
-        ),
+            child: image,
+          ),
+          const SizedBox(height: 4,),
+          Text(lable,
+            style: TextStyle(
+              fontSize: 14,
+              color: Color(MyColor.black)
+            ),
+          )
+        ],
       ),
     );
   }
