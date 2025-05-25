@@ -4,10 +4,10 @@ import 'package:metropass/themes/colors/colors.dart';
 import 'package:intl/intl.dart';
 
 class TicketCard extends StatelessWidget {
-  final TicketTypeModel Ticket;
+  final TicketTypeModel ticket;
   const TicketCard({
     super.key,
-    required this.Ticket
+    required this.ticket
     });
 
   @override
@@ -43,7 +43,7 @@ class TicketCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  Ticket.ticketName,
+                  ticket.ticketName,
                   style: TextStyle(
                     color: Color(MyColor.pr9),
                     fontSize: 16,
@@ -51,7 +51,7 @@ class TicketCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${NumberFormat('#,###', 'vi_VN').format(Ticket.price)} đ',
+                  '${NumberFormat('#,###', 'vi_VN').format(ticket.price)} đ',
                   style: TextStyle(
                     color: Color(MyColor.pr8),
                     fontSize: 12,
@@ -66,17 +66,17 @@ class TicketCard extends StatelessWidget {
     );
   }
   void _showTicketDetailDialog(BuildContext context) {
-    final hsd_time = Ticket.duration * 24;
+    final hsdTime = ticket.duration * 24;
     String? hsd;
-    if(hsd_time <= 72){
-      hsd = '${hsd_time}h';
+    if(hsdTime <= 72){
+      hsd = '${hsdTime}h';
     }else{
-      hsd = '${Ticket.duration} ngày';
+      hsd = '${ticket.duration} ngày';
     }
-    if(Ticket.type == 'single'){
-      hsd = hsd + ' kể từ ngày mua';
+    if(ticket.type == 'single'){
+      hsd = '$hsd kể từ ngày mua';
     } else{
-      hsd = hsd + ' kể từ thời diểm kích hoạt';
+      hsd = '$hsd kể từ thời diểm kích hoạt';
     }
     showDialog(
       context: context,
@@ -106,15 +106,15 @@ class TicketCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _infoRow('Loại vé:', Ticket.ticketName),
+                            _infoRow('Loại vé:', ticket.type == 'single' ? 'Vé lượt' : ticket.ticketName),
                             _infoRow('HSD:', hsd!),
                             _infoRow(
                               'Lưu ý:',
-                              Ticket.note,
+                              ticket.note,
                               color: Color(MyColor.red),
                             ),
-                            if(Ticket.description != '')
-                              _infoRow('Mô tả', Ticket.description)
+                            if(ticket.description != '')
+                              _infoRow('Mô tả', ticket.description)
                           ],
                         ),
                       ),
@@ -141,10 +141,10 @@ class TicketCard extends StatelessWidget {
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          // TODO: xử lý mua vé
+                          // TODO:
                         },
                         child: Text(
-                          'Mua ngay: ${NumberFormat('#,###', 'vi_VN').format(Ticket.price)} đ',
+                          'Mua ngay: ${NumberFormat('#,###', 'vi_VN').format(ticket.price)} đ',
                           style: TextStyle(
                             fontSize: 14,
                             color: Color(MyColor.pr1),

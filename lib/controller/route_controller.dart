@@ -10,7 +10,7 @@ class RouteController {
           .map(
             (doc) => RouteModel.fromMap(doc.data(), doc.id)
           ).toList();
-        list.sort((a, b) => a.order_index.compareTo(b.order_index));
+        list.sort((a, b) => a.orderIndex.compareTo(b.orderIndex));
         return list;
       }
     );

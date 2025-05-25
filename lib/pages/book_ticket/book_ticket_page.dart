@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:metropass/widgets/route_list.dart';
-import 'package:metropass/widgets/ticket_card.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:metropass/widgets/ticket_hssv_list.dart';
 import 'package:metropass/widgets/ticket_normal_list.dart';
@@ -13,6 +13,7 @@ class BookTicketPage extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -118,7 +119,7 @@ class BookTicketPage extends StatelessWidget {
                   TicketHssvList(),
                   const SizedBox(height: 20,),
                   Text(
-                    'Các tuyến',
+                    'Các tuyến 🚎',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

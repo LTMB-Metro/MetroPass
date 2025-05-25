@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:metropass/controller/route_controller.dart';
+import 'package:metropass/themes/colors/colors.dart';
 import 'package:metropass/widgets/route_cart.dart';
 import 'package:metropass/widgets/skeleton/ticket_card_skeleton.dart';
 
@@ -21,15 +22,24 @@ class RouteList extends StatelessWidget {
           );
         }
         if(!snapshot.hasData || snapshot.data!.isEmpty){
-          return const Center(child: Text('Không có vé nào'),);
+          return const Center(
+            child: Text(
+              'Không có tuyến nào',
+              style: TextStyle(
+                color: Color(MyColor.pr9),
+                fontSize: 16,
+                fontWeight: FontWeight.bold
+              ),
+            ),
+          );
         }
-        final Route = snapshot.data!.toList();
+        final route = snapshot.data!.toList();
         return ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) => RouteCart(route: Route[index]), 
+          itemBuilder: (context, index) => RouteCart(route: route[index]), 
           separatorBuilder: (_, _) => const SizedBox(height: 10,), 
-          itemCount: Route.length
+          itemCount: route.length
         );
       }
     );

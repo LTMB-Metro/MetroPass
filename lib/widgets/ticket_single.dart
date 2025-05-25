@@ -1,25 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:metropass/controller/ticket_type_controller.dart';
+import 'package:metropass/controller/create_ticket_type.dart';
+import 'package:metropass/models/station_model.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:metropass/widgets/skeleton/ticket_card_skeleton.dart';
 import 'package:metropass/widgets/ticket_card.dart';
 
-class TicketHssvList extends StatelessWidget {
-  TicketHssvList({super.key});
+class TicketSingle extends StatefulWidget {
+  final StationModel station;
+  const TicketSingle({
+    super.key,
+    required this.station
+  });
 
-  //@override
-  final TicketTypeController _controller = TicketTypeController();
+  @override
+  State<TicketSingle> createState() => _TicketSingleState();
+}
+
+class _TicketSingleState extends State<TicketSingle> {
+  late final CreateTicketType _controller;
+  @override
+  void initState() {
+    super.initState();
+    _controller = CreateTicketType(station: widget.station);
+  }
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: _controller.getTicketType(), 
+      stream: _controller.ticketStream, 
       builder: (context, snapshot){
         if(snapshot.connectionState == ConnectionState.waiting){
           return ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: 1,
-            itemBuilder: (context, index) => const TicketCardSkeleton(),
+            itemCount: 7,
+            itemBuilder: (context, index) => const TicketCardSkeleton()
           );
         }
         if(!snapshot.hasData || snapshot.data!.isEmpty){
@@ -35,7 +49,7 @@ class TicketHssvList extends StatelessWidget {
           );
         }
         final ticketCard = snapshot.data!
-          .where((ticket) => ticket.categories == 'student' && ticket.type != 'single')
+          .where((ticket) => ticket.type == 'single')
           .toList();
         if(ticketCard.isEmpty){
           return const Center(
@@ -52,9 +66,9 @@ class TicketHssvList extends StatelessWidget {
         return ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) => TicketCard(ticket: ticketCard[index]), 
           separatorBuilder: (_, _) => const SizedBox(height: 10,), 
-          itemCount: ticketCard.length
+          itemCount: ticketCard.length,
+          itemBuilder: (context, index) => TicketCard(ticket: ticketCard[index]), 
         );
       }
     );

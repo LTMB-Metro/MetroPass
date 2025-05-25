@@ -1,46 +1,50 @@
 import 'package:flutter/material.dart';
-import 'package:metropass/controller/ticket_type_controller.dart';
+import 'package:metropass/controller/station_controller.dart';
+import 'package:metropass/models/route_model.dart';
 import 'package:metropass/themes/colors/colors.dart';
-import 'package:metropass/widgets/skeleton/ticket_card_skeleton.dart';
-import 'package:metropass/widgets/ticket_card.dart';
+import 'package:metropass/widgets/skeleton/station_card_skeleton.dart';
+import 'package:metropass/widgets/station_card.dart';
 
-class TicketHssvList extends StatelessWidget {
-  TicketHssvList({super.key});
+class StationList extends StatelessWidget {
+  final RouteModel route;
+  StationList({
+    super.key,
+    required this.route
+  });
 
-  //@override
-  final TicketTypeController _controller = TicketTypeController();
+  final StationController _controller = StationController();
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: _controller.getTicketType(), 
+      stream: _controller.getStations(), 
       builder: (context, snapshot){
-        if(snapshot.connectionState == ConnectionState.waiting){
+        if(snapshot.connectionState == ConnectionState.waiting ){
           return ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: 1,
-            itemBuilder: (context, index) => const TicketCardSkeleton(),
+            itemCount: 7,
+            itemBuilder: (context, index) => const StationCardSkeleton()
           );
         }
         if(!snapshot.hasData || snapshot.data!.isEmpty){
           return const Center(
             child: Text(
-              'Không có vé nào',
+              'Không có ga nào',
               style: TextStyle(
                 color: Color(MyColor.pr9),
-                fontSize: 16,
+                fontSize: 20,
                 fontWeight: FontWeight.bold
               ),
             ),
           );
         }
-        final ticketCard = snapshot.data!
-          .where((ticket) => ticket.categories == 'student' && ticket.type != 'single')
+        final stationCard = snapshot.data!
+          .where((station) => station.zone == route.zone)
           .toList();
-        if(ticketCard.isEmpty){
-          return const Center(
+        if(stationCard.isEmpty){
+          return Center(
             child: Text(
-              'Hiện chưa có vé nào',
+              '${route.name} hiện chưa có ga nào hoạt động',
               style: TextStyle(
                 color: Color(MyColor.pr8),
                 fontSize: 16,
@@ -52,9 +56,9 @@ class TicketHssvList extends StatelessWidget {
         return ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) => TicketCard(ticket: ticketCard[index]), 
           separatorBuilder: (_, _) => const SizedBox(height: 10,), 
-          itemCount: ticketCard.length
+          itemCount: stationCard.length,
+          itemBuilder: (context, index) => StationCard(station: stationCard[index]), 
         );
       }
     );

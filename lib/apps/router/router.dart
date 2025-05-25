@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:metropass/pages/book_ticket/book_ticket_page.dart';
+import 'package:metropass/pages/book_ticket/stations_route_page.dart';
 import 'package:metropass/pages/home/home_page.dart';
 import 'package:metropass/pages/welcome/welcome_page.dart';
 import 'package:metropass/pages/login/login.dart';

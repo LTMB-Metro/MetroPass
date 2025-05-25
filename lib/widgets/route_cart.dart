@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:metropass/models/route_model.dart';
+import 'package:metropass/pages/book_ticket/stations_route_page.dart';
 import 'package:metropass/themes/colors/colors.dart';
 
 class RouteCart extends StatelessWidget {
@@ -13,7 +14,11 @@ class RouteCart extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-       
+       Navigator.push(
+        context, 
+        MaterialPageRoute(
+          builder: (_) => StationsRoutePage(route: route))
+        );
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
