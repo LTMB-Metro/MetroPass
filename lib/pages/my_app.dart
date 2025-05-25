@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'welcome/welcome_page.dart'; // thay vì welcome_page.dart
+import 'package:metropass/apps/router/router.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      home: const WelcomePage(), // thay thế WelcomePage bằng WelcomeView
+      theme: ThemeData(fontFamily: 'RobotoSlap'),
+      routerConfig: RouterCustom.router,
     );
   }
 }
