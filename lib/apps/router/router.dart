@@ -3,7 +3,10 @@ import 'package:go_router/go_router.dart';
 import 'package:metropass/pages/welcome/welcome_page.dart';
 import 'package:metropass/pages/login/login.dart';
 import 'package:metropass/pages/register/register.dart';
+import 'package:metropass/pages/forget_password/forgetpassword.dart';
+import 'package:metropass/pages/forget_password/verification.dart';
 import 'package:metropass/apps/router/router_name.dart';
+import 'package:metropass/pages/home/home.dart';
 
 class RouterCustom {
   static final GoRouter router = GoRouter(
@@ -30,10 +33,27 @@ class RouterCustom {
           return const RegisterPage();
         },
       ),
-      
-      
-      
-    
+      GoRoute(
+        path: '/forgot-password',
+        name: RouterName.forgotPassword,
+        builder: (BuildContext context, GoRouterState state) {
+          return const ForgotPasswordPage();
+        },
+      ),
+      GoRoute(
+        path: '/verification',
+        name: RouterName.verification,
+        builder: (BuildContext context, GoRouterState state) {
+          return const VerificationPage();
+        },
+      ),
+      GoRoute(
+        path: '/home',
+        name: RouterName.home,
+        builder: (BuildContext context, GoRouterState state) {
+          return const HomePage();
+        },
+      ),
     ],
   );
 }
