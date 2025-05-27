@@ -11,5 +11,5 @@ class MyColor{
   static const int pr8 = 0xFF088395;
   static const int pr9 = 0xFF010A43;
   static const int grey = 0xFFA19E9A;
-  static const int red = 0xFFF13535;
+  static const int red = 0xFFD00043;
 }

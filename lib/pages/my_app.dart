@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../apps/router/router.dart';
 import '../controllers/auth_controller.dart';
 import '../controllers/password_reset_controller.dart';
-
+import 'package:metropass/apps/router/router.dart';
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

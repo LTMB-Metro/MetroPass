@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:metropass/pages/book_ticket/book_ticket_page.dart';
 import 'package:metropass/pages/welcome/welcome_page.dart';
 import 'package:metropass/themes/colors/colors.dart';
 
@@ -85,14 +86,16 @@ class HomePage extends StatelessWidget {
                       children: [
                         const SizedBox(height: 5,),
                         Image.asset(
-                          'assets/images/logo.png'
+                          'assets/images/logo.png',
+                          width: 79,
+                          height: 25,
                         ),
                         const SizedBox(height: 24,),
                         Row(
                           children: [
                             Expanded(
                               flex: 1,
-                              child: buildIcon(context, Image.asset('assets/images/ticket1.png'), 'Đặt vé', WelcomePage()),
+                              child: buildIcon(context, Image.asset('assets/images/ticket1.png'), 'Đặt vé', BookTicketPage()),
                             ),
                             Expanded(
                               flex: 1,
