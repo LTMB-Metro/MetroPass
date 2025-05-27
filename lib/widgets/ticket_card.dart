@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:metropass/models/ticket_type_model.dart';
+import 'package:metropass/pages/payment/payment_page.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:intl/intl.dart';
 
@@ -140,13 +141,18 @@ class TicketCard extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.pop(context);
-                          // TODO:
+                          Navigator.push(
+                            context, 
+                            MaterialPageRoute(
+                              builder: 
+                              (_) => PaymentPage(ticket: ticket)
+                            )
+                          );
                         },
                         child: Text(
                           'Mua ngay: ${NumberFormat('#,###', 'vi_VN').format(ticket.price)} đ',
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 16,
                             color: Color(MyColor.pr1),
                             fontWeight: FontWeight.w600
                           ),
