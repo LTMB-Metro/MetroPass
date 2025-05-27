@@ -8,7 +8,7 @@ import 'package:metropass/models/ticket_type_model.dart';
 import 'package:metropass/pages/payment/infor_payment.dart';
 import 'package:metropass/pages/payment/infor_ticket.dart';
 import 'package:metropass/pages/payment/vnpay_webview_page.dart';
-import 'package:metropass/services/vnPay_service.dart';
+import 'package:metropass/services/vnpay_payment_service.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:metropass/widgets/skeleton/station_card_skeleton.dart';
 
@@ -160,8 +160,8 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
             ),
             onPressed: () async {
-              final url = await VNPayService.createPayment('DH123456', 100000);
-
+              final url = await createVNPayPayment(100000);
+              if (!context.mounted) return;
               if (url != null) {
                 Navigator.push(
                   context,
@@ -171,7 +171,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Lỗi khi tạo đơn thanh toán')),
+                  SnackBar(content: Text("Không tạo được link thanh toán")),
                 );
               }
             },

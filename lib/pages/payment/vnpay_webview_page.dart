@@ -3,7 +3,6 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class VNPayWebViewPage extends StatefulWidget {
   final String paymentUrl;
-
   const VNPayWebViewPage({super.key, required this.paymentUrl});
 
   @override
@@ -20,12 +19,12 @@ class _VNPayWebViewPageState extends State<VNPayWebViewPage> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
-          onPageFinished: (url) {
-            if (url.contains("vnp_ResponseCode=00")) {
-              Navigator.pop(context, true); // thanh toán thành công
-            } else if (url.contains("vnp_ResponseCode")) {
-              Navigator.pop(context, false); // thanh toán thất bại
+          onNavigationRequest: (request) {
+            if (request.url.contains('vnpay_return.php')) {
+              Navigator.pop(context);
+              return NavigationDecision.prevent;
             }
+            return NavigationDecision.navigate;
           },
         ),
       )
@@ -35,7 +34,7 @@ class _VNPayWebViewPageState extends State<VNPayWebViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Thanh toán VNPay')),
+      appBar: AppBar(title: Text("VNPay")),
       body: WebViewWidget(controller: _controller),
     );
   }
