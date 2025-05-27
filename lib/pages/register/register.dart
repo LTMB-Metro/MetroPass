@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../base_auth_page.dart';
 import '../../widgets/shared_widgets.dart';
-import '../../themes/colors/colors.dart';
+import '../../constants/app_constants.dart';
+import '../../utils/validators.dart';
 import '../../apps/router/router_name.dart';
+import '../../controllers/auth_controller.dart';
 
-class RegisterPage extends StatefulWidget {
+class RegisterPage extends BaseAuthPage {
   const RegisterPage({Key? key}) : super(key: key);
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<RegisterPage> createState() => _OptimizedRegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _OptimizedRegisterPageState extends BaseAuthPageState<RegisterPage> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
+  // Error messages
+  String? _nameError;
+  String? _emailError;
+  String? _passwordError;
+  String? _confirmPasswordError;
 
   @override
   void dispose() {
@@ -27,85 +37,198 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _nameController.addListener(_validateName);
+    _emailController.addListener(_validateEmail);
+    _passwordController.addListener(_validatePassword);
+    _confirmPasswordController.addListener(_validateConfirmPassword);
+  }
+
+  void _validateName() {
+    setState(() {
+      _nameError = Validators.validateName(_nameController.text);
+    });
+  }
+
+  void _validateEmail() {
+    setState(() {
+      _emailError = Validators.validateEmail(_emailController.text);
+    });
+  }
+
+  void _validatePassword() {
+    setState(() {
+      _passwordError = Validators.validateStrongPassword(_passwordController.text);
+    });
+
+    // Re-validate confirm password if it has value
+    if (_confirmPasswordController.text.isNotEmpty) {
+      _validateConfirmPassword();
+    }
+  }
+
+  void _validateConfirmPassword() {
+    setState(() {
+      _confirmPasswordError = Validators.validateConfirmPassword(
+        _confirmPasswordController.text,
+        _passwordController.text,
+      );
+    });
+  }
+
+  bool _validateForSubmission() {
+    bool isValid = true;
+
+    final nameError = Validators.validateNameRequired(_nameController.text);
+    if (nameError != null) {
+      setState(() => _nameError = nameError);
+      isValid = false;
+    }
+
+    final emailError = Validators.validateEmailRequired(_emailController.text);
+    if (emailError != null) {
+      setState(() => _emailError = emailError);
+      isValid = false;
+    }
+
+    final passwordError = Validators.validateStrongPasswordRequired(_passwordController.text);
+    if (passwordError != null) {
+      setState(() => _passwordError = passwordError);
+      isValid = false;
+    }
+
+    final confirmPasswordError = Validators.validateConfirmPasswordRequired(
+      _confirmPasswordController.text,
+      _passwordController.text,
+    );
+    if (confirmPasswordError != null) {
+      setState(() => _confirmPasswordError = confirmPasswordError);
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  void _clearForm() {
+    _nameController.clear();
+    _emailController.clear();
+    _passwordController.clear();
+    _confirmPasswordController.clear();
+    setState(() {
+      _nameError = null;
+      _emailError = null;
+      _passwordError = null;
+      _confirmPasswordError = null;
+    });
+  }
+
+  Future<void> _handleRegister() async {
+    if (!_validateForSubmission()) {
+      showMessage(AppMessages.fillAllFields, isError: true);
+      return;
+    }
+
+    final authController = context.read<AuthController>();
+
+    await handleAsyncAction(
+      () => authController.register(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        username: _nameController.text.trim(),
+      ),
+      successMessage: AppMessages.registerSuccess,
+      errorMessage: authController.errorMessage ?? AppMessages.registerFailed,
+      onSuccess: () {
+        _clearForm();
+        navigateWithDelay(
+          () => context.goNamed(RouterName.login),
+          delay: AppDurations.extraLong,
+        );
+      },
+    );
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    final authController = context.read<AuthController>();
+
+    await handleAsyncAction(
+      () => authController.signInWithGoogle(),
+      successMessage: AppMessages.googleSignInSuccess,
+      errorMessage: authController.errorMessage ?? AppMessages.googleSignInFailed,
+      onSuccess: () => navigateWithDelay(
+        () => context.goNamed(RouterName.home),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return AuthBackground(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 20),
+    return Consumer<AuthController>(
+      builder: (context, authController, child) {
+        return buildPageStructure(
+          onBackPressed: () => context.goNamed(RouterName.login),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 24),
-              const Text(
-                'Xin Chào!!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color(MyColor.black),
-                ),
+              // Header
+              AuthHeader(
+                title: 'Đăng ký',
+                onBackPressed: () => context.goNamed(RouterName.login),
               ),
-              const SizedBox(height: 30),
-              const Center(child: AppLogo()),
-              const SizedBox(height: 40),
-              Center(child: Text('Đăng ký', style: AppStyles.titleStyle)),
-              const SizedBox(height: 20),
 
               // Form fields
-              AppTextField(hintText: 'Tên người dùng', controller: _nameController),
-              const SizedBox(height: 12),
-              AppTextField(
-                hintText: 'Email',
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 12),
-              PasswordField(controller: _passwordController, label: 'Mật khẩu'),
-              const SizedBox(height: 12),
-              PasswordField(
-                controller: _confirmPasswordController,
-                label: 'Xác nhận mật khẩu',
-              ),
-              const SizedBox(height: 12),
-
-              // Login link
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              buildFormContainer(
                 children: [
-                  const Text(
-                    'Bạn đã có tài khoản?',
-                    style: TextStyle(fontSize: 14, color: Color(MyColor.black)),
+                  AppTextField(
+                    hintText: 'Tên người dùng',
+                    controller: _nameController,
+                    errorText: _nameError,
                   ),
-                  TextButton(
-                    onPressed: () => context.goNamed(RouterName.login),
-                    style: TextButton.styleFrom(
-                      foregroundColor: Color(MyColor.pr8),
-                      padding: const EdgeInsets.only(left: 4),
-                      minimumSize: const Size(10, 10),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: const Text(
-                      'Đăng nhập',
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
+                  const SizedBox(height: AppSpacing.md),
+
+                  AppTextField(
+                    hintText: 'Email',
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    errorText: _emailError,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+
+                  PasswordField(
+                    controller: _passwordController,
+                    label: 'Mật khẩu',
+                    errorText: _passwordError,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+
+                  PasswordField(
+                    controller: _confirmPasswordController,
+                    label: 'Xác nhận mật khẩu',
+                    errorText: _confirmPasswordError,
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+
+                  // Account link
+                  AccountLinkText(
+                    question: AppMessages.haveAccount,
+                    linkText: 'Đăng nhập',
+                    onTap: () => context.goNamed(RouterName.login),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+
+                  // Auth actions
+                  buildAuthActions(
+                    primaryButtonText: 'Đăng ký',
+                    onPrimaryTap: _handleRegister,
+                    onGoogleTap: _handleGoogleSignIn,
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-
-              // Register button
-              Center(child: PrimaryButton(
-                text: 'Đăng ký',
-                width: 140,
-                onTap: () => context.goNamed(RouterName.login),
-              )),
-              const SizedBox(height: 18),
-              
-              // Google button
-              Center(child: GoogleButton(onTap: () {}, width: 140)),
             ],
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
