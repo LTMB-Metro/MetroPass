@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:metropass/pages/book_ticket/book_ticket_page.dart';
 import 'package:metropass/pages/welcome/welcome_page.dart';
 import 'package:metropass/themes/colors/colors.dart';
 
@@ -81,7 +82,9 @@ class HomePage extends StatelessWidget {
                       children: [
                         const SizedBox(height: 5,),
                         Image.asset(
-                          'assets/images/logo.png'
+                          'assets/images/logo.png',
+                          width: 79,
+                          height: 25,
                         ),
                         const SizedBox(height: 24,),
                         Wrap(
@@ -89,12 +92,35 @@ class HomePage extends StatelessWidget {
                           spacing: 53,
                           runSpacing: 24,
                           children: [
-                            buildIcon(context, Image.asset('assets/images/ticket1.png'), 'Đặt vé', WelcomePage()),
-                            buildIcon(context, Image.asset('assets/images/ticket2.png'), 'Vé của tôi', WelcomePage()),
-                            buildIcon(context, Image.asset('assets/images/ticket3.png'), 'Thông tin', WelcomePage()),
-                            buildIcon(context, Image.asset('assets/images/map1.png'), 'Lộ trình', WelcomePage()),
-                            buildIcon(context, Image.asset('assets/images/map2.png'), 'Bản đồ', WelcomePage()),
-                            buildIcon(context, Image.asset('assets/images/profile.png'), 'Tài khoản', WelcomePage()),
+                            Expanded(
+                              flex: 1,
+                              child: buildIcon(context, Image.asset('assets/images/ticket1.png'), 'Đặt vé', BookTicketPage()),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: buildIcon(context, Image.asset('assets/images/ticket2.png'), 'Vé của tôi', WelcomePage()),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: buildIcon(context, Image.asset('assets/images/ticket3.png'), 'Thông tin', WelcomePage()),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24,),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: buildIcon(context, Image.asset('assets/images/map1.png'), 'Lộ trình', WelcomePage()),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: buildIcon(context, Image.asset('assets/images/map2.png'), 'Bản đồ', WelcomePage()),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: buildIcon(context, Image.asset('assets/images/profile.png'), 'Tài khoản', WelcomePage()),
+                            ),
                           ],
                         )
                       ],
