@@ -24,6 +24,10 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
   String? _emailError;
   String? _passwordError;
 
+  // Loading states
+  bool isLoginLoading = false;
+  bool isGoogleLoading = false;
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -59,7 +63,9 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
       isValid = false;
     }
 
-    final passwordError = Validators.validatePasswordRequired(_passwordController.text);
+    final passwordError = Validators.validatePasswordRequired(
+      _passwordController.text,
+    );
     if (passwordError != null) {
       setState(() => _passwordError = passwordError);
       isValid = false;
@@ -73,9 +79,8 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
       showMessage(AppMessages.fillAllFields, isError: true);
       return;
     }
-
+    setState(() => isLoginLoading = true);
     final authController = context.read<AuthController>();
-
     await handleAsyncAction(
       () => authController.signIn(
         email: _emailController.text.trim(),
@@ -83,27 +88,29 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
       ),
       successMessage: AppMessages.loginSuccess,
       errorMessage: authController.errorMessage ?? AppMessages.loginFailed,
-      onSuccess: () => navigateWithDelay(
-        () => context.goNamed(RouterName.home),
-      ),
+      onSuccess:
+          () => navigateWithDelay(() => context.goNamed(RouterName.home)),
     );
+    if (mounted) setState(() => isLoginLoading = false);
   }
 
   Future<void> _handleGoogleSignIn() async {
+    setState(() => isGoogleLoading = true);
     final authController = context.read<AuthController>();
-
     await handleAsyncAction(
       () => authController.signInWithGoogle(),
       successMessage: AppMessages.googleSignInSuccess,
-      errorMessage: authController.errorMessage ?? AppMessages.googleSignInFailed,
-      onSuccess: () => navigateWithDelay(
-        () => context.goNamed(RouterName.home),
-      ),
+      errorMessage:
+          authController.errorMessage ?? AppMessages.googleSignInFailed,
+      onSuccess:
+          () => navigateWithDelay(() => context.goNamed(RouterName.home)),
     );
+    if (mounted) setState(() => isGoogleLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
+    final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
     return Consumer<AuthController>(
       builder: (context, authController, child) {
         return buildPageStructure(
@@ -115,6 +122,7 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
               AuthHeader(
                 title: 'Đăng nhập',
                 onBackPressed: () => context.goNamed(RouterName.welcome),
+                isKeyboardOpen: isKeyboardOpen,
               ),
 
               // Form fields
@@ -139,7 +147,8 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () => context.goNamed(RouterName.forgotPassword),
+                      onPressed:
+                          () => context.goNamed(RouterName.forgotPassword),
                       style: TextButton.styleFrom(
                         foregroundColor: const Color(MyColor.pr8),
                         padding: EdgeInsets.zero,
@@ -170,6 +179,8 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
                     primaryButtonText: 'Đăng nhập',
                     onPrimaryTap: _handleLogin,
                     onGoogleTap: _handleGoogleSignIn,
+                    isPrimaryLoading: isLoginLoading,
+                    isGoogleLoading: isGoogleLoading,
                   ),
                 ],
               ),

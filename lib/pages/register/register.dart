@@ -27,6 +27,10 @@ class _OptimizedRegisterPageState extends BaseAuthPageState<RegisterPage> {
   String? _passwordError;
   String? _confirmPasswordError;
 
+  // Loading states
+  bool isRegisterLoading = false;
+  bool isGoogleLoading = false;
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -59,7 +63,9 @@ class _OptimizedRegisterPageState extends BaseAuthPageState<RegisterPage> {
 
   void _validatePassword() {
     setState(() {
-      _passwordError = Validators.validateStrongPassword(_passwordController.text);
+      _passwordError = Validators.validateStrongPassword(
+        _passwordController.text,
+      );
     });
 
     // Re-validate confirm password if it has value
@@ -92,7 +98,9 @@ class _OptimizedRegisterPageState extends BaseAuthPageState<RegisterPage> {
       isValid = false;
     }
 
-    final passwordError = Validators.validateStrongPasswordRequired(_passwordController.text);
+    final passwordError = Validators.validateStrongPasswordRequired(
+      _passwordController.text,
+    );
     if (passwordError != null) {
       setState(() => _passwordError = passwordError);
       isValid = false;
@@ -128,9 +136,8 @@ class _OptimizedRegisterPageState extends BaseAuthPageState<RegisterPage> {
       showMessage(AppMessages.fillAllFields, isError: true);
       return;
     }
-
+    setState(() => isRegisterLoading = true);
     final authController = context.read<AuthController>();
-
     await handleAsyncAction(
       () => authController.register(
         email: _emailController.text.trim(),
@@ -147,23 +154,26 @@ class _OptimizedRegisterPageState extends BaseAuthPageState<RegisterPage> {
         );
       },
     );
+    if (mounted) setState(() => isRegisterLoading = false);
   }
 
   Future<void> _handleGoogleSignIn() async {
+    setState(() => isGoogleLoading = true);
     final authController = context.read<AuthController>();
-
     await handleAsyncAction(
       () => authController.signInWithGoogle(),
       successMessage: AppMessages.googleSignInSuccess,
-      errorMessage: authController.errorMessage ?? AppMessages.googleSignInFailed,
-      onSuccess: () => navigateWithDelay(
-        () => context.goNamed(RouterName.home),
-      ),
+      errorMessage:
+          authController.errorMessage ?? AppMessages.googleSignInFailed,
+      onSuccess:
+          () => navigateWithDelay(() => context.goNamed(RouterName.home)),
     );
+    if (mounted) setState(() => isGoogleLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
+    final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
     return Consumer<AuthController>(
       builder: (context, authController, child) {
         return buildPageStructure(
@@ -175,6 +185,7 @@ class _OptimizedRegisterPageState extends BaseAuthPageState<RegisterPage> {
               AuthHeader(
                 title: 'Đăng ký',
                 onBackPressed: () => context.goNamed(RouterName.login),
+                isKeyboardOpen: isKeyboardOpen,
               ),
 
               // Form fields
@@ -222,6 +233,8 @@ class _OptimizedRegisterPageState extends BaseAuthPageState<RegisterPage> {
                     primaryButtonText: 'Đăng ký',
                     onPrimaryTap: _handleRegister,
                     onGoogleTap: _handleGoogleSignIn,
+                    isPrimaryLoading: isRegisterLoading,
+                    isGoogleLoading: isGoogleLoading,
                   ),
                 ],
               ),

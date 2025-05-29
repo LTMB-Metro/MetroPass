@@ -17,9 +17,7 @@ class AppBackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: AppDecorations.backButton.copyWith(
-        color: backgroundColor,
-      ),
+      decoration: AppDecorations.backButton.copyWith(color: backgroundColor),
       child: IconButton(
         onPressed: onPressed ?? () => Navigator.pop(context),
         icon: Icon(
@@ -44,6 +42,7 @@ class AuthHeader extends StatelessWidget {
   final VoidCallback? onBackPressed;
   final bool showBackButton;
   final bool showLogo;
+  final bool isKeyboardOpen;
 
   const AuthHeader({
     Key? key,
@@ -52,15 +51,43 @@ class AuthHeader extends StatelessWidget {
     this.onBackPressed,
     this.showBackButton = true,
     this.showLogo = true,
+    this.isKeyboardOpen = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    if (isKeyboardOpen) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              top: AppSpacing.lg,
+              bottom: AppSpacing.lg,
+            ),
+            child: Row(
+              children: [
+                if (showBackButton) AppBackButton(onPressed: onBackPressed),
+                if (showBackButton) const SizedBox(width: AppSpacing.md),
+                if (greeting != null)
+                  Text(
+                    greeting!,
+                    style: AppTextStyles.greeting.copyWith(fontSize: 18),
+                  ),
+                const Spacer(),
+                if (showLogo) Image.asset(AppAssets.logo, height: 32),
+              ],
+            ),
+          ),
+          Center(child: Text(title, style: AppTextStyles.title)),
+          const SizedBox(height: AppSpacing.lg),
+        ],
+      );
+    }
+    // layout mặc định
     return Column(
       children: [
         const SizedBox(height: AppSpacing.xxxl),
-        
-        // Back button and greeting row
         if (showBackButton)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -73,17 +100,10 @@ class AuthHeader extends StatelessWidget {
               ],
             ),
           ),
-        
         const SizedBox(height: AppSpacing.xxl),
-        
-        // Logo
         if (showLogo) const Center(child: AppLogo()),
         if (showLogo) const SizedBox(height: AppSpacing.xxxl),
-        
-        // Title
-        Center(
-          child: Text(title, style: AppTextStyles.title),
-        ),
+        Center(child: Text(title, style: AppTextStyles.title)),
         const SizedBox(height: AppSpacing.lg),
       ],
     );
@@ -140,16 +160,22 @@ class AppTextField extends StatelessWidget {
       children: [
         Container(
           height: maxLength != null ? null : AppDimensions.inputHeight,
-          decoration: isRoundedStyle
-              ? AppDecorations.roundedInput(hasError: errorText != null)
-              : BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(AppDimensions.borderRadius),
-                  border: Border.all(
-                    color: errorText != null ? Colors.red : const Color(MyColor.pr3),
-                    width: 1,
+          decoration:
+              isRoundedStyle
+                  ? AppDecorations.roundedInput(hasError: errorText != null)
+                  : BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(
+                      AppDimensions.borderRadius,
+                    ),
+                    border: Border.all(
+                      color:
+                          errorText != null
+                              ? Colors.red
+                              : const Color(MyColor.pr3),
+                      width: 1,
+                    ),
                   ),
-                ),
           child: TextFormField(
             controller: controller,
             obscureText: isPassword,
@@ -264,7 +290,9 @@ class PrimaryButton extends StatelessWidget {
           height: AppDimensions.buttonHeight,
           decoration: BoxDecoration(
             color: isLoading ? color.withOpacity(0.6) : color,
-            borderRadius: BorderRadius.circular(AppDimensions.roundBorderRadius),
+            borderRadius: BorderRadius.circular(
+              AppDimensions.roundBorderRadius,
+            ),
             boxShadow: [
               BoxShadow(
                 color: color.withValues(alpha: 0.3),
@@ -275,16 +303,17 @@ class PrimaryButton extends StatelessWidget {
             ],
           ),
           child: Center(
-            child: isLoading
-                ? const SizedBox(
-                    width: AppSpacing.lg,
-                    height: AppSpacing.lg,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
-                : Text(text, style: AppTextStyles.buttonText),
+            child:
+                isLoading
+                    ? const SizedBox(
+                      width: AppSpacing.lg,
+                      height: AppSpacing.lg,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                    : Text(text, style: AppTextStyles.buttonText),
           ),
         ),
       ),
@@ -329,7 +358,9 @@ class GoogleButton extends StatelessWidget {
                   height: AppSpacing.lg,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(MyColor.pr8)),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Color(MyColor.pr8),
+                    ),
                   ),
                 ),
               ] else ...[
@@ -338,7 +369,11 @@ class GoogleButton extends StatelessWidget {
                   style: TextStyle(fontSize: 16, color: Color(MyColor.black)),
                 ),
                 const SizedBox(width: AppSpacing.xs),
-                Image.asset(AppAssets.googleIcon, height: AppSpacing.lg, width: AppSpacing.lg),
+                Image.asset(
+                  AppAssets.googleIcon,
+                  height: AppSpacing.lg,
+                  width: AppSpacing.lg,
+                ),
               ],
             ],
           ),
@@ -378,7 +413,8 @@ class AppSnackBar {
             ),
           ],
         ),
-        backgroundColor: isError ? const Color(MyColor.red) : Colors.green.shade600,
+        backgroundColor:
+            isError ? const Color(MyColor.red) : Colors.green.shade600,
         duration: duration,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
@@ -448,26 +484,17 @@ class OrDivider extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: Container(
-            height: 1,
-            decoration: AppDecorations.dividerLine,
-          ),
+          child: Container(height: 1, decoration: AppDecorations.dividerLine),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
           child: Text(
             text,
-            style: const TextStyle(
-              color: Color(MyColor.grey),
-              fontSize: 12,
-            ),
+            style: const TextStyle(color: Color(MyColor.grey), fontSize: 12),
           ),
         ),
         Expanded(
-          child: Container(
-            height: 1,
-            decoration: AppDecorations.dividerLine,
-          ),
+          child: Container(height: 1, decoration: AppDecorations.dividerLine),
         ),
       ],
     );

@@ -30,19 +30,26 @@ abstract class BaseAuthPageState<T extends BaseAuthPage> extends State<T> {
 
     try {
       final success = await action();
-      
+
       if (!mounted) return;
 
       if (success) {
         showMessage(successMessage, isError: false);
         onSuccess?.call();
       } else {
-        showMessage(errorMessage ?? AppMessages.genericError.replaceAll('{error}', 'Unknown'), isError: true);
+        showMessage(
+          errorMessage ??
+              AppMessages.genericError.replaceAll('{error}', 'Unknown'),
+          isError: true,
+        );
         onError?.call();
       }
     } catch (e) {
       if (mounted) {
-        showMessage(AppMessages.genericError.replaceAll('{error}', e.toString()), isError: true);
+        showMessage(
+          AppMessages.genericError.replaceAll('{error}', e.toString()),
+          isError: true,
+        );
         onError?.call();
       }
     } finally {
@@ -95,30 +102,28 @@ abstract class BaseAuthPageState<T extends BaseAuthPage> extends State<T> {
     VoidCallback? onGoogleTap,
     bool showGoogleButton = true,
     double buttonWidth = 140,
+    bool isPrimaryLoading = false,
+    bool isGoogleLoading = false,
   }) {
     return Column(
       children: [
-        // Primary button
         Center(
           child: PrimaryButton(
             text: primaryButtonText,
             width: buttonWidth,
-            onTap: isLoading ? null : onPrimaryTap,
-            isLoading: isLoading,
+            onTap: isPrimaryLoading ? null : onPrimaryTap,
+            isLoading: isPrimaryLoading,
           ),
         ),
-        
         if (showGoogleButton) ...[
           const SizedBox(height: AppSpacing.lg),
           const OrDivider(),
           const SizedBox(height: AppSpacing.lg),
-          
-          // Google button
           Center(
             child: GoogleButton(
-              onTap: isLoading ? null : onGoogleTap,
+              onTap: isGoogleLoading ? null : onGoogleTap,
               width: buttonWidth,
-              isLoading: isLoading,
+              isLoading: isGoogleLoading,
             ),
           ),
         ],
@@ -138,14 +143,24 @@ abstract class BaseAuthPageState<T extends BaseAuthPage> extends State<T> {
         onBackPressed();
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: true,
         body: AuthBackground(
           child: Form(
             key: formKey,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                child: child,
-              ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                      child: child,
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ),

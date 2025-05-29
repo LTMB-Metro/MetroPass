@@ -12,6 +12,11 @@ import 'package:metropass/pages/forget_password/verification.dart';
 import 'package:metropass/apps/router/router_name.dart';
 import 'package:metropass/widgets/skeleton/ticket_card_skeleton.dart';
 import 'package:metropass/widgets/ticket_normal_list.dart';
+import '../../pages/welcome/welcome_page.dart';
+import '../../pages/profile/profile.dart';
+import 'package:metropass/pages/profile/profile_infomation.dart';
+import 'package:metropass/pages/profile/profile_ticket.dart';
+import 'package:metropass/pages/profile/profile_setting.dart';
 
 class RouterCustom {
   static final GoRouter router = GoRouter(
@@ -21,7 +26,7 @@ class RouterCustom {
         path: '/',
         name: RouterName.welcome,
         builder: (BuildContext context, GoRouterState state) {
-          return HomePage();
+          return WelcomePage();
         },
       ),
       GoRoute(
@@ -57,6 +62,34 @@ class RouterCustom {
         name: RouterName.home,
         builder: (BuildContext context, GoRouterState state) {
           return const HomePage();
+        },
+      ),
+      GoRoute(
+        path: '/profile-information',
+        name: RouterName.profileInformation,
+        builder: (BuildContext context, GoRouterState state) {
+          return const ProfileInformationPage();
+        },
+      ),
+      GoRoute(
+        path: '/profile',
+        name: RouterName.profile,
+        builder: (BuildContext context, GoRouterState state) {
+          return const ProfilePage();
+        },
+      ),
+      GoRoute(
+        path: '/profile-ticket',
+        name: RouterName.profileTicket,
+        builder: (BuildContext context, GoRouterState state) {
+          return const ProfileTicketPage();
+        },
+      ),
+      GoRoute(
+        path: '/profile-setting',
+        name: RouterName.profileSetting,
+        builder: (BuildContext context, GoRouterState state) {
+          return const ProfileSettingPage();
         },
       ),
     ],
