@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:metropass/pages/atlas/atlas_page.dart';
 import 'package:metropass/pages/book_ticket/book_ticket_page.dart';
+import 'package:metropass/pages/map/map_page.dart';
 import 'package:metropass/pages/welcome/welcome_page.dart';
 import 'package:metropass/themes/colors/colors.dart';
 
@@ -112,11 +114,11 @@ class HomePage extends StatelessWidget {
                           children: [
                             Expanded(
                               flex: 1,
-                              child: buildIcon(context, Image.asset('assets/images/map1.png'), 'Lộ trình', WelcomePage()),
+                              child: buildIcon(context, Image.asset('assets/images/map1.png'), 'Lộ trình', AtlasPage()),
                             ),
                             Expanded(
                               flex: 1,
-                              child: buildIcon(context, Image.asset('assets/images/map2.png'), 'Bản đồ', WelcomePage()),
+                              child: buildIcon(context, Image.asset('assets/images/map2.png'), 'Bản đồ', MapPage()),
                             ),
                             Expanded(
                               flex: 1,

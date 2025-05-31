@@ -160,21 +160,35 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
             ),
             onPressed: () async {
-              final url = await createVNPayPayment(100000);
+              print("🚀 Gọi hàm tạo link thanh toán...");
+              final url = await createVNPayPayment(widget.ticket.price);
+
               if (!context.mounted) return;
               if (url != null) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => VNPayWebViewPage(paymentUrl: url),
+                    builder: (_) => VNPayWebViewPage(
+                      paymentUrl: url,
+                      onPaymentComplete: (bool success) {
+                        // ✅ Gọi khi WebView kết thúc và có kết quả
+                        final message = success
+                            ? 'Thanh toán thành công!'
+                            : 'Thanh toán thất bại hoặc bị huỷ';
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(message)),
+                        );
+                      },
+                    ),
                   ),
                 );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Không tạo được link thanh toán")),
+                  const SnackBar(content: Text("Không tạo được link thanh toán")),
                 );
               }
             },
+
             child: Text(
               'Thanh toán: ${NumberFormat('#,###', 'vi_VN').format(widget.ticket.price)} đ',
               style: TextStyle(

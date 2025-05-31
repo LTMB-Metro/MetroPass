@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:metropass/models/route_model.dart';
 import 'package:metropass/pages/book_ticket/stations_route_page.dart';
 import 'package:metropass/themes/colors/colors.dart';
@@ -38,8 +39,8 @@ class RouteCart extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 color: Color(MyColor.pr3)
               ),
-              child: Image.asset(
-                'assets/images/station.png',
+              child: SvgPicture.asset(
+                'assets/icons/bus.svg'
               ),
             ),
             const SizedBox(width: 15,),
