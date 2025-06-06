@@ -10,7 +10,6 @@ class TicketTypeController {
           .map((doc) => TicketTypeModel.fromMap(doc.data(), doc.id))
           .toList();
         list.sort((a, b) => a.duration.compareTo(b.duration));
-
         return list;
       },
     );

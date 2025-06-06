@@ -31,9 +31,15 @@ class _VNPayWebViewPageState extends State<VNPayWebViewPage> {
             final url = request.url;
             print("🔍 Điều hướng tới: $url");
 
-            // Kiểm tra redirect về trang kết quả thanh toán
-            if (url.contains("vnpay_return") || url.contains("example.com/return")) {
-              widget.onPaymentComplete(true);
+            if (url.contains("vnp_ResponseCode")) {
+              final uri = Uri.parse(url);
+              final responseCode = uri.queryParameters['vnp_ResponseCode'];
+
+              print("📥 Mã phản hồi thanh toán: $responseCode");
+
+              final isSuccess = responseCode == '00';
+              widget.onPaymentComplete(isSuccess);
+
               Navigator.pop(context);
               return NavigationDecision.prevent;
             }
@@ -52,7 +58,6 @@ class _VNPayWebViewPageState extends State<VNPayWebViewPage> {
           },
           onWebResourceError: (error) {
             print("❌ Lỗi tài nguyên: $error");
-            // Optional: xử lý lỗi nếu cần
           },
         ),
       )
