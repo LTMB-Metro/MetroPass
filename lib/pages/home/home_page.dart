@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:metropass/pages/atlas/atlas_page.dart';
 import 'package:metropass/pages/book_ticket/book_ticket_page.dart';
+import 'package:metropass/pages/map/map_page.dart';
 import 'package:metropass/pages/welcome/welcome_page.dart';
 import 'package:metropass/pages/profile/profile.dart';
 import 'package:metropass/pages/infomation/infomation.dart';
@@ -131,7 +133,7 @@ class HomePage extends StatelessWidget {
                                 context,
                                 Image.asset('assets/images/map1.png'),
                                 'Lộ trình',
-                                WelcomePage(),
+                                AtlasPage(),
                               ),
                             ),
                             Expanded(
@@ -140,7 +142,7 @@ class HomePage extends StatelessWidget {
                                 context,
                                 Image.asset('assets/images/map2.png'),
                                 'Bản đồ',
-                                WelcomePage(),
+                                MapPage(),
                               ),
                             ),
                             Expanded(
