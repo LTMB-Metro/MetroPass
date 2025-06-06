@@ -44,10 +44,10 @@ class _MapPageState extends State<MapPage> {
             origin: origin,
             destination: destination,
           );
-          await _routeController.drawRouteOnMap(
-            map: _mapboxMap,
-            route: route,
-          );
+          // await _routeController.drawRouteOnMap(
+          //   map: _mapboxMap,
+          //   route: route,
+          // );
         },
       ),
     );

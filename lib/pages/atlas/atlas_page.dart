@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
+import 'package:metropass/controller/map_contrller.dart';
 import 'package:metropass/controller/station_controller.dart';
 import 'package:metropass/models/metro_intermediate_points.dart';
 import 'package:metropass/models/station_model.dart';
@@ -18,6 +19,7 @@ class AtlasPage extends StatefulWidget {
 class _AtlasPageState extends State<AtlasPage> {
   late MapboxMap _mapboxMap;
   late PointAnnotationManager _annotationManager;
+  final MapContrller _mapContrller = MapContrller();
   final StationController _stationController = StationController();
   PointAnnotation? vehicleForward;
   PointAnnotation? vehicleBackward;
@@ -68,7 +70,13 @@ class _AtlasPageState extends State<AtlasPage> {
                 const [],
                 null,
               );
-              await _drawStationRoute(stations);
+              await _mapContrller.drawStationRoute(
+                stations: stations,
+                map: _mapboxMap, 
+                color: Colors.orange, 
+                sourceId: 'station_route_source', 
+                layerId: 'station_route_layer'
+                );
               await _addStationMarkers(stations);
               _annotationManager = await _mapboxMap.annotations.createPointAnnotationManager();
               await _fitCameraToStationsAndIntermediatePoints(stations);

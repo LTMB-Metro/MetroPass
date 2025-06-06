@@ -19,37 +19,71 @@ class MapboxRouteController {
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode != 200) {
-      throw Exception('Failed to fetch route: ${response.body}');
+      throw Exception('Lỗi kết nối Mapbox: ${response.body}');
     }
 
     final data = jsonDecode(response.body);
-    final coords = data['routes'][0]['geometry']['coordinates'] as List;
+
+    // ✅ Kiểm tra nếu không có tuyến nào
+    final routes = data['routes'] as List;
+    if (routes.isEmpty) {
+      throw Exception('Mapbox không trả về tuyến đường nào. Có thể 2 điểm không nối được.');
+    }
+
+    final coords = routes[0]['geometry']['coordinates'] as List;
     return coords.map<Position>((c) => Position(c[0], c[1])).toList();
   }
 
-  Future<void> drawRouteOnMap({
+  Future<Position?> getCoordinatesFromAddress(String address) async {
+    final url = Uri.parse(
+      'https://api.mapbox.com/geocoding/v5/mapbox.places/${Uri.encodeComponent(address)}.json?access_token=$accessToken',
+    );
+
+    final response = await http.get(url);
+    if (response.statusCode != 200) {
+      debugPrint('Lỗi khi lấy tọa độ: ${response.body}');
+      return null;
+    }
+
+    final data = jsonDecode(response.body);
+    if (data['features'].isEmpty) return null;
+
+    final coords = data['features'][0]['geometry']['coordinates'];
+    return Position(coords[0], coords[1]); // [lng, lat]
+  }
+  
+  Future<void> drawCustomRouteOnMap({
     required MapboxMap map,
     required List<Position> route,
+    required Color color,
+    required String sourceId,
+    required String layerId,
   }) async {
+    final style = map.style;
+
+    try {
+      await style.removeStyleLayer(layerId);
+    } catch (_) {}
+
+    try {
+      await style.removeStyleSource(sourceId);
+    } catch (_) {}
+
     final geoJsonData = jsonEncode({
       "type": "Feature",
       "geometry": {
         "type": "LineString",
         "coordinates": route.map((e) => [e.lng, e.lat]).toList(),
       },
-      "properties": {}
     });
 
-    await map.style.addSource(GeoJsonSource(
-      id: 'route_source',
-      data: geoJsonData,
-    ));
+    await style.addSource(GeoJsonSource(id: sourceId, data: geoJsonData));
 
-    await map.style.addLayer(LineLayer(
-      id: 'route_layer',
-      sourceId: 'route_source',
-      lineColor: Colors.red.value,
-      lineWidth: 5.0,
+    await style.addLayer(LineLayer(
+      id: layerId,
+      sourceId: sourceId,
+      lineColor: color.toARGB32(),
+      lineWidth: 8.0,
     ));
   }
 }

@@ -188,7 +188,6 @@ class _PaymentPageState extends State<PaymentPage> {
                 );
               }
             },
-
             child: Text(
               'Thanh toán: ${NumberFormat('#,###', 'vi_VN').format(widget.ticket.price)} đ',
               style: TextStyle(

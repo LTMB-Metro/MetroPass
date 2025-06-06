@@ -62,10 +62,6 @@ class _VNPayWebViewPageState extends State<VNPayWebViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Thanh toán VNPay'),
-        backgroundColor: Colors.blue,
-      ),
       body: Stack(
         children: [
           WebViewWidget(controller: _controller),
