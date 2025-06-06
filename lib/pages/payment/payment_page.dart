@@ -3,12 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:metropass/controller/payment_method_controller.dart';
+import 'package:metropass/controller/user_ticket_controller.dart';
 import 'package:metropass/models/payment_method_model.dart';
 import 'package:metropass/models/ticket_type_model.dart';
 import 'package:metropass/pages/payment/infor_payment.dart';
 import 'package:metropass/pages/payment/infor_ticket.dart';
 import 'package:metropass/pages/payment/vnpay_webview_page.dart';
-import 'package:metropass/services/vnPay_service.dart';
+import 'package:metropass/services/vnpay_payment_service.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:metropass/widgets/skeleton/station_card_skeleton.dart';
 
@@ -30,7 +31,7 @@ class _PaymentPageState extends State<PaymentPage> {
   final PaymentMethodController _controller = PaymentMethodController();
   List<PaymentMethodModel> paymentMethods = [];
   bool isLoadingPayment = true;
-
+  final UserTicketController _userTicketController = UserTicketController();
   @override
   void initState() {
     super.initState();
@@ -154,26 +155,45 @@ class _PaymentPageState extends State<PaymentPage> {
           height: 48,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(MyColor.pr8),
+              backgroundColor: selectedMethod == 'Phương thức thanh toán'? Color(MyColor.grey) : Color(MyColor.pr8),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
             onPressed: () async {
-              final url = await VNPayService.createPayment('DH123456', 100000);
-
-              if (url != null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => VNPayWebViewPage(paymentUrl: url),
-                  ),
-                );
-              } else {
+              if (selectedMethod == 'Phương thức thanh toán') {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Lỗi khi tạo đơn thanh toán')),
+                  const SnackBar(content: Text("Vui lòng chọn phương thức thanh toán")),
                 );
+                return;
               }
+              await _userTicketController.createUserTicket(widget.ticket);
+              // print("🚀 Gọi hàm tạo link thanh toán...");
+              // final url = await createVNPayPayment(widget.ticket.price);
+              // if (!context.mounted) return;
+              // if (url != null) {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (_) => VNPayWebViewPage(
+              //         paymentUrl: url,
+              //         onPaymentComplete: (bool success) {
+              //           // ✅ Gọi khi WebView kết thúc và có kết quả
+              //           final message = success
+              //               ? 'Thanh toán thành công!'
+              //               : 'Thanh toán thất bại hoặc bị huỷ';
+              //           ScaffoldMessenger.of(context).showSnackBar(
+              //             SnackBar(content: Text(message)),
+              //           );
+              //         },
+              //       ),
+              //     ),
+              //   );
+              // } else {
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     const SnackBar(content: Text("Không tạo được link thanh toán")),
+              //   );
+              // }
             },
             child: Text(
               'Thanh toán: ${NumberFormat('#,###', 'vi_VN').format(widget.ticket.price)} đ',
@@ -235,19 +255,25 @@ class _PaymentPageState extends State<PaymentPage> {
       ),
     );
   }
-  Widget showPayment(Widget image, String title){
+  Widget showPayment(Widget image, String title, String status){
+    final String checkStatus = 'active';
     return GestureDetector(
       onTap: (){
+        status == checkStatus ?
         setState(() {
           showPaymentMethor = !showPaymentMethor;
           selectedMethod = title;
           logoSelectedMethod = image;
-        });
+        }): 
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Phương thức thanh toán này chưa hỗ trợ')),
+          );
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10),
         margin: EdgeInsets.only(left: 15, top: 5, bottom: 5 ),
         decoration: BoxDecoration(
+          color: status == checkStatus ? Color(MyColor.white) : Colors.grey[300],
           border: Border(
             left: BorderSide(
               color: Color(MyColor.pr8),
@@ -284,6 +310,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 ),
               ),
             ),
+            status == checkStatus ?
             Expanded(
               flex: 1,
               child: Align(
@@ -296,7 +323,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 activeColor: Colors.green,
               )
               )
-            ),
+            ) : Container(height: 45,),
           ],
         ),
       ),
@@ -329,7 +356,7 @@ class _PaymentPageState extends State<PaymentPage> {
       itemCount: paymentMethods.length,
       itemBuilder: (context, index) {
         final method = paymentMethods[index];
-        return showPayment(Image.network(method.logoUrl), method.name);
+        return showPayment(Image.network(method.logoUrl), method.name, method.status);
       },
     );
   }
