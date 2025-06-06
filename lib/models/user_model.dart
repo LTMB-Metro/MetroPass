@@ -7,6 +7,8 @@ class UserModel {
   final String photoURL;
   final String role;
   final DateTime? createdAt;
+  final String birthday;
+  final String cccd;
 
   UserModel({
     required this.email,
@@ -15,6 +17,8 @@ class UserModel {
     required this.photoURL,
     required this.role,
     this.createdAt,
+    this.birthday = '',
+    this.cccd = '',
   });
 
   /// Convert object to map for saving
@@ -26,6 +30,8 @@ class UserModel {
       'photoURL': photoURL,
       'role': role,
       'createdAt': createdAt ?? DateTime.now(),
+      'birthday': birthday,
+      'cccd': cccd,
     };
   }
 
@@ -38,6 +44,8 @@ class UserModel {
       photoURL: map['photoURL'] ?? '',
       role: map['role'] ?? 'user',
       createdAt: map['createdAt']?.toDate(),
+      birthday: map['birthday'] ?? '',
+      cccd: map['cccd'] ?? '',
     );
   }
 
@@ -55,6 +63,8 @@ class UserModel {
     String? photoURL,
     String? role,
     DateTime? createdAt,
+    String? birthday,
+    String? cccd,
   }) {
     return UserModel(
       email: email ?? this.email,
@@ -63,6 +73,8 @@ class UserModel {
       photoURL: photoURL ?? this.photoURL,
       role: role ?? this.role,
       createdAt: createdAt ?? this.createdAt,
+      birthday: birthday ?? this.birthday,
+      cccd: cccd ?? this.cccd,
     );
   }
 

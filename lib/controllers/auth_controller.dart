@@ -146,13 +146,13 @@ class AuthController extends ChangeNotifier {
       print('Bắt đầu đăng xuất');
       await _authService.signOut();
       await _storageService.clearLoginCredentials();
-      
+
       _firebaseUser = null;
       _userModel = null;
       _status = AuthStatus.unauthenticated;
       _clearError();
       _setLoading(false);
-      
+
       print('Đăng xuất thành công');
       return true;
     } catch (e) {
@@ -168,6 +168,8 @@ class AuthController extends ChangeNotifier {
     String? username,
     String? phonenumber,
     String? photoURL,
+    String? birthday,
+    String? cccd,
   }) async {
     if (_firebaseUser == null || _userModel == null) return false;
 
@@ -179,6 +181,8 @@ class AuthController extends ChangeNotifier {
         username: username ?? _userModel!.username,
         phonenumber: phonenumber ?? _userModel!.phonenumber,
         photoURL: photoURL ?? _userModel!.photoURL,
+        birthday: birthday ?? _userModel!.birthday,
+        cccd: cccd ?? _userModel!.cccd,
       );
 
       await _db
@@ -194,7 +198,7 @@ class AuthController extends ChangeNotifier {
       _userModel = updatedUser;
       _clearError();
       _setLoading(false);
-      
+
       print('Cập nhật thông tin người dùng thành công');
       return true;
     } catch (e) {
@@ -248,7 +252,7 @@ class AuthController extends ChangeNotifier {
       print('Tải dữ liệu người dùng cho UID: $uid');
 
       final userModel = await _authService.getUserData(uid);
-      
+
       if (userModel != null) {
         _userModel = userModel;
         _status = AuthStatus.authenticated;
