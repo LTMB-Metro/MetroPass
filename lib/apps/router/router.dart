@@ -4,6 +4,7 @@ import 'package:metropass/pages/atlas/atlas_page.dart';
 import 'package:metropass/pages/book_ticket/book_ticket_page.dart';
 import 'package:metropass/pages/book_ticket/stations_route_page.dart';
 import 'package:metropass/pages/home/home_page.dart';
+import 'package:metropass/pages/my_ticket/my_ticket_page.dart';
 import 'package:metropass/pages/payment/payment_page.dart';
 import 'package:metropass/pages/welcome/welcome_page.dart';
 import 'package:metropass/pages/login/login.dart';
@@ -28,7 +29,7 @@ class RouterCustom {
         path: '/',
         name: RouterName.welcome,
         builder: (BuildContext context, GoRouterState state) {
-          return WelcomePage();
+          return HomePage();
         },
       ),
       GoRoute(

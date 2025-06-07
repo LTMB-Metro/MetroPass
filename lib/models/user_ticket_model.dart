@@ -13,7 +13,7 @@ class UserTicketModel {
   final String endStationCode;
   final String status;
   final DateTime bookingTime;
-  final DateTime? startTime;
+  final DateTime? activateTime;
   final String qrCodeContent;
 
   UserTicketModel({
@@ -29,7 +29,7 @@ class UserTicketModel {
     required this.endStationCode,
     required this.status,
     required this.bookingTime,
-    this.startTime,
+    this.activateTime,
     required this.qrCodeContent,
   });
 
@@ -45,10 +45,10 @@ class UserTicketModel {
       duration: map['duration'] ?? 0,
       startStationCode: map['start_station_code'] ?? '',
       endStationCode: map['end_station_code'] ?? '',
-      status: map['status'] ?? 'active',
+      status: map['status'] ?? 'unused',
       bookingTime: (map['booking_time'] as Timestamp).toDate(),
-      startTime: map['start_time'] != null
-          ? (map['start_time'] as Timestamp).toDate()
+      activateTime: map['activate_time'] != null
+          ? (map['activate_time'] as Timestamp).toDate()
           : null,
       qrCodeContent: map['qr_code_content'] ?? '',
     );
@@ -67,7 +67,7 @@ class UserTicketModel {
       'end_station_code': endStationCode,
       'status': status,
       'booking_time': bookingTime,
-      if (startTime != null) 'start_time': startTime,
+      if (activateTime != null) 'activate_time': activateTime,
       'qr_code_content': qrCodeContent,
     };
   }
