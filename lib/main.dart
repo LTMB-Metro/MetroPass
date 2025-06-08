@@ -3,16 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:metropass/pages/my_app.dart';
 
+
+/// Main entry point of the application
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent, // Trong suốt
+      statusBarColor: Colors.transparent, 
       statusBarIconBrightness:
-          Brightness.dark, // Đổi màu icon (light = icon trắng, dark = icon đen)
+          Brightness
+              .dark, 
       systemNavigationBarColor:
-          Colors.transparent, // Làm trong suốt hoặc đổi thành màu nền
+          Colors.transparent, 
       systemNavigationBarDividerColor: Colors.transparent,
     ),
   );

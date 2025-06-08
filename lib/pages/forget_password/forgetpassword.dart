@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../base_auth_page.dart';
-import '../../widgets/shared_widgets.dart';
-import '../../constants/app_constants.dart';
-import '../../utils/validators.dart';
-import '../../apps/router/router_name.dart';
+import 'package:metropass/apps/router/router_name.dart';
+import 'package:metropass/constants/app_constants.dart';
+import 'package:metropass/pages/base_auth_page.dart';
+import 'package:metropass/widgets/shared_widgets.dart';
 import '../../controllers/password_reset_controller.dart';
+import '../../themes/colors/colors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../utils/validators.dart';
 
 class ForgotPasswordPage extends BaseAuthPage {
   const ForgotPasswordPage({Key? key}) : super(key: key);
 
   @override
-  State<ForgotPasswordPage> createState() => _OptimizedForgotPasswordPageState();
+  State<ForgotPasswordPage> createState() =>
+      _OptimizedForgotPasswordPageState();
 }
 
-class _OptimizedForgotPasswordPageState extends BaseAuthPageState<ForgotPasswordPage> {
+class _OptimizedForgotPasswordPageState
+    extends BaseAuthPageState<ForgotPasswordPage> {
   final _emailController = TextEditingController();
   String? _emailError;
 
@@ -48,7 +52,7 @@ class _OptimizedForgotPasswordPageState extends BaseAuthPageState<ForgotPassword
 
   Future<void> _sendOTPCode() async {
     if (!_validateForSubmission()) {
-      showMessage(AppMessages.enterValidEmail, isError: true);
+      showMessage(AppLocalizations.of(context)!.enterValidEmail, isError: true);
       return;
     }
 
@@ -56,11 +60,13 @@ class _OptimizedForgotPasswordPageState extends BaseAuthPageState<ForgotPassword
 
     await handleAsyncAction(
       () => resetController.sendOTP(_emailController.text.trim()),
-      successMessage: AppMessages.otpSent,
-      errorMessage: resetController.errorMessage ?? AppMessages.otpSendFailed,
-      onSuccess: () => navigateWithDelay(
-        () => context.goNamed(RouterName.verification),
-      ),
+      successMessage: AppLocalizations.of(context)!.otpSent,
+      errorMessage:
+          resetController.errorMessage ??
+          AppLocalizations.of(context)!.otpSendFailed,
+      onSuccess:
+          () =>
+              navigateWithDelay(() => context.goNamed(RouterName.verification)),
     );
   }
 
@@ -72,7 +78,8 @@ class _OptimizedForgotPasswordPageState extends BaseAuthPageState<ForgotPassword
           onBackPressed: () => context.goNamed(RouterName.login),
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height -
+              minHeight:
+                  MediaQuery.of(context).size.height -
                   MediaQuery.of(context).padding.top -
                   MediaQuery.of(context).padding.bottom,
             ),
@@ -82,7 +89,7 @@ class _OptimizedForgotPasswordPageState extends BaseAuthPageState<ForgotPassword
                 children: [
                   // Header
                   AuthHeader(
-                    title: 'Quên mật khẩu',
+                    title: AppLocalizations.of(context)!.forgotPassword,
                     onBackPressed: () => context.goNamed(RouterName.login),
                     greeting: null, // No greeting for this page
                   ),
@@ -90,7 +97,7 @@ class _OptimizedForgotPasswordPageState extends BaseAuthPageState<ForgotPassword
                   // Subtitle
                   Center(
                     child: Text(
-                      AppMessages.forgotPasswordInfo,
+                      AppLocalizations.of(context)!.forgotPasswordInfo,
                       style: AppTextStyles.subtitle,
                       textAlign: TextAlign.center,
                     ),
@@ -101,7 +108,7 @@ class _OptimizedForgotPasswordPageState extends BaseAuthPageState<ForgotPassword
                   buildFormContainer(
                     children: [
                       AppTextField(
-                        hintText: 'Email',
+                        hintText: AppLocalizations.of(context)!.email,
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         errorText: _emailError,
@@ -109,7 +116,7 @@ class _OptimizedForgotPasswordPageState extends BaseAuthPageState<ForgotPassword
                       const SizedBox(height: AppSpacing.xxl),
 
                       PrimaryButton(
-                        text: 'Gửi mã',
+                        text: AppLocalizations.of(context)!.sendCode,
                         onTap: resetController.isLoading ? null : _sendOTPCode,
                         isLoading: resetController.isLoading,
                       ),

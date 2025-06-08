@@ -22,9 +22,9 @@ class _VNPayWebViewPageState extends State<VNPayWebViewPage> {
         NavigationDelegate(
           onPageFinished: (url) {
             if (url.contains("vnp_ResponseCode=00")) {
-              Navigator.pop(context, true); // thanh toán thành công
+              Navigator.pop(context, true); 
             } else if (url.contains("vnp_ResponseCode")) {
-              Navigator.pop(context, false); // thanh toán thất bại
+              Navigator.pop(context, false);
             }
           },
         ),

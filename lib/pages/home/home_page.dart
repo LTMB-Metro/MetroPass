@@ -4,19 +4,29 @@ import 'package:metropass/pages/book_ticket/book_ticket_page.dart';
 import 'package:metropass/pages/welcome/welcome_page.dart';
 import 'package:metropass/pages/profile/profile.dart';
 import 'package:metropass/pages/infomation/infomation.dart';
+import 'package:metropass/pages/instruction/instruction_page.dart';
+import 'package:metropass/route_information/route_information.dart';
 import 'package:metropass/themes/colors/colors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
+import 'package:metropass/apps/router/router_name.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.white : const Color(MyColor.black);
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark.copyWith(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
+        backgroundColor: backgroundColor,
         extendBody: true,
         body: SingleChildScrollView(
           child: Stack(
@@ -47,14 +57,14 @@ class HomePage extends StatelessWidget {
                           buildhelp(
                             context,
                             AssetImage('assets/images/help.png'),
-                            'MetroPass có nhiều loại vé khác nhau cho bạn lựa chọn',
-                            WelcomePage(),
+                            AppLocalizations.of(context)!.help1,
+                            InstructionPage(),
                           ),
                           buildhelp(
                             context,
                             AssetImage('assets/images/help2.png'),
-                            'MetroPass sẽ cung cấp cho bạn thông tin về các tuyến Metro',
-                            WelcomePage(),
+                            AppLocalizations.of(context)!.help2,
+                            RouteInformationPage(),
                           ),
                         ],
                       ),
@@ -70,7 +80,7 @@ class HomePage extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.only(bottom: 10),
                   decoration: BoxDecoration(
-                    color: Color(MyColor.pr1),
+                    color: isDarkMode ? Colors.black : Color(MyColor.pr1),
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
@@ -98,7 +108,7 @@ class HomePage extends StatelessWidget {
                               child: buildIcon(
                                 context,
                                 Image.asset('assets/images/ticket1.png'),
-                                'Đặt vé',
+                                AppLocalizations.of(context)!.bookTicket,
                                 BookTicketPage(),
                               ),
                             ),
@@ -107,7 +117,7 @@ class HomePage extends StatelessWidget {
                               child: buildIcon(
                                 context,
                                 Image.asset('assets/images/ticket2.png'),
-                                'Vé của tôi',
+                                AppLocalizations.of(context)!.myTickets,
                                 WelcomePage(),
                               ),
                             ),
@@ -116,8 +126,8 @@ class HomePage extends StatelessWidget {
                               child: buildIcon(
                                 context,
                                 Image.asset('assets/images/ticket3.png'),
-                                'Thông tin',
-                                InfomationPage(),
+                                AppLocalizations.of(context)!.info,
+                                InformationPage(),
                               ),
                             ),
                           ],
@@ -130,8 +140,10 @@ class HomePage extends StatelessWidget {
                               child: buildIcon(
                                 context,
                                 Image.asset('assets/images/map1.png'),
-                                'Lộ trình',
-                                WelcomePage(),
+                                AppLocalizations.of(context)!.routes,
+                                () => context.pushNamed(
+                                  RouterName.routeInformation,
+                                ),
                               ),
                             ),
                             Expanded(
@@ -139,7 +151,7 @@ class HomePage extends StatelessWidget {
                               child: buildIcon(
                                 context,
                                 Image.asset('assets/images/map2.png'),
-                                'Bản đồ',
+                                AppLocalizations.of(context)!.map,
                                 WelcomePage(),
                               ),
                             ),
@@ -148,7 +160,7 @@ class HomePage extends StatelessWidget {
                               child: buildIcon(
                                 context,
                                 Image.asset('assets/images/profile.png'),
-                                'Tài khoản',
+                                AppLocalizations.of(context)!.account,
                                 ProfilePage(),
                               ),
                             ),
@@ -170,28 +182,34 @@ class HomePage extends StatelessWidget {
     BuildContext context,
     Image image,
     String lable,
-    Widget targetpage,
+    dynamic onTap,
   ) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDarkMode ? Colors.white : const Color(MyColor.black);
+
     return GestureDetector(
-      onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => targetpage));
-      },
+      onTap:
+          onTap is Widget
+              ? () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => onTap),
+                );
+              }
+              : onTap,
       child: Column(
         children: [
           Container(
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Color(MyColor.pr3),
+              color: isDarkMode ? Colors.grey[800] : Color(MyColor.pr3),
               borderRadius: BorderRadius.circular(50),
             ),
             child: image,
           ),
           const SizedBox(height: 4),
-          Text(
-            lable,
-            style: TextStyle(fontSize: 14, color: Color(MyColor.black)),
-          ),
+          Text(lable, style: TextStyle(fontSize: 14, color: textColor)),
         ],
       ),
     );
@@ -203,6 +221,9 @@ class HomePage extends StatelessWidget {
     String lable,
     Widget targetpage,
   ) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDarkMode ? Colors.white : const Color(MyColor.black);
+
     return GestureDetector(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (_) => targetpage));
@@ -220,7 +241,7 @@ class HomePage extends StatelessWidget {
               offset: Offset(0, 0.1),
             ),
           ],
-          color: Color(MyColor.white),
+          color: isDarkMode ? Colors.black : Color(MyColor.white),
         ),
         child: Column(
           children: [
@@ -239,15 +260,16 @@ class HomePage extends StatelessWidget {
                   Text(
                     lable,
                     style: TextStyle(
-                      color: Color(MyColor.black),
+                      color: textColor,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   Text(
-                    'Nhấn để xem ngay',
+                    AppLocalizations.of(context)!.seeNow,
                     style: TextStyle(
-                      color: Color(MyColor.grey),
+                      color:
+                          isDarkMode ? Colors.grey[400] : Color(MyColor.grey),
                       fontSize: 14,
                       fontWeight: FontWeight.w300,
                     ),

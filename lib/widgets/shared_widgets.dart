@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../themes/colors/colors.dart';
 import '../constants/app_constants.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// A reusable back button widget with customizable appearance
 class AppBackButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final Color? iconColor;
@@ -35,7 +37,7 @@ class AppBackButton extends StatelessWidget {
   }
 }
 
-/// Reusable auth header component
+/// A reusable header component for authentication screens
 class AuthHeader extends StatelessWidget {
   final String title;
   final String? greeting;
@@ -47,7 +49,7 @@ class AuthHeader extends StatelessWidget {
   const AuthHeader({
     Key? key,
     required this.title,
-    this.greeting = 'Xin Chào!!',
+    this.greeting,
     this.onBackPressed,
     this.showBackButton = true,
     this.showLogo = true,
@@ -56,6 +58,9 @@ class AuthHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final defaultGreeting =
+        greeting ?? AppLocalizations.of(context)!.welcomeUser('');
+
     if (isKeyboardOpen) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -69,11 +74,10 @@ class AuthHeader extends StatelessWidget {
               children: [
                 if (showBackButton) AppBackButton(onPressed: onBackPressed),
                 if (showBackButton) const SizedBox(width: AppSpacing.md),
-                if (greeting != null)
-                  Text(
-                    greeting!,
-                    style: AppTextStyles.greeting.copyWith(fontSize: 18),
-                  ),
+                Text(
+                  defaultGreeting,
+                  style: AppTextStyles.greeting.copyWith(fontSize: 18),
+                ),
                 const Spacer(),
                 if (showLogo) Image.asset(AppAssets.logo, height: 32),
               ],
@@ -84,7 +88,7 @@ class AuthHeader extends StatelessWidget {
         ],
       );
     }
-    // layout mặc định
+    // Default layout
     return Column(
       children: [
         const SizedBox(height: AppSpacing.xxxl),
@@ -95,8 +99,7 @@ class AuthHeader extends StatelessWidget {
               children: [
                 AppBackButton(onPressed: onBackPressed),
                 const SizedBox(width: AppSpacing.md),
-                if (greeting != null)
-                  Text(greeting!, style: AppTextStyles.greeting),
+                Text(defaultGreeting, style: AppTextStyles.greeting),
               ],
             ),
           ),
@@ -110,7 +113,7 @@ class AuthHeader extends StatelessWidget {
   }
 }
 
-/// Enhanced App Logo with customizable height
+/// A reusable logo widget with customizable height
 class AppLogo extends StatelessWidget {
   final double height;
 
@@ -122,7 +125,7 @@ class AppLogo extends StatelessWidget {
   }
 }
 
-/// Enhanced TextField with better validation integration
+/// A reusable text field with enhanced validation and styling
 class AppTextField extends StatelessWidget {
   final String hintText;
   final bool isPassword;
@@ -212,7 +215,7 @@ class AppTextField extends StatelessWidget {
   }
 }
 
-/// Enhanced Password field with better validation
+/// A reusable password field with visibility toggle
 class PasswordField extends StatefulWidget {
   final TextEditingController controller;
   final String label;
@@ -260,7 +263,7 @@ class _PasswordFieldState extends State<PasswordField> {
   }
 }
 
-/// Enhanced Primary Button
+/// A reusable primary button with loading state
 class PrimaryButton extends StatelessWidget {
   final String text;
   final VoidCallback? onTap;
@@ -321,7 +324,7 @@ class PrimaryButton extends StatelessWidget {
   }
 }
 
-/// Enhanced Google Button
+/// A reusable Google sign-in button with loading state
 class GoogleButton extends StatelessWidget {
   final VoidCallback? onTap;
   final double? width;
@@ -364,9 +367,12 @@ class GoogleButton extends StatelessWidget {
                   ),
                 ),
               ] else ...[
-                const Text(
-                  'Google',
-                  style: TextStyle(fontSize: 16, color: Color(MyColor.black)),
+                Text(
+                  AppLocalizations.of(context)!.googleSignIn,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Color(MyColor.black),
+                  ),
                 ),
                 const SizedBox(width: AppSpacing.xs),
                 Image.asset(
@@ -383,7 +389,7 @@ class GoogleButton extends StatelessWidget {
   }
 }
 
-/// Enhanced SnackBar utility
+/// A utility class for showing snackbar messages
 class AppSnackBar {
   static void show(
     BuildContext context,
@@ -426,7 +432,7 @@ class AppSnackBar {
   }
 }
 
-/// Auth Background with gradient and image
+/// A reusable background widget for authentication screens
 class AuthBackground extends StatelessWidget {
   final Widget child;
 
@@ -473,14 +479,16 @@ class AuthBackground extends StatelessWidget {
   }
 }
 
-/// Divider with "or" text
+/// A reusable divider with optional text in the middle
 class OrDivider extends StatelessWidget {
-  final String text;
+  final String? text;
 
-  const OrDivider({Key? key, this.text = AppMessages.orText}) : super(key: key);
+  const OrDivider({Key? key, this.text}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final orText = text ?? AppLocalizations.of(context)!.orText;
+
     return Row(
       children: [
         Expanded(
@@ -489,7 +497,7 @@ class OrDivider extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
           child: Text(
-            text,
+            orText,
             style: const TextStyle(color: Color(MyColor.grey), fontSize: 12),
           ),
         ),
@@ -501,7 +509,7 @@ class OrDivider extends StatelessWidget {
   }
 }
 
-/// Account link text (e.g., "Don't have account? Register")
+/// A reusable widget for account-related links (e.g., "Don't have account? Register")
 class AccountLinkText extends StatelessWidget {
   final String question;
   final String linkText;

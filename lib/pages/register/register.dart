@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../base_auth_page.dart';
-import '../../widgets/shared_widgets.dart';
-import '../../constants/app_constants.dart';
-import '../../utils/validators.dart';
-import '../../apps/router/router_name.dart';
+import 'package:metropass/apps/router/router_name.dart';
+import 'package:metropass/constants/app_constants.dart';
+import 'package:metropass/pages/base_auth_page.dart';
+import 'package:metropass/widgets/shared_widgets.dart';
 import '../../controllers/auth_controller.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../utils/validators.dart';
 
 class RegisterPage extends BaseAuthPage {
   const RegisterPage({Key? key}) : super(key: key);
@@ -133,7 +134,7 @@ class _OptimizedRegisterPageState extends BaseAuthPageState<RegisterPage> {
 
   Future<void> _handleRegister() async {
     if (!_validateForSubmission()) {
-      showMessage(AppMessages.fillAllFields, isError: true);
+      showMessage(AppLocalizations.of(context)!.fillAllFields, isError: true);
       return;
     }
     setState(() => isRegisterLoading = true);
@@ -144,8 +145,10 @@ class _OptimizedRegisterPageState extends BaseAuthPageState<RegisterPage> {
         password: _passwordController.text,
         username: _nameController.text.trim(),
       ),
-      successMessage: AppMessages.registerSuccess,
-      errorMessage: authController.errorMessage ?? AppMessages.registerFailed,
+      successMessage: AppLocalizations.of(context)!.registerSuccess,
+      errorMessage:
+          authController.errorMessage ??
+          AppLocalizations.of(context)!.registerFailed,
       onSuccess: () {
         _clearForm();
         navigateWithDelay(
@@ -162,9 +165,10 @@ class _OptimizedRegisterPageState extends BaseAuthPageState<RegisterPage> {
     final authController = context.read<AuthController>();
     await handleAsyncAction(
       () => authController.signInWithGoogle(),
-      successMessage: AppMessages.googleSignInSuccess,
+      successMessage: AppLocalizations.of(context)!.googleSignInSuccess,
       errorMessage:
-          authController.errorMessage ?? AppMessages.googleSignInFailed,
+          authController.errorMessage ??
+          AppLocalizations.of(context)!.googleSignInFailed,
       onSuccess:
           () => navigateWithDelay(() => context.goNamed(RouterName.home)),
     );
@@ -183,7 +187,7 @@ class _OptimizedRegisterPageState extends BaseAuthPageState<RegisterPage> {
             children: [
               // Header
               AuthHeader(
-                title: 'Đăng ký',
+                title: AppLocalizations.of(context)!.register,
                 onBackPressed: () => context.goNamed(RouterName.login),
                 isKeyboardOpen: isKeyboardOpen,
               ),
@@ -192,14 +196,14 @@ class _OptimizedRegisterPageState extends BaseAuthPageState<RegisterPage> {
               buildFormContainer(
                 children: [
                   AppTextField(
-                    hintText: 'Tên người dùng',
+                    hintText: AppLocalizations.of(context)!.username,
                     controller: _nameController,
                     errorText: _nameError,
                   ),
                   const SizedBox(height: AppSpacing.md),
 
                   AppTextField(
-                    hintText: 'Email',
+                    hintText: AppLocalizations.of(context)!.email,
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     errorText: _emailError,
@@ -208,29 +212,29 @@ class _OptimizedRegisterPageState extends BaseAuthPageState<RegisterPage> {
 
                   PasswordField(
                     controller: _passwordController,
-                    label: 'Mật khẩu',
+                    label: AppLocalizations.of(context)!.password,
                     errorText: _passwordError,
                   ),
                   const SizedBox(height: AppSpacing.md),
 
                   PasswordField(
                     controller: _confirmPasswordController,
-                    label: 'Xác nhận mật khẩu',
+                    label: AppLocalizations.of(context)!.confirmPassword,
                     errorText: _confirmPasswordError,
                   ),
                   const SizedBox(height: AppSpacing.lg),
 
                   // Account link
                   AccountLinkText(
-                    question: AppMessages.haveAccount,
-                    linkText: 'Đăng nhập',
+                    question: AppLocalizations.of(context)!.haveAccount,
+                    linkText: AppLocalizations.of(context)!.login,
                     onTap: () => context.goNamed(RouterName.login),
                   ),
                   const SizedBox(height: AppSpacing.lg),
 
                   // Auth actions
                   buildAuthActions(
-                    primaryButtonText: 'Đăng ký',
+                    primaryButtonText: AppLocalizations.of(context)!.register,
                     onPrimaryTap: _handleRegister,
                     onGoogleTap: _handleGoogleSignIn,
                     isPrimaryLoading: isRegisterLoading,

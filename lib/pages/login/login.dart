@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../base_auth_page.dart';
-import '../../widgets/shared_widgets.dart';
-import '../../constants/app_constants.dart';
-import '../../utils/validators.dart';
-import '../../apps/router/router_name.dart';
+import 'package:metropass/apps/router/router_name.dart';
+import 'package:metropass/constants/app_constants.dart';
+import 'package:metropass/pages/base_auth_page.dart';
+import 'package:metropass/widgets/shared_widgets.dart';
 import '../../controllers/auth_controller.dart';
 import '../../themes/colors/colors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../utils/validators.dart';
 
 class LoginPage extends BaseAuthPage {
   const LoginPage({Key? key}) : super(key: key);
@@ -76,7 +77,7 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
 
   Future<void> _handleLogin() async {
     if (!_validateForSubmission()) {
-      showMessage(AppMessages.fillAllFields, isError: true);
+      showMessage(AppLocalizations.of(context)!.fillAllFields, isError: true);
       return;
     }
     setState(() => isLoginLoading = true);
@@ -86,8 +87,10 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       ),
-      successMessage: AppMessages.loginSuccess,
-      errorMessage: authController.errorMessage ?? AppMessages.loginFailed,
+      successMessage: AppLocalizations.of(context)!.loginSuccess,
+      errorMessage:
+          authController.errorMessage ??
+          AppLocalizations.of(context)!.loginFailed,
       onSuccess:
           () => navigateWithDelay(() => context.goNamed(RouterName.home)),
     );
@@ -99,9 +102,10 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
     final authController = context.read<AuthController>();
     await handleAsyncAction(
       () => authController.signInWithGoogle(),
-      successMessage: AppMessages.googleSignInSuccess,
+      successMessage: AppLocalizations.of(context)!.googleSignInSuccess,
       errorMessage:
-          authController.errorMessage ?? AppMessages.googleSignInFailed,
+          authController.errorMessage ??
+          AppLocalizations.of(context)!.googleSignInFailed,
       onSuccess:
           () => navigateWithDelay(() => context.goNamed(RouterName.home)),
     );
@@ -120,7 +124,7 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
             children: [
               // Header
               AuthHeader(
-                title: 'Đăng nhập',
+                title: AppLocalizations.of(context)!.login,
                 onBackPressed: () => context.goNamed(RouterName.welcome),
                 isKeyboardOpen: isKeyboardOpen,
               ),
@@ -129,7 +133,7 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
               buildFormContainer(
                 children: [
                   AppTextField(
-                    hintText: 'Email',
+                    hintText: AppLocalizations.of(context)!.email,
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     errorText: _emailError,
@@ -138,7 +142,7 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
 
                   PasswordField(
                     controller: _passwordController,
-                    label: 'Mật khẩu',
+                    label: AppLocalizations.of(context)!.password,
                     errorText: _passwordError,
                   ),
                   const SizedBox(height: AppSpacing.sm),
@@ -155,8 +159,8 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
                         minimumSize: const Size(50, 20),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      child: const Text(
-                        'Quên mật khẩu?',
+                      child: Text(
+                        AppLocalizations.of(context)!.forgotPassword,
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
@@ -168,15 +172,15 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
 
                   // Account link
                   AccountLinkText(
-                    question: AppMessages.noAccount,
-                    linkText: 'Đăng ký',
+                    question: AppLocalizations.of(context)!.noAccount,
+                    linkText: AppLocalizations.of(context)!.register,
                     onTap: () => context.goNamed(RouterName.register),
                   ),
                   const SizedBox(height: AppSpacing.lg),
 
                   // Auth actions
                   buildAuthActions(
-                    primaryButtonText: 'Đăng nhập',
+                    primaryButtonText: AppLocalizations.of(context)!.login,
                     onPrimaryTap: _handleLogin,
                     onGoogleTap: _handleGoogleSignIn,
                     isPrimaryLoading: isLoginLoading,

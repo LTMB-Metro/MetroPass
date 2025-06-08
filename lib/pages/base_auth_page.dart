@@ -2,21 +2,22 @@ import 'package:flutter/material.dart';
 import '../widgets/shared_widgets.dart';
 import '../constants/app_constants.dart';
 
+/// Base class for authentication pages
 abstract class BaseAuthPage extends StatefulWidget {
   const BaseAuthPage({Key? key}) : super(key: key);
 }
 
-/// Base state class with common functionality
+/// Base state class with common functionality for authentication pages
 abstract class BaseAuthPageState<T extends BaseAuthPage> extends State<T> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool isLoading = false;
 
-  /// Show message using AppSnackBar
+  /// Display a message using AppSnackBar
   void showMessage(String message, {bool isError = false}) {
     AppSnackBar.show(context, message, isError: isError);
   }
 
-  /// Handle async actions with loading state and error handling
+  /// Handle asynchronous actions with loading state and error handling
   Future<void> handleAsyncAction(
     Future<bool> Function() action, {
     required String successMessage,
@@ -59,7 +60,7 @@ abstract class BaseAuthPageState<T extends BaseAuthPage> extends State<T> {
     }
   }
 
-  /// Navigate with delay for better UX
+  /// Navigate with a delay for better user experience
   Future<void> navigateWithDelay(
     VoidCallback navigation, {
     Duration delay = AppDurations.medium,
@@ -70,24 +71,24 @@ abstract class BaseAuthPageState<T extends BaseAuthPage> extends State<T> {
     }
   }
 
-  /// Validate form fields
+  /// Validate all form fields
   bool validateForm() {
     return formKey.currentState?.validate() ?? false;
   }
 
-  /// Clear form fields
+  /// Clear all form fields
   void clearForm() {
     formKey.currentState?.reset();
   }
 
-  /// Show loading indicator
+  /// Show or hide loading indicator
   void setLoading(bool loading) {
     if (mounted) {
       setState(() => isLoading = loading);
     }
   }
 
-  /// Create form container with consistent styling
+  /// Create a form container with consistent styling
   Widget buildFormContainer({required List<Widget> children}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
@@ -95,7 +96,7 @@ abstract class BaseAuthPageState<T extends BaseAuthPage> extends State<T> {
     );
   }
 
-  /// Create auth action buttons section
+  /// Create authentication action buttons section
   Widget buildAuthActions({
     required String primaryButtonText,
     required VoidCallback onPrimaryTap,
@@ -131,7 +132,7 @@ abstract class BaseAuthPageState<T extends BaseAuthPage> extends State<T> {
     );
   }
 
-  /// Build page structure with PopScope
+  /// Build page structure with PopScope for handling back navigation
   Widget buildPageStructure({
     required Widget child,
     required VoidCallback onBackPressed,
