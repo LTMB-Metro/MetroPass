@@ -86,13 +86,12 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
       () => authController.signIn(
         email: _emailController.text.trim(),
         password: _passwordController.text,
+        context: context,
       ),
       successMessage: AppLocalizations.of(context)!.loginSuccess,
       errorMessage:
           authController.errorMessage ??
           AppLocalizations.of(context)!.loginFailed,
-      onSuccess:
-          () => navigateWithDelay(() => context.goNamed(RouterName.home)),
     );
     if (mounted) setState(() => isLoginLoading = false);
   }
@@ -101,13 +100,11 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
     setState(() => isGoogleLoading = true);
     final authController = context.read<AuthController>();
     await handleAsyncAction(
-      () => authController.signInWithGoogle(),
+      () => authController.signInWithGoogle(context: context),
       successMessage: AppLocalizations.of(context)!.googleSignInSuccess,
       errorMessage:
           authController.errorMessage ??
           AppLocalizations.of(context)!.googleSignInFailed,
-      onSuccess:
-          () => navigateWithDelay(() => context.goNamed(RouterName.home)),
     );
     if (mounted) setState(() => isGoogleLoading = false);
   }

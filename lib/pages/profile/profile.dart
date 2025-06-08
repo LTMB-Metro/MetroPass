@@ -184,19 +184,6 @@ class ProfilePage extends StatelessWidget {
                                   color: textColor,
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                AppLocalizations.of(context)!.role +
-                                    ': ' +
-                                    userModel.role.toUpperCase(),
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color:
-                                      isDarkMode
-                                          ? Colors.grey[400]
-                                          : const Color(MyColor.grey),
-                                ),
-                              ),
                             ],
                           ),
                         ],

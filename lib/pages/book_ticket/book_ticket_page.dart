@@ -12,8 +12,6 @@ class BookTicketPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor =
-        isDarkMode ? Colors.black : const Color(MyColor.pr2);
     final textColor = isDarkMode ? Colors.white : const Color(MyColor.pr9);
 
     return Scaffold(

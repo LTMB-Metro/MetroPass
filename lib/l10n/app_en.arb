@@ -151,5 +151,13 @@
   },
   "@darkMode": {
     "description": "Label for dark mode theme"
-  }
+  },
+  "authErrorWeakPassword": "Password is too weak",
+  "authErrorEmailInUse": "Email is already registered",
+  "authErrorInvalidEmail": "Invalid email format",
+  "authErrorUserNotFound": "No account found with this email",
+  "authErrorWrongPassword": "Incorrect password",
+  "authErrorInvalidCredential": "Invalid email or password",
+  "authErrorTooManyRequests": "Too many attempts. Please try again later",
+  "authErrorGeneric": "Authentication error: {code}"
 } 

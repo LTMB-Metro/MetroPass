@@ -141,6 +141,7 @@ class _OptimizedRegisterPageState extends BaseAuthPageState<RegisterPage> {
     final authController = context.read<AuthController>();
     await handleAsyncAction(
       () => authController.register(
+        context: context,
         email: _emailController.text.trim(),
         password: _passwordController.text,
         username: _nameController.text.trim(),
@@ -164,7 +165,7 @@ class _OptimizedRegisterPageState extends BaseAuthPageState<RegisterPage> {
     setState(() => isGoogleLoading = true);
     final authController = context.read<AuthController>();
     await handleAsyncAction(
-      () => authController.signInWithGoogle(),
+      () => authController.signInWithGoogle(context: context),
       successMessage: AppLocalizations.of(context)!.googleSignInSuccess,
       errorMessage:
           authController.errorMessage ??

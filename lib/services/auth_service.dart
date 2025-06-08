@@ -2,133 +2,124 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../models/user_model.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  /// Register new user with email/password
-  Future<AuthResult> registerUser({
-    required String email,
-    required String password,
-    required String username,
-  }) async {
+  /// Register with email and password
+  Future<AuthResult> registerWithEmailAndPassword(
+    String email,
+    String password,
+    String username,
+    BuildContext context,
+  ) async {
     try {
-      UserCredential result = await _auth.createUserWithEmailAndPassword(
+      final userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      
-      User? user = result.user;
-      if (user != null) {
-        final userModel = UserModel(
-          email: email,
-          username: username,
-          phonenumber: "", 
-          photoURL: "https://img.lovepik.com/free-png/20211204/lovepik-cartoon-avatar-png-image_401302777_wh1200.png",
-          role: "user",
-        );
 
-        await _db.collection("users").doc(user.uid).set(userModel.toMap());
-        await user.updateDisplayName(username);
-        await user.reload();
-        await _auth.signOut();
-
+      if (userCredential.user != null) {
+        await userCredential.user!.updateDisplayName(username);
         return AuthResult.success(
-          message: 'Đăng ký thành công! Vui lòng đăng nhập.',
-          user: user,
+          message: AppLocalizations.of(context)!.registerSuccess,
+          user: userCredential.user,
         );
       }
+      return AuthResult.failure(AppLocalizations.of(context)!.registerFailed);
     } on FirebaseAuthException catch (e) {
       print('Lỗi Firebase Auth khi đăng ký: ${e.code}');
-      return AuthResult.failure(_getAuthErrorMessage(e.code));
+      return AuthResult.failure(_getAuthErrorMessage(e.code, context));
     } catch (e) {
       print('Lỗi chung khi đăng ký: $e');
-      return AuthResult.failure('Đã xảy ra lỗi: $e');
+      return AuthResult.failure(AppLocalizations.of(context)!.registerFailed);
     }
-
-    return AuthResult.failure('Đăng ký thất bại');
   }
 
-  /// Sign in with email/password
-  Future<AuthResult> signInUser({
-    required String email,
-    required String password,
-  }) async {
+  /// Sign in with email and password
+  Future<AuthResult> signInWithEmailAndPassword(
+    String email,
+    String password,
+    BuildContext context,
+  ) async {
     try {
-      UserCredential result = await _auth.signInWithEmailAndPassword(
+      final userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-
-      User? user = result.user;
-      if (user != null) {
-        DocumentSnapshot userDoc = await _db.collection("users").doc(user.uid).get();
-        
-        if (!userDoc.exists) {
-          print('Tài liệu người dùng không tồn tại, tạo mới');
-          await _createUserDocument(user, email);
-        }
-        
-        return AuthResult.success(
-          message: 'Đăng nhập thành công',
-          user: user,
-        );
-      }
-      
-      return AuthResult.failure('Đăng nhập thất bại');
-      
+      return AuthResult.success(
+        message: AppLocalizations.of(context)!.loginSuccess,
+        user: userCredential.user,
+      );
     } on FirebaseAuthException catch (e) {
       print('Lỗi Firebase Auth khi đăng nhập: ${e.code}');
-      return AuthResult.failure(_getAuthErrorMessage(e.code));
+      return AuthResult.failure(_getAuthErrorMessage(e.code, context));
     } catch (e) {
       print('Lỗi chung khi đăng nhập: $e');
-      return AuthResult.failure('Đã xảy ra lỗi: $e');
+      return AuthResult.failure(AppLocalizations.of(context)!.loginFailed);
     }
   }
 
-  /// Sign in with Google account
-  Future<AuthResult> signInWithGoogle() async {
+  /// Sign in with Google
+  Future<AuthResult> signInWithGoogle(BuildContext context) async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      
       if (googleUser == null) {
-        print('Người dùng hủy đăng nhập Google');
-        return AuthResult.failure('Đăng nhập bị hủy');
+        return AuthResult.failure(
+          AppLocalizations.of(context)!.googleSignInFailed,
+        );
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      UserCredential result = await _auth.signInWithCredential(credential);
-      User? user = result.user;
-
-      if (user != null) {
-        DocumentSnapshot userDoc = await _db.collection("users").doc(user.uid).get();
-        
-        if (!userDoc.exists) {
-          print('Tài liệu người dùng Google không tồn tại, tạo mới');
-          await _createUserDocument(user, user.email ?? '');
-        }
-
-        return AuthResult.success(
-          message: 'Đăng nhập Google thành công',
-          user: user,
-        );
-      }
-
-      return AuthResult.failure('Đăng nhập Google thất bại');
-
+      final userCredential = await _auth.signInWithCredential(credential);
+      return AuthResult.success(
+        message: AppLocalizations.of(context)!.googleSignInSuccess,
+        user: userCredential.user,
+      );
     } on FirebaseAuthException catch (e) {
       print('Lỗi Firebase Auth khi đăng nhập Google: ${e.code}');
-      return AuthResult.failure(_getAuthErrorMessage(e.code));
+      return AuthResult.failure(_getAuthErrorMessage(e.code, context));
     } catch (e) {
       print('Lỗi chung khi đăng nhập Google: $e');
-      return AuthResult.failure('Đã xảy ra lỗi: $e');
+      return AuthResult.failure(
+        AppLocalizations.of(context)!.googleSignInFailed,
+      );
+    }
+  }
+
+  /// Reset password
+  Future<Map<String, dynamic>> resetPassword(
+    String email,
+    BuildContext context,
+  ) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      return {
+        'success': true,
+        'message': AppLocalizations.of(context)!.otpSent,
+      };
+    } on FirebaseAuthException catch (e) {
+      print('Lỗi Firebase Auth khi đặt lại mật khẩu: ${e.code}');
+      return {
+        'success': false,
+        'message': _getAuthErrorMessage(e.code, context),
+      };
+    } catch (e) {
+      print('Lỗi chung khi đặt lại mật khẩu: $e');
+      return {
+        'success': false,
+        'message': AppLocalizations.of(context)!.otpSendFailed,
+      };
     }
   }
 
@@ -144,30 +135,6 @@ class AuthService {
     } catch (e) {
       print('Lỗi khi đăng xuất: $e');
       throw Exception('Lỗi đăng xuất: $e');
-    }
-  }
-
-  /// Send password reset email
-  Future<Map<String, dynamic>> resetPassword(String email) async {
-    try {
-      await _auth.sendPasswordResetEmail(email: email);
-      print('Email đặt lại mật khẩu đã được gửi đến: $email');
-      return {
-        'success': true,
-        'message': 'Email đặt lại mật khẩu đã được gửi',
-      };
-    } on FirebaseAuthException catch (e) {
-      print('Lỗi Firebase Auth khi đặt lại mật khẩu: ${e.code}');
-      return {
-        'success': false,
-        'message': _getAuthErrorMessage(e.code),
-      };
-    } catch (e) {
-      print('Lỗi chung khi đặt lại mật khẩu: $e');
-      return {
-        'success': false,
-        'message': 'Đã xảy ra lỗi: $e',
-      };
     }
   }
 
@@ -198,10 +165,11 @@ class AuthService {
         email: email,
         username: user.displayName ?? 'Người dùng',
         phonenumber: "",
-        photoURL: user.photoURL ?? "https://img.lovepik.com/free-png/20211204/lovepik-cartoon-avatar-png-image_401302777_wh1200.png",
-        role: "user",
+        photoURL:
+            user.photoURL ??
+            "https://img.lovepik.com/free-png/20211204/lovepik-cartoon-avatar-png-image_401302777_wh1200.png",
       );
-      
+
       await _db.collection("users").doc(user.uid).set(userModel.toMap());
       print('Tạo tài liệu người dùng thành công cho UID: ${user.uid}');
     } catch (e) {
@@ -211,24 +179,25 @@ class AuthService {
   }
 
   /// Get localized error messages
-  String _getAuthErrorMessage(String code) {
+  String _getAuthErrorMessage(String code, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (code) {
       case 'weak-password':
-        return 'Mật khẩu quá yếu';
+        return l10n.authErrorWeakPassword;
       case 'email-already-in-use':
-        return 'Email đã được đăng ký';
+        return l10n.authErrorEmailInUse;
       case 'invalid-email':
-        return 'Định dạng email không hợp lệ';
+        return l10n.authErrorInvalidEmail;
       case 'user-not-found':
-        return 'Không tìm thấy tài khoản với email này';
+        return l10n.authErrorUserNotFound;
       case 'wrong-password':
-        return 'Mật khẩu không chính xác';
+        return l10n.authErrorWrongPassword;
       case 'invalid-credential':
-        return 'Email hoặc mật khẩu không hợp lệ';
+        return l10n.authErrorInvalidCredential;
       case 'too-many-requests':
-        return 'Quá nhiều lần thử. Vui lòng thử lại sau';
+        return l10n.authErrorTooManyRequests;
       default:
-        return 'Lỗi xác thực: $code';
+        return l10n.authErrorGeneric(code);
     }
   }
 }
@@ -239,11 +208,7 @@ class AuthResult {
   final String message;
   final User? user;
 
-  AuthResult._({
-    required this.success,
-    required this.message,
-    this.user,
-  });
+  AuthResult._({required this.success, required this.message, this.user});
 
   factory AuthResult.success({required String message, User? user}) {
     return AuthResult._(success: true, message: message, user: user);

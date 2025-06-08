@@ -138,5 +138,13 @@
     "description": "Label for dark mode theme"
   },
   "account": "Tài khoản",
-  "favoriteWithEmoji": "💞 {text} 💞"
+  "favoriteWithEmoji": "💞 {text} 💞",
+  "authErrorWeakPassword": "Mật khẩu quá yếu",
+  "authErrorEmailInUse": "Email đã được đăng ký",
+  "authErrorInvalidEmail": "Định dạng email không hợp lệ",
+  "authErrorUserNotFound": "Không tìm thấy tài khoản với email này",
+  "authErrorWrongPassword": "Mật khẩu không chính xác",
+  "authErrorInvalidCredential": "Email hoặc mật khẩu không hợp lệ",
+  "authErrorTooManyRequests": "Quá nhiều lần thử. Vui lòng thử lại sau",
+  "authErrorGeneric": "Lỗi xác thực: {code}"
 } 

@@ -9,7 +9,6 @@ class RouterName {
   static const String profileInformation = 'profile-information';
   static const String profileTicket = 'profile-ticket';
   static const String profileSetting = 'profile-setting';
-  static const String admin = 'admin';
   static const String verification = 'verification';
   static const String instruction = 'instruction';
   static const String routeInformation = 'route-information';
