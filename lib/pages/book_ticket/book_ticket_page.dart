@@ -6,6 +6,7 @@ import 'package:metropass/widgets/route_list.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:metropass/widgets/ticket_hssv_list.dart';
 import 'package:metropass/widgets/ticket_normal_list.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shimmer/shimmer.dart';
 
 class BookTicketPage extends StatelessWidget {
@@ -13,39 +14,37 @@ class BookTicketPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDarkMode ? Colors.white : const Color(MyColor.pr9);
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle:
+            isDarkMode ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back)
+          icon: Icon(Icons.arrow_back, color: textColor),
         ),
         title: Text(
-          'Mua vé', 
+          AppLocalizations.of(context)!.bookTicket,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w500,
-            color: Color(MyColor.pr9)
+            color: textColor,
           ),
         ),
         actions: [
-          Image.asset(
-            'assets/images/logo.png',
-            width: 80,
-            height: 25,
-          ),
-          const SizedBox(width: 10,)
+          Image.asset('assets/images/logo.png', width: 80, height: 25),
+          const SizedBox(width: 10),
         ],
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1), 
-          child: Container(
-            height: 1,
-            color: Color(MyColor.pr8),
-          )),
+          preferredSize: Size.fromHeight(1),
+          child: Container(height: 1, color: Color(MyColor.pr8)),
+        ),
       ),
       body: Container(
         width: double.infinity,
@@ -54,11 +53,11 @@ class BookTicketPage extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color(MyColor.pr1),
-              Color(MyColor.pr3)
-            ]
-          )
+            colors:
+                isDarkMode
+                    ? [Colors.black, Colors.black]
+                    : [Color(MyColor.pr1), Color(MyColor.pr3)],
+          ),
         ),
         child: SafeArea(
           child: SingleChildScrollView(
@@ -72,10 +71,12 @@ class BookTicketPage extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(50),
-                      color:  Color(MyColor.white),
+                      color:
+                          isDarkMode ? Colors.grey[900] : Color(MyColor.white),
                       border: Border.all(
-                        color: Color(MyColor.pr7)
-                      )
+                        color:
+                            isDarkMode ? Colors.grey[800]! : Color(MyColor.pr7),
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -138,38 +139,38 @@ class BookTicketPage extends StatelessWidget {
                     ),
                   ),
                   // love
-                  const SizedBox(height: 20,),
+                  const SizedBox(height: 20),
                   Text(
-                    '💞 Yêu thích 💞',
+                    '💞 ${AppLocalizations.of(context)!.favorite} 💞',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Color(MyColor.pr9)
+                      color: textColor,
                     ),
                   ),
-                  const SizedBox(height: 3,),
+                  const SizedBox(height: 3),
                   TicketNormalList(),
-                  const SizedBox(height: 20,),
+                  const SizedBox(height: 20),
                   Text(
-                    'Ưu đã Học sinh 🎒 Sinh viên 🎓',
+                    AppLocalizations.of(context)!.studentDiscount,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Color(MyColor.pr9)
+                      color: textColor,
                     ),
                   ),
-                  const SizedBox(height: 3,),
+                  const SizedBox(height: 3),
                   TicketHssvList(),
-                  const SizedBox(height: 20,),
+                  const SizedBox(height: 20),
                   Text(
-                    'Các tuyến 🚎',
+                    AppLocalizations.of(context)!.routes,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Color(MyColor.pr9)
+                      color: textColor,
                     ),
                   ),
-                  const SizedBox(height: 3,),
+                  const SizedBox(height: 3),
                   RouteList(),
                 ],
               ),
@@ -179,5 +180,4 @@ class BookTicketPage extends StatelessWidget {
       ),
     );
   }
-  
 }

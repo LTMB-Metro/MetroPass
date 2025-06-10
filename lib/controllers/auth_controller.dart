@@ -4,6 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
 import '../services/storage_service.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../apps/router/router_name.dart';
 
 enum AuthStatus { unknown, authenticated, unauthenticated, loading }
 
@@ -35,16 +38,18 @@ class AuthController extends ChangeNotifier {
     required String email,
     required String password,
     required String username,
+    required BuildContext context,
   }) async {
     _setLoading(true);
     _clearError();
 
     try {
       print('Bắt đầu đăng ký người dùng với email: $email');
-      final result = await _authService.registerUser(
-        email: email,
-        password: password,
-        username: username,
+      final result = await _authService.registerWithEmailAndPassword(
+        email,
+        password,
+        username,
+        context,
       );
 
       if (result.success) {
@@ -71,15 +76,17 @@ class AuthController extends ChangeNotifier {
     required String email,
     required String password,
     bool rememberMe = false,
+    required BuildContext context,
   }) async {
     _setLoading(true);
     _clearError();
 
     try {
       print('Bắt đầu đăng nhập với email: $email');
-      final result = await _authService.signInUser(
-        email: email,
-        password: password,
+      final result = await _authService.signInWithEmailAndPassword(
+        email,
+        password,
+        context,
       );
 
       if (result.success) {
@@ -93,6 +100,7 @@ class AuthController extends ChangeNotifier {
           );
         }
 
+        context.goNamed(RouterName.home);
         _setError(null);
         _setLoading(false);
         return true;
@@ -111,16 +119,17 @@ class AuthController extends ChangeNotifier {
   }
 
   /// Sign in with Google
-  Future<bool> signInWithGoogle() async {
+  Future<bool> signInWithGoogle({required BuildContext context}) async {
     _setLoading(true);
     _clearError();
 
     try {
       print('Bắt đầu đăng nhập Google');
-      final result = await _authService.signInWithGoogle();
+      final result = await _authService.signInWithGoogle(context);
 
       if (result.success) {
         print('Đăng nhập Google thành công');
+        context.goNamed(RouterName.home);
         _setError(null);
         _setLoading(false);
         return true;

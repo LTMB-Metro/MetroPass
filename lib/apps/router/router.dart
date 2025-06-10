@@ -15,11 +15,12 @@ import 'package:metropass/apps/router/router_name.dart';
 import 'package:metropass/test/test_page.dart';
 import 'package:metropass/widgets/skeleton/ticket_card_skeleton.dart';
 import 'package:metropass/widgets/ticket_normal_list.dart';
-import '../../pages/welcome/welcome_page.dart';
 import '../../pages/profile/profile.dart';
 import 'package:metropass/pages/profile/profile_infomation.dart';
 import 'package:metropass/pages/profile/profile_ticket.dart';
 import 'package:metropass/pages/profile/profile_setting.dart';
+import 'package:metropass/pages/instruction/instruction_page.dart';
+import 'package:metropass/route_information/route_information.dart';
 
 class RouterCustom {
   static final GoRouter router = GoRouter(
@@ -93,6 +94,20 @@ class RouterCustom {
         name: RouterName.profileSetting,
         builder: (BuildContext context, GoRouterState state) {
           return const ProfileSettingPage();
+        },
+      ),
+      GoRoute(
+        path: '/instruction',
+        name: RouterName.instruction,
+        builder: (BuildContext context, GoRouterState state) {
+          return const InstructionPage();
+        },
+      ),
+      GoRoute(
+        path: '/route-information',
+        name: RouterName.routeInformation,
+        builder: (BuildContext context, GoRouterState state) {
+          return const RouteInformationPage();
         },
       ),
     ],

@@ -7,7 +7,11 @@ class EmailService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   /// Send OTP email via EmailJS with dynamic user name
-  Future<bool> sendOTPEmail(String email, String otpCode, String userName) async {
+  Future<bool> sendOTPEmail(
+    String email,
+    String otpCode,
+    String userName,
+  ) async {
     const serviceId = 'service_metro';
     const templateId = 'template_metro';
     const publicKey = 'CpNDc4BXcpqJV_2pU';
@@ -48,7 +52,7 @@ class EmailService {
     }
   }
 
-  // Send OTP code for password reset 
+  // Send OTP code for password reset
   Future<OTPResult> sendOTPCode(String email) async {
     try {
       print('Kiểm tra email trong hệ thống: $email');
@@ -65,16 +69,14 @@ class EmailService {
       }
       final userDoc = userQuery.docs.first;
       final userData = userDoc.data();
-      final userName = userData['username'] ?? 'Người dùng'; 
+      final userName = userData['username'] ?? 'Người dùng';
 
       print('Tìm thấy user: $userName với email: $email');
       print('Tạo mã OTP mới cho email: $email');
-      
+
       final emailOTP = EmailModel.createNewOTP(email);
       await _db.collection("password_reset_otps").add(emailOTP.toMap());
       print('Lưu mã OTP vào Firestore thành công');
-
-      // Gửi email với tên user từ Firebase
       final emailSent = await sendOTPEmail(email, emailOTP.otpCode, userName);
 
       if (emailSent) {

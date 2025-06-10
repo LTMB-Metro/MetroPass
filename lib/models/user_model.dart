@@ -5,7 +5,6 @@ class UserModel {
   final String username;
   final String phonenumber;
   final String photoURL;
-  final String role;
   final DateTime? createdAt;
   final String birthday;
   final String cccd;
@@ -15,7 +14,6 @@ class UserModel {
     required this.username,
     required this.phonenumber,
     required this.photoURL,
-    required this.role,
     this.createdAt,
     this.birthday = '',
     this.cccd = '',
@@ -28,7 +26,6 @@ class UserModel {
       'username': username,
       'phonenumber': phonenumber,
       'photoURL': photoURL,
-      'role': role,
       'createdAt': createdAt ?? DateTime.now(),
       'birthday': birthday,
       'cccd': cccd,
@@ -42,7 +39,6 @@ class UserModel {
       username: map['username'] ?? '',
       phonenumber: map['phonenumber'] ?? '',
       photoURL: map['photoURL'] ?? '',
-      role: map['role'] ?? 'user',
       createdAt: map['createdAt']?.toDate(),
       birthday: map['birthday'] ?? '',
       cccd: map['cccd'] ?? '',
@@ -61,7 +57,6 @@ class UserModel {
     String? username,
     String? phonenumber,
     String? photoURL,
-    String? role,
     DateTime? createdAt,
     String? birthday,
     String? cccd,
@@ -71,7 +66,6 @@ class UserModel {
       username: username ?? this.username,
       phonenumber: phonenumber ?? this.phonenumber,
       photoURL: photoURL ?? this.photoURL,
-      role: role ?? this.role,
       createdAt: createdAt ?? this.createdAt,
       birthday: birthday ?? this.birthday,
       cccd: cccd ?? this.cccd,
@@ -80,6 +74,6 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(email: $email, username: $username, phonenumber: $phonenumber, photoURL: $photoURL, role: $role, createdAt: $createdAt)';
+    return 'UserModel(email: $email, username: $username, phonenumber: $phonenumber, photoURL: $photoURL, createdAt: $createdAt)';
   }
 }

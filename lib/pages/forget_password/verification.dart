@@ -8,6 +8,7 @@ import '../../utils/validators.dart';
 import '../../apps/router/router_name.dart';
 import '../../controllers/password_reset_controller.dart';
 import '../../themes/colors/colors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class VerificationPage extends BaseAuthPage {
   const VerificationPage({Key? key}) : super(key: key);
@@ -16,7 +17,8 @@ class VerificationPage extends BaseAuthPage {
   State<VerificationPage> createState() => _OptimizedVerificationPageState();
 }
 
-class _OptimizedVerificationPageState extends BaseAuthPageState<VerificationPage> {
+class _OptimizedVerificationPageState
+    extends BaseAuthPageState<VerificationPage> {
   final _codeController = TextEditingController();
   String? _otpError;
 
@@ -49,43 +51,45 @@ class _OptimizedVerificationPageState extends BaseAuthPageState<VerificationPage
 
   Future<void> _verifyOTP() async {
     if (!_validateForSubmission()) {
-      showMessage(AppMessages.enterValidOTP, isError: true);
+      showMessage(AppLocalizations.of(context)!.enterValidOTP, isError: true);
       return;
     }
 
     final resetController = context.read<PasswordResetController>();
 
     await handleAsyncAction(
-      () => resetController.verifyOTPAndSendResetEmail(_codeController.text.trim()),
-      successMessage: AppMessages.verificationSuccess,
-      errorMessage: resetController.errorMessage ?? AppMessages.invalidOTP,
+      () => resetController.verifyOTPAndSendResetEmail(
+        _codeController.text.trim(),
+      ),
+      successMessage: AppLocalizations.of(context)!.verificationSuccess,
+      errorMessage:
+          resetController.errorMessage ??
+          AppLocalizations.of(context)!.invalidOTP,
       onSuccess: () {
-        navigateWithDelay(
-          () {
-            resetController.resetFlow();
-            context.goNamed(RouterName.login);
-          },
-          delay: AppDurations.extraLong,
-        );
+        navigateWithDelay(() {
+          resetController.resetFlow();
+          context.goNamed(RouterName.login);
+        }, delay: AppDurations.extraLong);
       },
     );
   }
 
   Future<void> _resendOTP() async {
     final resetController = context.read<PasswordResetController>();
-
     if (!resetController.canResendOTP) {
-      showMessage(
-        AppMessages.waitToResend.replaceAll('{countdown}', '${resetController.otpResendCooldown}'),
-        isError: true,
-      );
+      final waitMessage = AppLocalizations.of(
+        context,
+      )!.waitToResend(resetController.otpResendCooldown);
+      showMessage(waitMessage, isError: true);
       return;
     }
 
     await handleAsyncAction(
       () => resetController.resendOTP(),
-      successMessage: AppMessages.otpResent,
-      errorMessage: resetController.errorMessage ?? AppMessages.otpResendFailed,
+      successMessage: AppLocalizations.of(context)!.otpResent,
+      errorMessage:
+          resetController.errorMessage ??
+          AppLocalizations.of(context)!.otpResendFailed,
     );
   }
 
@@ -106,6 +110,11 @@ class _OptimizedVerificationPageState extends BaseAuthPageState<VerificationPage
   }
 
   Widget _buildResendSection(PasswordResetController resetController) {
+    final resendText = AppLocalizations.of(context)!.resendText;
+    final resendWithCountdown = AppLocalizations.of(
+      context,
+    )!.resendWithCountdown(resetController.otpResendCooldown);
+
     return Column(
       children: [
         // Resend OTP
@@ -113,7 +122,7 @@ class _OptimizedVerificationPageState extends BaseAuthPageState<VerificationPage
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              AppMessages.didntReceiveCode,
+              AppLocalizations.of(context)!.didntReceiveCode,
               style: AppTextStyles.subtitle,
             ),
             TextButton(
@@ -125,21 +134,18 @@ class _OptimizedVerificationPageState extends BaseAuthPageState<VerificationPage
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: Text(
-                resetController.canResendOTP
-                    ? AppMessages.resendText
-                    : AppMessages.resendWithCountdown.replaceAll(
-                        '{countdown}',
-                        '${resetController.otpResendCooldown}',
-                      ),
+                resetController.canResendOTP ? resendText : resendWithCountdown,
                 style: TextStyle(
-                  color: resetController.canResendOTP
-                      ? const Color(MyColor.pr8)
-                      : const Color(MyColor.grey),
+                  color:
+                      resetController.canResendOTP
+                          ? const Color(MyColor.pr8)
+                          : const Color(MyColor.grey),
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  decoration: resetController.canResendOTP
-                      ? TextDecoration.underline
-                      : TextDecoration.none,
+                  decoration:
+                      resetController.canResendOTP
+                          ? TextDecoration.underline
+                          : TextDecoration.none,
                 ),
               ),
             ),
@@ -161,7 +167,7 @@ class _OptimizedVerificationPageState extends BaseAuthPageState<VerificationPage
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: Text(
-              AppMessages.changeEmail,
+              AppLocalizations.of(context)!.changeEmail,
               style: AppTextStyles.linkText.copyWith(
                 decoration: TextDecoration.underline,
               ),
@@ -176,11 +182,16 @@ class _OptimizedVerificationPageState extends BaseAuthPageState<VerificationPage
   Widget build(BuildContext context) {
     return Consumer<PasswordResetController>(
       builder: (context, resetController, child) {
+        final verificationInfo = AppLocalizations.of(
+          context,
+        )!.verificationInfo(resetController.email);
+
         return buildPageStructure(
           onBackPressed: () => context.goNamed(RouterName.forgotPassword),
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height -
+              minHeight:
+                  MediaQuery.of(context).size.height -
                   MediaQuery.of(context).padding.top -
                   MediaQuery.of(context).padding.bottom,
             ),
@@ -190,15 +201,16 @@ class _OptimizedVerificationPageState extends BaseAuthPageState<VerificationPage
                 children: [
                   // Header
                   AuthHeader(
-                    title: 'Nhập mã xác nhận',
-                    onBackPressed: () => context.goNamed(RouterName.forgotPassword),
+                    title: AppLocalizations.of(context)!.enterVerificationCode,
+                    onBackPressed:
+                        () => context.goNamed(RouterName.forgotPassword),
                     greeting: null,
                   ),
 
                   // Subtitle with email
                   Center(
                     child: Text(
-                      AppMessages.verificationInfo.replaceAll('{email}', resetController.email),
+                      verificationInfo,
                       style: AppTextStyles.subtitle,
                       textAlign: TextAlign.center,
                     ),
@@ -213,7 +225,7 @@ class _OptimizedVerificationPageState extends BaseAuthPageState<VerificationPage
 
                       // Confirm button
                       PrimaryButton(
-                        text: 'Xác nhận',
+                        text: AppLocalizations.of(context)!.confirm,
                         onTap: resetController.isLoading ? null : _verifyOTP,
                         isLoading: resetController.isLoading,
                       ),
