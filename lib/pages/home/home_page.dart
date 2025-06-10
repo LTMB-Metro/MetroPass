@@ -1,20 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:metropass/apps/router/router_name.dart';
 import 'package:metropass/pages/atlas/atlas_page.dart';
 import 'package:metropass/pages/book_ticket/book_ticket_page.dart';
 import 'package:metropass/pages/login/login.dart';
 import 'package:metropass/pages/map/map_page.dart';
 import 'package:metropass/pages/my_ticket/my_ticket_page.dart';
-import 'package:metropass/pages/welcome/welcome_page.dart';
 import 'package:metropass/pages/profile/profile.dart';
 import 'package:metropass/pages/infomation/infomation.dart';
 import 'package:metropass/pages/instruction/instruction_page.dart';
 import 'package:metropass/route_information/route_information.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:go_router/go_router.dart';
-import 'package:metropass/apps/router/router_name.dart';
+
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -145,7 +145,7 @@ class HomePage extends StatelessWidget {
                               child: buildIcon(
                                 context,
                                 Image.asset('assets/images/map1.png'),
-                                AppLocalizations.of(context)!.routes,
+                                AppLocalizations.of(context)!.atlas,
                                 AtlasPage(),
                               ),
                             ),
@@ -185,35 +185,69 @@ class HomePage extends StatelessWidget {
     BuildContext context,
     Image image,
     String lable,
-    dynamic onTap,
+    Widget targetpage,
   ) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDarkMode ? Colors.white : const Color(MyColor.black);
 
     return GestureDetector(
       onTap: () {
-        if (lable == 'Đặt vé') {
+        if (lable == AppLocalizations.of(context)!.bookTicket 
+          || lable == AppLocalizations.of(context)!.myTickets
+          || lable == AppLocalizations.of(context)!.account
+        ) {
           final currentUser = FirebaseAuth.instance.currentUser;
           if (currentUser == null) {
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
-                title: const Text("Cần đăng nhập"),
-                content: const Text("Bạn cần đăng nhập để đặt vé. Vui lòng đăng nhập để tiếp tục."),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                title: Row(
+                  children: [
+                    Icon(Icons.lock_outline, color: Theme.of(context).primaryColor),
+                    const SizedBox(width: 4),
+                    const Text("Bạn chưa đăng nhập", style: TextStyle(fontSize: 20, color: Color(MyColor.pr9)),),
+                  ],
+                ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Text(
+                      "Bạn cần đăng nhập để tiếp tục!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Color(MyColor.pr8),
+                      ),
+                    ),
+                  ],
+                ),
+                actionsAlignment: MainAxisAlignment.center,
                 actions: [
                   TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.grey[600],
+                    ),
                     onPressed: () => Navigator.pop(context),
                     child: const Text("Hủy"),
                   ),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                     onPressed: () {
                       Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => LoginPage()),
-                      );
+                      context.goNamed(RouterName.login);
                     },
-                    child: const Text("Đăng nhập ngay"),
+                    child: const Text(
+                      "Đăng nhập",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    )
                   ),
                 ],
               ),
