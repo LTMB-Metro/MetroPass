@@ -1,6 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:metropass/pages/atlas/atlas_page.dart';
 import 'package:metropass/pages/book_ticket/book_ticket_page.dart';
+import 'package:metropass/pages/login/login.dart';
+import 'package:metropass/pages/map/map_page.dart';
+import 'package:metropass/pages/my_ticket/my_ticket_page.dart';
 import 'package:metropass/pages/welcome/welcome_page.dart';
 import 'package:metropass/pages/profile/profile.dart';
 import 'package:metropass/pages/infomation/infomation.dart';
@@ -118,7 +123,7 @@ class HomePage extends StatelessWidget {
                                 context,
                                 Image.asset('assets/images/ticket2.png'),
                                 AppLocalizations.of(context)!.myTickets,
-                                WelcomePage(),
+                                MyTicketPage(),
                               ),
                             ),
                             Expanded(
@@ -141,9 +146,7 @@ class HomePage extends StatelessWidget {
                                 context,
                                 Image.asset('assets/images/map1.png'),
                                 AppLocalizations.of(context)!.routes,
-                                () => context.pushNamed(
-                                  RouterName.routeInformation,
-                                ),
+                                AtlasPage(),
                               ),
                             ),
                             Expanded(
@@ -152,7 +155,7 @@ class HomePage extends StatelessWidget {
                                 context,
                                 Image.asset('assets/images/map2.png'),
                                 AppLocalizations.of(context)!.map,
-                                WelcomePage(),
+                                MapPage(),
                               ),
                             ),
                             Expanded(
@@ -188,15 +191,38 @@ class HomePage extends StatelessWidget {
     final textColor = isDarkMode ? Colors.white : const Color(MyColor.black);
 
     return GestureDetector(
-      onTap:
-          onTap is Widget
-              ? () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => onTap),
-                );
-              }
-              : onTap,
+      onTap: () {
+        if (lable == 'Đặt vé') {
+          final currentUser = FirebaseAuth.instance.currentUser;
+          if (currentUser == null) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text("Cần đăng nhập"),
+                content: const Text("Bạn cần đăng nhập để đặt vé. Vui lòng đăng nhập để tiếp tục."),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Hủy"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => LoginPage()),
+                      );
+                    },
+                    child: const Text("Đăng nhập ngay"),
+                  ),
+                ],
+              ),
+            );
+            return;
+          }
+        }
+        Navigator.push(context, MaterialPageRoute(builder: (_) => targetpage));
+      },
       child: Column(
         children: [
           Container(
