@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:metropass/apps/router/router_name.dart';
 import 'package:metropass/pages/atlas/atlas_page.dart';
 import 'package:metropass/pages/book_ticket/book_ticket_page.dart';
-import 'package:metropass/pages/login/login.dart';
 import 'package:metropass/pages/map/map_page.dart';
 import 'package:metropass/pages/my_ticket/my_ticket_page.dart';
 import 'package:metropass/pages/profile/profile.dart';
@@ -14,6 +13,7 @@ import 'package:metropass/pages/instruction/instruction_page.dart';
 import 'package:metropass/route_information/route_information.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:metropass/widgets/weather_widget.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -174,6 +174,11 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               ),
+              Positioned(
+                top: 60,
+                left: 10,
+                child: WeatherWidget(),
+              )
             ],
           ),
         ),
