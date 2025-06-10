@@ -99,6 +99,7 @@
   "priceFlexibility": "Ngoài ra, giá vé được xây dựng linh hoạt theo chặng và vé ngày/vé tháng nhằm khuyến khích di chuyển nhiều hơn với mức chi phí hợp lý hơn.",
   "changeAvatar": "Thay đổi ảnh",
   "googleSignIn": "Google",
+  "map": "Bản đồ",
   "orText": "hoặc",
   "step1Title": "Bước 1: Chọn loại vé",
   "step1Description": "Chọn giữa vé ngày hoặc vé tháng tùy theo nhu cầu của bạn",
@@ -146,5 +147,6 @@
   "authErrorWrongPassword": "Mật khẩu không chính xác",
   "authErrorInvalidCredential": "Email hoặc mật khẩu không hợp lệ",
   "authErrorTooManyRequests": "Quá nhiều lần thử. Vui lòng thử lại sau",
-  "authErrorGeneric": "Lỗi xác thực: {code}"
+  "authErrorGeneric": "Lỗi xác thực: {code}",
+  "atlas": "Lộ trình"
 } 
