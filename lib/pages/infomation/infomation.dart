@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:metropass/themes/colors/colors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class InfomationPage extends StatelessWidget {
-  const InfomationPage({Key? key}) : super(key: key);
+/// Information page displaying Metro Line 1 ticket pricing and related information
+class InformationPage extends StatelessWidget {
+  const InformationPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor =
+        isDarkMode ? Colors.black : const Color(MyColor.pr2);
+    final textColor = isDarkMode ? Colors.white : const Color(MyColor.pr9);
+
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(MyColor.pr2),
+        backgroundColor: backgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(MyColor.pr9)),
+          icon: Icon(Icons.arrow_back, color: textColor),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Bảng giá vé Metro Bến Thành - Suối Tiên',
-          style: TextStyle(color: Color(MyColor.pr9), fontSize: 16),
+        title: Text(
+          AppLocalizations.of(context)!.metroLine1PriceTitle,
+          style: TextStyle(color: textColor, fontSize: 16),
         ),
         centerTitle: true,
       ),
@@ -25,14 +33,12 @@ class InfomationPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Price information with student discount highlight
             RichText(
-              text: const TextSpan(
-                style: TextStyle(color: Color(MyColor.pr9), fontSize: 15),
+              text: TextSpan(
+                style: TextStyle(color: textColor, fontSize: 15),
                 children: [
-                  TextSpan(
-                    text:
-                        'Bảng giá vé tuyến Metro số 1 Bến Thành - Suối Tiên\n',
-                  ),
+                  TextSpan(text: AppLocalizations.of(context)!.metroLine1Price),
                   WidgetSpan(
                     child: Icon(
                       Icons.star,
@@ -41,64 +47,78 @@ class InfomationPage extends StatelessWidget {
                     ),
                   ),
                   TextSpan(
-                    text:
-                        ' Học sinh, sinh viên được giảm 50%, chỉ còn 150.000 đồng/tháng',
+                    text: AppLocalizations.of(context)!.studentDiscountInfo,
                     style: TextStyle(color: Color(MyColor.red)),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 8),
+            // Price update date information
             Row(
               children: [
                 Image.asset(
                   'assets/images/calendar.png',
                   width: 18,
                   height: 18,
-                  color: const Color(MyColor.pr8),
+                  color: textColor,
                 ),
                 const SizedBox(width: 6),
-                const Text(
-                  '16/12/2024 12:00:00',
-                  style: TextStyle(fontSize: 14, color: Color(MyColor.pr9)),
+                Text(
+                  AppLocalizations.of(context)!.priceUpdateDate,
+                  style: TextStyle(fontSize: 14, color: textColor),
                 ),
               ],
             ),
             const SizedBox(height: 8),
-            const Text(
-              '"Ban hành giá vé dịch vụ vận tải bằng Metro số 1"\nKhi hành khách sử dụng Metro số 1:',
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+            // Price update details
+            Text(
+              AppLocalizations.of(context)!.priceUpdateTitle,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 15,
+                color: textColor,
+              ),
             ),
             const SizedBox(height: 4),
-            const Padding(
-              padding: EdgeInsets.only(left: 8),
+            // Payment method information
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('• Thanh toán không dùng tiền mặt chỉ từ 6 nghìn đồng'),
-                  Text('• Thanh toán tiền mặt chỉ từ 7 nghìn đồng.'),
+                  Text(
+                    AppLocalizations.of(context)!.cashlessPaymentInfo,
+                    style: TextStyle(color: textColor),
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.cashPaymentInfo,
+                    style: TextStyle(color: textColor),
+                  ),
                 ],
               ),
             ),
             const SizedBox(height: 8),
+            // Price goal information
             Row(
               children: [
                 Image.asset(
                   'assets/images/notification.png',
                   width: 18,
                   height: 18,
-                  color: const Color(MyColor.pr8),
+                  color: textColor,
                 ),
                 const SizedBox(width: 6),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Với mục tiêu phù hợp với khả năng chi trả của người dân, đảm bảo thuận tiện cho di chuyển',
-                    style: TextStyle(fontSize: 14, color: Color(MyColor.pr9)),
+                    AppLocalizations.of(context)!.priceGoal,
+                    style: TextStyle(fontSize: 14, color: textColor),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 4),
+            // Price benefits information
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -106,18 +126,19 @@ class InfomationPage extends StatelessWidget {
                   'assets/images/station.png',
                   width: 18,
                   height: 18,
-                  color: Color(MyColor.pr8),
+                  color: textColor,
                 ),
                 const SizedBox(width: 6),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Định giá giúp người dân dễ dàng tiếp cận phương tiện công cộng hiện đại. Khuyến khích thói quen sử dụng giao thông công cộng, góp phần giảm ùn tắc giao thông đô thị và giảm thiểu ô nhiễm môi trường. HƯỚNG tới xây dựng hệ thống giao thông vận tải công cộng hiện đại, văn minh.',
-                    style: TextStyle(fontSize: 14, color: Color(MyColor.pr9)),
+                    AppLocalizations.of(context)!.priceBenefit,
+                    style: TextStyle(fontSize: 14, color: textColor),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 4),
+            // Price flexibility information
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -125,13 +146,13 @@ class InfomationPage extends StatelessWidget {
                   'assets/images/station.png',
                   width: 18,
                   height: 18,
-                  color: Color(MyColor.pr8),
+                  color: textColor,
                 ),
                 const SizedBox(width: 6),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Ngoài ra, giá vé được xây dựng linh hoạt theo chặng và vé ngày/vé tháng nhằm khuyến khích di chuyển nhiều hơn với mức chi phí hợp lý hơn.',
-                    style: TextStyle(fontSize: 14, color: Color(MyColor.pr9)),
+                    AppLocalizations.of(context)!.priceFlexibility,
+                    style: TextStyle(fontSize: 14, color: textColor),
                   ),
                 ),
               ],

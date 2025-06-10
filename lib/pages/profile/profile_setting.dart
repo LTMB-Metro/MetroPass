@@ -6,26 +6,34 @@ import '../../apps/router/router_name.dart';
 import '../../controllers/auth_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../utils/validators.dart';
+import '../my_app.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../themes/theme_provider.dart';
 
 class ProfileSettingPage extends StatelessWidget {
   const ProfileSettingPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor =
+        isDarkMode ? Colors.black : const Color(MyColor.pr2);
+    final textColor = isDarkMode ? Colors.white : const Color(MyColor.pr9);
+
     return Scaffold(
-      backgroundColor: const Color(MyColor.pr2),
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(MyColor.pr2),
+        backgroundColor: backgroundColor,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(MyColor.pr9)),
+          icon: Icon(Icons.arrow_back, color: textColor),
           onPressed: () => context.goNamed(RouterName.profile),
         ),
-        title: const Text(
-          'Cài đặt',
+        title: Text(
+          AppLocalizations.of(context)!.settings,
           style: TextStyle(
-            color: Color(MyColor.pr9),
+            color: textColor,
             fontWeight: FontWeight.w500,
             fontSize: 20,
           ),
@@ -47,12 +55,12 @@ class ProfileSettingPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 12),
-                const Text(
-                  'Tài khoản',
+                Text(
+                  AppLocalizations.of(context)!.profile,
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 16,
-                    color: Color(MyColor.pr9),
+                    color: textColor,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -66,7 +74,7 @@ class ProfileSettingPage extends StatelessWidget {
                               ? 'Bạn đã đăng nhập bằng Google, không thể đổi mật khẩu tại đây.'
                               : '',
                       child: _SettingItem(
-                        title: 'Đổi mật khẩu',
+                        title: AppLocalizations.of(context)!.changePassword,
                         onTap: () async {
                           final currentPasswordController =
                               TextEditingController();
@@ -86,8 +94,10 @@ class ProfileSettingPage extends StatelessWidget {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16),
                                     ),
-                                    title: const Text(
-                                      'Đổi mật khẩu',
+                                    title: Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.changePassword,
                                       style: TextStyle(
                                         color: Color(MyColor.pr9),
                                         fontWeight: FontWeight.bold,
@@ -100,7 +110,10 @@ class ProfileSettingPage extends StatelessWidget {
                                           controller: currentPasswordController,
                                           obscureText: obscureCurrent,
                                           decoration: InputDecoration(
-                                            labelText: 'Mật khẩu hiện tại',
+                                            labelText:
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.currentPassword,
                                             labelStyle: const TextStyle(
                                               color: Color(MyColor.pr8),
                                             ),
@@ -127,7 +140,10 @@ class ProfileSettingPage extends StatelessWidget {
                                           controller: newPasswordController,
                                           obscureText: obscureNew,
                                           decoration: InputDecoration(
-                                            labelText: 'Mật khẩu mới',
+                                            labelText:
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.newPassword,
                                             labelStyle: const TextStyle(
                                               color: Color(MyColor.pr8),
                                             ),
@@ -160,8 +176,10 @@ class ProfileSettingPage extends StatelessWidget {
                                                   RouterName.forgotPassword,
                                                 );
                                               },
-                                              child: const Text(
-                                                'Quên mật khẩu?',
+                                              child: Text(
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.forgotPassword,
                                                 style: TextStyle(
                                                   color: Color(MyColor.pr8),
                                                 ),
@@ -242,9 +260,11 @@ class ProfileSettingPage extends StatelessWidget {
                                                     ScaffoldMessenger.of(
                                                       context,
                                                     ).showSnackBar(
-                                                      const SnackBar(
+                                                      SnackBar(
                                                         content: Text(
-                                                          'Đổi mật khẩu thành công!',
+                                                          AppLocalizations.of(
+                                                            context,
+                                                          )!.changePasswordSuccess,
                                                         ),
                                                       ),
                                                     );
@@ -257,7 +277,9 @@ class ProfileSettingPage extends StatelessWidget {
                                                             e.code ==
                                                                 'invalid-credential')) {
                                                       message =
-                                                          'Mật khẩu hiện tại không đúng.';
+                                                          AppLocalizations.of(
+                                                            context,
+                                                          )!.currentPasswordIncorrect;
                                                       setState(() {
                                                         currentPasswordError =
                                                             message;
@@ -265,7 +287,10 @@ class ProfileSettingPage extends StatelessWidget {
                                                       });
                                                     } else {
                                                       errorMsg =
-                                                          'Đổi mật khẩu thất bại: ${e is FirebaseAuthException ? e.message : e.toString()}';
+                                                          AppLocalizations.of(
+                                                            context,
+                                                          )!.changePasswordFail +
+                                                          ': ${e is FirebaseAuthException ? e.message : e.toString()}';
                                                       setState(
                                                         () => isLoading = false,
                                                       );
@@ -292,7 +317,11 @@ class ProfileSettingPage extends StatelessWidget {
                                                         color: Colors.white,
                                                       ),
                                                 )
-                                                : const Text('Đổi mật khẩu'),
+                                                : Text(
+                                                  AppLocalizations.of(
+                                                    context,
+                                                  )!.changePassword,
+                                                ),
                                       ),
                                     ],
                                   );
@@ -311,59 +340,103 @@ class ProfileSettingPage extends StatelessWidget {
                   ),
                 ),
                 _SettingItem(
-                  title: 'Ngôn ngữ',
-                  onTap: () {},
+                  title: AppLocalizations.of(context)!.language,
+                  onTap: () async {
+                    final localeProvider = Provider.of<LocaleProvider>(
+                      context,
+                      listen: false,
+                    );
+                    final currentLocale = localeProvider.locale.languageCode;
+                    final selected = await showDialog<String>(
+                      context: context,
+                      builder:
+                          (context) => SimpleDialog(
+                            title: Text(AppLocalizations.of(context)!.language),
+                            children: [
+                              SimpleDialogOption(
+                                onPressed: () => Navigator.pop(context, 'vi'),
+                                child: Row(
+                                  children: [
+                                    if (currentLocale == 'vi')
+                                      Icon(Icons.check, color: Colors.green),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      AppLocalizations.of(context)!.vietnamese,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SimpleDialogOption(
+                                onPressed: () => Navigator.pop(context, 'en'),
+                                child: Row(
+                                  children: [
+                                    if (currentLocale == 'en')
+                                      Icon(Icons.check, color: Colors.green),
+                                    const SizedBox(width: 8),
+                                    Text(AppLocalizations.of(context)!.english),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                    );
+                    if (selected != null && selected != currentLocale) {
+                      localeProvider.setLocale(Locale(selected));
+                    }
+                  },
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
+                    children: [
                       Text(
-                        'Tiếng việt',
-                        style: TextStyle(
-                          color: Color(MyColor.grey),
-                          fontSize: 15,
-                        ),
+                        Provider.of<LocaleProvider>(
+                                  context,
+                                ).locale.languageCode ==
+                                'en'
+                            ? AppLocalizations.of(context)!.english
+                            : AppLocalizations.of(context)!.vietnamese,
+                        style: TextStyle(color: textColor, fontSize: 15),
                       ),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Icon(
                         Icons.arrow_forward_ios_rounded,
                         size: 18,
-                        color: Color(MyColor.grey),
+                        color: textColor,
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 18),
-                const Text(
-                  'Giao diện',
+                Text(
+                  AppLocalizations.of(context)!.interface,
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 16,
-                    color: Color(MyColor.pr9),
+                    color: textColor,
                   ),
                 ),
                 const SizedBox(height: 8),
                 _SettingItem(
-                  title: 'Chế độ tối',
+                  title: AppLocalizations.of(context)!.darkMode,
                   onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Tính năng đang được phát triển'),
-                      ),
+                    final themeProvider = Provider.of<ThemeProvider>(
+                      context,
+                      listen: false,
                     );
+                    themeProvider.toggleTheme();
                   },
                   trailing: Container(
                     height: 32,
                     alignment: Alignment.center,
-                    child: Switch(
-                      value: false,
-                      onChanged: (_) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Tính năng đang được phát triển'),
-                          ),
+                    child: Consumer<ThemeProvider>(
+                      builder: (context, themeProvider, _) {
+                        return Switch(
+                          value: themeProvider.isDarkMode,
+                          onChanged: (_) {
+                            themeProvider.toggleTheme();
+                          },
+                          activeColor: Color(MyColor.pr8),
                         );
                       },
-                      activeColor: Color(MyColor.pr8),
                     ),
                   ),
                 ),
@@ -373,11 +446,20 @@ class ProfileSettingPage extends StatelessWidget {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(MyColor.white),
-                        foregroundColor: const Color(MyColor.pr9),
+                        backgroundColor:
+                            isDarkMode
+                                ? Colors.transparent
+                                : const Color(MyColor.pr8),
+                        foregroundColor: isDarkMode ? textColor : Colors.white,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(
+                            color:
+                                isDarkMode
+                                    ? const Color(0xFF424242)
+                                    : Colors.transparent,
+                          ),
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
@@ -386,20 +468,22 @@ class ProfileSettingPage extends StatelessWidget {
                           context: context,
                           builder:
                               (context) => AlertDialog(
-                                backgroundColor: const Color(MyColor.white),
+                                backgroundColor: backgroundColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                 ),
-                                title: const Text(
-                                  'Xác nhận đăng xuất',
+                                title: Text(
+                                  AppLocalizations.of(context)!.logoutConfirm,
                                   style: TextStyle(
-                                    color: Color(MyColor.pr9),
+                                    color: textColor,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                content: const Text(
-                                  'Bạn có chắc muốn đăng xuất không?',
-                                  style: TextStyle(color: Color(MyColor.pr9)),
+                                content: Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.logoutConfirmContent,
+                                  style: TextStyle(color: textColor),
                                 ),
                                 actions: [
                                   Row(
@@ -449,8 +533,8 @@ class ProfileSettingPage extends StatelessWidget {
                           context.goNamed(RouterName.login);
                         }
                       },
-                      child: const Text(
-                        'Đăng xuất',
+                      child: Text(
+                        AppLocalizations.of(context)!.logout,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -482,23 +566,32 @@ class _SettingItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor =
+        isDarkMode ? Colors.black : const Color(MyColor.white);
+    final textColor = isDarkMode ? Colors.white : const Color(MyColor.pr9);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
-        color: const Color(MyColor.white),
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(10),
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
           onTap: onTap,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: isDarkMode ? Border.all(color: Colors.grey[800]!) : null,
+            ),
             child: Row(
               children: [
                 Expanded(
                   child: Text(
                     title,
-                    style: const TextStyle(
-                      color: Color(MyColor.pr9),
+                    style: TextStyle(
+                      color: textColor,
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),

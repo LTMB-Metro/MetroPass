@@ -68,17 +68,13 @@ class AppTextStyles {
     color: Color(MyColor.black),
   );
 
-  static const TextStyle errorText = TextStyle(
-    color: Colors.red,
-    fontSize: 12,
-  );
+  static const TextStyle errorText = TextStyle(color: Colors.red, fontSize: 12);
 }
 
 /// Common decorations
 class AppDecorations {
-  static BoxDecoration get backButton => BoxDecoration(
-    borderRadius: BorderRadius.circular(12),
-  );
+  static BoxDecoration get backButton =>
+      BoxDecoration(borderRadius: BorderRadius.circular(12));
 
   static BoxDecoration roundedInput({bool hasError = false}) => BoxDecoration(
     color: Colors.white,
@@ -89,20 +85,21 @@ class AppDecorations {
     ),
   );
 
-  static BoxDecoration get dividerLine => BoxDecoration(
-    color: const Color(MyColor.pr3).withValues(alpha: 0.3),
-  );
+  static BoxDecoration get dividerLine =>
+      BoxDecoration(color: const Color(MyColor.pr3).withValues(alpha: 0.3));
 }
 
 /// Message templates
 class AppMessages {
   // Success messages
   static const String loginSuccess = 'Đăng nhập thành công';
-  static const String registerSuccess = 'Đăng ký thành công! Vui lòng đăng nhập.';
+  static const String registerSuccess =
+      'Đăng ký thành công! Vui lòng đăng nhập.';
   static const String googleSignInSuccess = 'Đăng nhập Google thành công';
   static const String otpSent = 'Mã OTP đã được gửi đến email của bạn';
   static const String otpResent = 'Đã gửi lại mã OTP';
-  static const String verificationSuccess = 'Xác thực thành công! Đường dẫn đặt lại mật khẩu đã được gửi đến email của bạn.';
+  static const String verificationSuccess =
+      'Xác thực thành công! Đường dẫn đặt lại mật khẩu đã được gửi đến email của bạn.';
 
   // Error messages
   static const String loginFailed = 'Đăng nhập thất bại';
@@ -119,7 +116,8 @@ class AppMessages {
 
   // Info messages
   static const String forgotPasswordInfo = 'Nhập email để nhận mã xác nhận';
-  static const String verificationInfo = 'Mã xác nhận đã được gửi đến email:\n{email}';
+  static const String verificationInfo =
+      'Mã xác nhận đã được gửi đến email:\n{email}';
   static const String didntReceiveCode = 'Không nhận được mã? ';
   static const String resendText = 'Gửi lại';
   static const String resendWithCountdown = 'Gửi lại ({countdown}s)';
@@ -134,5 +132,6 @@ class AppAssets {
   static const String logo = 'assets/images/logo.png';
   static const String loginBackground = 'assets/images/login.png';
   static const String googleIcon = 'assets/images/email.png';
-  static const String defaultAvatar = 'https://img.lovepik.com/free-png/20211204/lovepik-cartoon-avatar-png-image_401302777_wh1200.png';
+  static const String defaultAvatar =
+      'https://img.lovepik.com/free-png/20211204/lovepik-cartoon-avatar-png-image_401302777_wh1200.png';
 }

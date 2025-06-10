@@ -7,6 +7,7 @@ import 'package:metropass/pages/my_app.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
+/// Main entry point of the application
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

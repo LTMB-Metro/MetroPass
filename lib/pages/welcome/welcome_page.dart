@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:metropass/apps/router/router_name.dart';
 import '../../themes/colors/colors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
@@ -9,31 +10,28 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false, // Ngăn không cho back thoát app
+      canPop: false, 
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
-        
-        // Hiển thị dialog xác nhận thoát ứng dụng
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Thoát ứng dụng'),
-              content: const Text('Bạn có chắc chắn muốn thoát ứng dụng không?'),
+              title: Text(AppLocalizations.of(context)!.exitApp),
+              content: Text(AppLocalizations.of(context)!.exitAppConfirm),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Hủy'),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
-                    // Thoát ứng dụng
                     Navigator.of(context).pop();
                   },
-                  child: const Text(
-                    'Thoát',
-                    style: TextStyle(color: Colors.red),
+                  child: Text(
+                    AppLocalizations.of(context)!.exit,
+                    style: const TextStyle(color: Colors.red),
                   ),
                 ),
               ],
@@ -46,10 +44,7 @@ class WelcomePage extends StatelessWidget {
         body: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Color(MyColor.pr2),
-                Color(MyColor.white),
-              ],
+              colors: [Color(MyColor.pr2), Color(MyColor.white)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -61,10 +56,7 @@ class WelcomePage extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: 40),
-                  Image.asset(
-                    'assets/images/logo.png',
-                    height: 30,
-                  ),
+                  Image.asset('assets/images/logo.png', height: 30),
                   const Spacer(),
                   // Welcome image
                   Container(
@@ -85,7 +77,7 @@ class WelcomePage extends StatelessWidget {
                   const SizedBox(height: 25),
                   // Text
                   Text(
-                    'Ga gần - Vé sẵn',
+                    AppLocalizations.of(context)!.welcomeSlogan1,
                     style: TextStyle(
                       color: Color(MyColor.pr8),
                       fontSize: 20,
@@ -94,7 +86,7 @@ class WelcomePage extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    'Không chờ đợi - Không lo âu',
+                    AppLocalizations.of(context)!.welcomeSlogan2,
                     style: TextStyle(color: Color(MyColor.pr8), fontSize: 16),
                   ),
                   const Spacer(),
@@ -125,8 +117,8 @@ class WelcomePage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      child: const Text(
-        'Bắt đầu',
+      child: Text(
+        AppLocalizations.of(context)!.start,
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
       ),
     );

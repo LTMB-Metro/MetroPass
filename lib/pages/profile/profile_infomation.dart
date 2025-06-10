@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import '../../apps/router/router_name.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/auth_controller.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// Profile information page for viewing and editing user details
 class ProfileInformationPage extends StatefulWidget {
   const ProfileInformationPage({Key? key}) : super(key: key);
 
@@ -13,14 +15,19 @@ class ProfileInformationPage extends StatefulWidget {
 }
 
 class _ProfileInformationPageState extends State<ProfileInformationPage> {
+  // Controllers for text input fields
   late TextEditingController nameController;
   late TextEditingController phoneController;
   late TextEditingController birthdayController;
   late TextEditingController cccdController;
+
+  // Focus nodes for managing input field focus
   late FocusNode nameFocusNode;
   late FocusNode phoneFocusNode;
   late FocusNode birthdayFocusNode;
   late FocusNode cccdFocusNode;
+
+  // State variables for UI control
   bool obscureCCCD = true;
   bool isLoading = false;
   bool isEditingName = false;
@@ -31,6 +38,7 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
   @override
   void initState() {
     super.initState();
+    // Initialize controllers with user data
     final user = Provider.of<AuthController>(context, listen: false).userModel;
     nameController = TextEditingController(text: user?.username ?? '');
     phoneController = TextEditingController(text: user?.phonenumber ?? '');
@@ -38,10 +46,14 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
       text: user?.toMap()['birthday'] ?? '',
     );
     cccdController = TextEditingController(text: user?.toMap()['cccd'] ?? '');
+
+    // Initialize focus nodes
     nameFocusNode = FocusNode();
     phoneFocusNode = FocusNode();
     birthdayFocusNode = FocusNode();
     cccdFocusNode = FocusNode();
+
+    // Add focus listeners to handle editing state
     nameFocusNode.addListener(() {
       if (!nameFocusNode.hasFocus && isEditingName) {
         setState(() {
@@ -74,6 +86,7 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
 
   @override
   void dispose() {
+    // Clean up controllers and focus nodes
     nameController.dispose();
     phoneController.dispose();
     birthdayController.dispose();
@@ -85,12 +98,14 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
     super.dispose();
   }
 
+  /// Show a snackbar message for features under development
   void _showUpdateFeature() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Tính năng đang được cập nhật')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.featureUpdating)),
     );
   }
 
+  /// Update user profile information
   Future<void> _updateProfile() async {
     setState(() => isLoading = true);
     final authController = Provider.of<AuthController>(context, listen: false);
@@ -103,27 +118,36 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
     setState(() => isLoading = false);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(success ? 'Cập nhật thành công!' : 'Cập nhật thất bại!'),
+        content: Text(
+          success
+              ? AppLocalizations.of(context)!.updateSuccess
+              : AppLocalizations.of(context)!.updateFail,
+        ),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor =
+        isDarkMode ? Colors.black : const Color(MyColor.pr2);
+    final textColor = isDarkMode ? Colors.white : const Color(MyColor.pr9);
+
     return Scaffold(
-      backgroundColor: const Color(MyColor.pr2),
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(MyColor.pr2),
+        backgroundColor: backgroundColor,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(MyColor.pr9)),
+          icon: Icon(Icons.arrow_back, color: textColor),
           onPressed: () => context.goNamed(RouterName.profile),
         ),
-        title: const Text(
-          'Thông tin cá nhân',
+        title: Text(
+          AppLocalizations.of(context)!.personalInfo,
           style: TextStyle(
-            color: Color(MyColor.pr9),
+            color: textColor,
             fontWeight: FontWeight.w500,
             fontSize: 20,
           ),
@@ -139,6 +163,7 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
           final firebaseUser = authController.firebaseUser;
           String? avatarUrl;
           if (user != null) {
+            // Get avatar URL from Firebase or user model
             avatarUrl =
                 firebaseUser?.photoURL?.isNotEmpty == true
                     ? firebaseUser!.photoURL
@@ -151,7 +176,7 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
               child: Column(
                 children: [
                   const SizedBox(height: 8),
-                  // Avatar
+                  // Profile avatar section
                   Center(
                     child: Column(
                       children: [
@@ -177,9 +202,9 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
                         const SizedBox(height: 8),
                         GestureDetector(
                           onTap: _showUpdateFeature,
-                          child: const Text(
-                            'Thay đổi ảnh',
-                            style: TextStyle(
+                          child: Text(
+                            AppLocalizations.of(context)!.changeAvatar,
+                            style: const TextStyle(
                               color: Color(MyColor.grey),
                               fontSize: 15,
                               fontWeight: FontWeight.w400,
@@ -190,9 +215,9 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  // Họ và tên
+                  // Full name field
                   _EditableField(
-                    label: 'Họ và tên',
+                    label: AppLocalizations.of(context)!.fullName,
                     controller: nameController,
                     focusNode: nameFocusNode,
                     readOnly: !isEditingName,
@@ -204,11 +229,11 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
                       });
                     },
                   ),
-                  // Số điện thoại
+                  // Phone number field
                   _EditableField(
-                    label: 'Số điện thoại',
+                    label: AppLocalizations.of(context)!.phoneNumber,
                     controller: phoneController,
-                    keyboardType: TextInputType.phone,
+                    keyboardType: TextInputType.number,
                     focusNode: phoneFocusNode,
                     readOnly: !isEditingPhone,
                     showEditIcon: !isEditingPhone,
@@ -219,20 +244,22 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
                       });
                     },
                   ),
-                  // Email (read only)
+
+                  // Email field (read-only)
                   _EditableField(
-                    label: 'Email',
+                    label: AppLocalizations.of(context)!.email,
                     controller: TextEditingController(text: email),
                     focusNode: null,
                     readOnly: true,
                     showEditIcon: false,
                   ),
-                  // Ngày sinh
+                  // Birthday field
                   _EditableField(
-                    label: 'Ngày sinh',
+                    label: AppLocalizations.of(context)!.birthday,
                     controller: birthdayController,
                     focusNode: birthdayFocusNode,
-                    hintText: 'dd/mm/yyyy',
+                    hintText: 'dd/mm/yy',
+                    keyboardType: TextInputType.datetime,
                     readOnly: !isEditingBirthday,
                     showEditIcon: !isEditingBirthday,
                     onEdit: () {
@@ -244,7 +271,7 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
                   ),
                   // CCCD/CMND
                   _EditableField(
-                    label: 'CCCD/CMND',
+                    label: AppLocalizations.of(context)!.idCard,
                     controller: cccdController,
                     focusNode: cccdFocusNode,
                     obscureText: obscureCCCD,
@@ -273,27 +300,38 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(MyColor.pr8),
+                        backgroundColor:
+                            isDarkMode
+                                ? Colors.transparent
+                                : const Color(MyColor.pr8),
+                        foregroundColor: isDarkMode ? textColor : Colors.white,
+                        elevation: 0,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(
+                            color:
+                                isDarkMode
+                                    ? const Color(0xFF424242)
+                                    : Colors.transparent,
+                          ),
                         ),
                       ),
                       onPressed: isLoading ? null : _updateProfile,
                       child:
                           isLoading
-                              ? const SizedBox(
+                              ? SizedBox(
                                 width: 24,
                                 height: 24,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: Colors.white,
+                                  color: isDarkMode ? textColor : Colors.white,
                                 ),
                               )
-                              : const Text(
-                                'Cập nhật',
+                              : Text(
+                                AppLocalizations.of(context)!.update,
                                 style: TextStyle(
-                                  color: Color(MyColor.white),
+                                  color: isDarkMode ? textColor : Colors.white,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -337,6 +375,12 @@ class _EditableField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDarkMode ? Colors.white : const Color(MyColor.pr9);
+    final fieldColor = isDarkMode ? Colors.black : const Color(MyColor.white);
+    final labelColor =
+        isDarkMode ? Colors.grey[400] : const Color(MyColor.grey);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 18),
       child: Column(
@@ -344,9 +388,9 @@ class _EditableField extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontStyle: FontStyle.italic,
-              color: Color(MyColor.grey),
+              color: labelColor,
               fontSize: 15,
             ),
           ),
@@ -361,7 +405,7 @@ class _EditableField extends StatelessWidget {
                 obscureText: obscureText,
                 keyboardType: keyboardType,
                 style: TextStyle(
-                  color: readOnly ? Color(MyColor.grey) : Color(MyColor.pr9),
+                  color: readOnly ? labelColor : textColor,
                   fontSize: 16,
                   fontStyle:
                       (hintText != null && controller.text.isEmpty)
@@ -372,10 +416,33 @@ class _EditableField extends StatelessWidget {
                   hintText: hintText,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
+                    borderSide: BorderSide(
+                      color:
+                          isDarkMode
+                              ? Colors.grey[800]!
+                              : const Color(MyColor.pr8),
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color:
+                          isDarkMode
+                              ? Colors.grey[800]!
+                              : const Color(MyColor.pr8),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color:
+                          isDarkMode
+                              ? Colors.grey[800]!
+                              : const Color(MyColor.pr8),
+                    ),
                   ),
                   filled: true,
-                  fillColor: Color(MyColor.white),
+                  fillColor: fieldColor,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 10,
@@ -391,7 +458,7 @@ class _EditableField extends StatelessWidget {
                                   'assets/images/editor.png',
                                   width: 20,
                                   height: 20,
-                                  color: Color(MyColor.pr8),
+                                  color: const Color(MyColor.pr8),
                                 ),
                                 onPressed: onEdit,
                               ),
@@ -405,7 +472,7 @@ class _EditableField extends StatelessWidget {
                                   'assets/images/editor.png',
                                   width: 20,
                                   height: 20,
-                                  color: Color(MyColor.pr8),
+                                  color: const Color(MyColor.pr8),
                                 ),
                                 onPressed: onEdit,
                               )

@@ -1,26 +1,32 @@
 import 'package:flutter/material.dart';
 import '../../themes/colors/colors.dart';
-import '../../constants/app_constants.dart';
 import 'package:go_router/go_router.dart';
 import '../../apps/router/router_name.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/auth_controller.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/// Main profile page displaying user information and navigation menu
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor =
+        isDarkMode ? Colors.black : const Color(MyColor.pr1);
+    final textColor = isDarkMode ? Colors.white : const Color(MyColor.pr9);
+
     return Scaffold(
-      backgroundColor: const Color(MyColor.pr1),
+      backgroundColor: backgroundColor,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(56),
         child: AppBar(
-          backgroundColor: const Color(MyColor.pr1),
+          backgroundColor: backgroundColor,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Color(MyColor.pr9)),
+            icon: Icon(Icons.arrow_back, color: textColor),
             onPressed: () {
               if (Navigator.of(context).canPop()) {
                 Navigator.of(context).pop();
@@ -29,10 +35,10 @@ class ProfilePage extends StatelessWidget {
               }
             },
           ),
-          title: const Text(
-            'Tài khoản',
+          title: Text(
+            AppLocalizations.of(context)!.profile,
             style: TextStyle(
-              color: Color(MyColor.pr9),
+              color: textColor,
               fontSize: 20,
               fontWeight: FontWeight.w500,
             ),
@@ -54,17 +60,15 @@ class ProfilePage extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 100),
-            // Avatar, Name, ID
+            // User profile section with avatar, name and role
             Center(
               child: Consumer<AuthController>(
                 builder: (context, authController, _) {
                   final userModel = authController.userModel;
                   final firebaseUser = authController.firebaseUser;
-                  final isLoggedIn =
-                      authController.isAuthenticated && userModel != null;
                   String? avatarUrl;
-                  if (isLoggedIn) {
-                    // Nếu đăng nhập bằng Google, ưu tiên lấy avatar Google
+                  if (userModel != null) {
+                    // Prioritize Google avatar if available, otherwise use user's photo URL
                     avatarUrl =
                         firebaseUser?.photoURL?.isNotEmpty == true
                             ? firebaseUser!.photoURL
@@ -72,8 +76,8 @@ class ProfilePage extends StatelessWidget {
                                 ? userModel.photoURL
                                 : null);
                   }
-                  if (!isLoggedIn && authController.isLoading) {
-                    // Hiệu ứng skeleton khi đang loading
+                  // Display loading skeleton while fetching user data
+                  if (authController.isLoading && userModel == null) {
                     return Shimmer.fromColors(
                       baseColor: Colors.grey[300]!,
                       highlightColor: Colors.grey[100]!,
@@ -83,8 +87,15 @@ class ProfilePage extends StatelessWidget {
                           vertical: 12,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(MyColor.white),
+                          color:
+                              isDarkMode
+                                  ? Colors.black
+                                  : const Color(MyColor.white),
                           borderRadius: BorderRadius.circular(16),
+                          border:
+                              isDarkMode
+                                  ? Border.all(color: Colors.grey[800]!)
+                                  : null,
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -119,56 +130,11 @@ class ProfilePage extends StatelessWidget {
                       ),
                     );
                   }
-                  if (!isLoggedIn) {
-                    // Nếu chưa đăng nhập, hiển thị mặc định
-                    return Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(MyColor.white),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CircleAvatar(
-                            radius: 32,
-                            backgroundColor: const Color(MyColor.grey),
-                            child: Icon(
-                              Icons.person,
-                              size: 48,
-                              color: Color(MyColor.white),
-                            ),
-                          ),
-                          const SizedBox(width: 18),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                'Phan Văn A',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: Color(MyColor.pr9),
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                'ID: MT-2004',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Color(MyColor.grey),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
+                  if (userModel == null) {
+                    // Hide profile section if no user data is available
+                    return const SizedBox.shrink();
                   }
-                  // Nếu đã đăng nhập, hiển thị dữ liệu thực tế
+                  // Display user profile information
                   return GestureDetector(
                     onTap: () => context.goNamed(RouterName.profileInformation),
                     child: Container(
@@ -177,8 +143,15 @@ class ProfilePage extends StatelessWidget {
                         vertical: 12,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(MyColor.white),
+                        color:
+                            isDarkMode
+                                ? Colors.black
+                                : const Color(MyColor.white),
                         borderRadius: BorderRadius.circular(16),
+                        border:
+                            isDarkMode
+                                ? Border.all(color: Colors.grey[800]!)
+                                : null,
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -204,19 +177,11 @@ class ProfilePage extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                userModel!.username,
-                                style: const TextStyle(
+                                userModel.username,
+                                style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
-                                  color: Color(MyColor.pr9),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Role: ${userModel.role.toUpperCase()}',
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: Color(MyColor.grey),
+                                  color: textColor,
                                 ),
                               ),
                             ],
@@ -229,25 +194,25 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 48),
-            // Menu buttons
+            // Navigation menu items
             _ProfileMenuItem(
               icon: Icons.person,
-              text: 'Thông tin cá nhân',
+              text: AppLocalizations.of(context)!.personalInfo,
               onTap: () => context.goNamed(RouterName.profileInformation),
             ),
             _ProfileMenuItem(
               icon: Icons.confirmation_num,
-              text: 'Vé của tôi',
+              text: AppLocalizations.of(context)!.myTickets,
               onTap: () => context.pushNamed(RouterName.profileTicket),
             ),
             _ProfileMenuItem(
               icon: Icons.history,
-              text: 'Lịch sử giao dịch',
+              text: AppLocalizations.of(context)!.transactionHistory,
               onTap: () {},
             ),
             _ProfileMenuItem(
               icon: Icons.settings,
-              text: 'Cài đặt',
+              text: AppLocalizations.of(context)!.settings,
               onTap: () => context.pushNamed(RouterName.profileSetting),
             ),
           ],
@@ -257,6 +222,7 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
+/// Menu item widget for profile navigation
 class _ProfileMenuItem extends StatelessWidget {
   final IconData icon;
   final String text;
@@ -271,16 +237,25 @@ class _ProfileMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor =
+        isDarkMode ? Colors.black : const Color(MyColor.white);
+    final textColor = isDarkMode ? Colors.white : const Color(MyColor.pr9);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
       child: Material(
-        color: const Color(MyColor.white),
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: onTap,
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: isDarkMode ? Border.all(color: Colors.grey[800]!) : null,
+            ),
             child: Row(
               children: [
                 Container(
@@ -296,17 +271,18 @@ class _ProfileMenuItem extends StatelessWidget {
                 Expanded(
                   child: Text(
                     text,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
-                      color: Color(MyColor.pr9),
+                      color: textColor,
                     ),
                   ),
                 ),
-                const Icon(
+                Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 18,
-                  color: Color(MyColor.grey),
+                  color:
+                      isDarkMode ? Colors.grey[400] : const Color(MyColor.grey),
                 ),
               ],
             ),

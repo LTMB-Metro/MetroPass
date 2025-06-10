@@ -164,48 +164,6 @@ class _AtlasPageState extends State<AtlasPage> {
     ));
   }
 
-  Future<void> _drawStationRoute(List<StationModel> stations) async {
-    final coordinates = <List<double>>[];
-
-    for (int i = 0; i < stations.length - 1; i++) {
-      coordinates.add([
-        stations[i].location.longitude,
-        stations[i].location.latitude,
-      ]);
-
-      if (customIntermediatePoints.containsKey(i)) {
-        coordinates.addAll(
-          customIntermediatePoints[i]!.map((p) => [p[1], p[0]]),
-        );
-      }
-    }
-
-    coordinates.add([
-      stations.last.location.longitude,
-      stations.last.location.latitude,
-    ]);
-
-    final geoJsonData = {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": coordinates,
-      },
-      "properties": {},
-    };
-
-    await _mapboxMap.style.addSource(GeoJsonSource(
-      id: 'station_route_source',
-      data: jsonEncode(geoJsonData),
-    ));
-
-    await _mapboxMap.style.addLayer(LineLayer(
-      id: 'station_route_layer',
-      sourceId: 'station_route_source',
-      lineColor: Colors.blue.toARGB32(),
-      lineWidth: 8.0,
-    ));
-  }
 
   Future<void> _animateTwoVehiclesAlongRoute(List<StationModel> stations) async {
     if (stations.isEmpty) return;

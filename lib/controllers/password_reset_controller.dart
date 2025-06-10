@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../services/email_service.dart';
 import '../services/auth_service.dart';
 
@@ -19,6 +20,7 @@ class PasswordResetController extends ChangeNotifier {
   String? _errorMessage;
   bool _isLoading = false;
   int _otpResendCooldown = 0;
+  BuildContext? _context;
 
   // Getters
   PasswordResetStep get currentStep => _currentStep;
@@ -27,6 +29,11 @@ class PasswordResetController extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get canResendOTP => _otpResendCooldown == 0;
   int get otpResendCooldown => _otpResendCooldown;
+
+  /// Set context for the controller
+  void setContext(BuildContext context) {
+    _context = context;
+  }
 
   /// Send OTP to email
   Future<bool> sendOTP(String email) async {
@@ -60,6 +67,11 @@ class PasswordResetController extends ChangeNotifier {
 
   /// Verify OTP code and send password reset email
   Future<bool> verifyOTPAndSendResetEmail(String otpCode) async {
+    if (_context == null) {
+      _setError('Context is not set');
+      return false;
+    }
+
     _setLoading(true);
     _clearError();
 
@@ -69,18 +81,22 @@ class PasswordResetController extends ChangeNotifier {
 
       if (otpResult.success) {
         print('Xác thực OTP thành công, gửi email đặt lại mật khẩu');
-        
+
         // Send password reset email after successful OTP verification
-        final resetResult = await _authService.resetPassword(_email);
-        
+        final resetResult = await _authService.resetPassword(_email, _context!);
+
         if (resetResult['success']) {
           print('Gửi email đặt lại mật khẩu thành công');
           _setStep(PasswordResetStep.completed);
           _setLoading(false);
           return true;
         } else {
-          print('Gửi email đặt lại mật khẩu thất bại: ${resetResult['message']}');
-          _setError('Gửi email đặt lại mật khẩu thất bại: ${resetResult['message']}');
+          print(
+            'Gửi email đặt lại mật khẩu thất bại: ${resetResult['message']}',
+          );
+          _setError(
+            'Gửi email đặt lại mật khẩu thất bại: ${resetResult['message']}',
+          );
           _setLoading(false);
           return false;
         }

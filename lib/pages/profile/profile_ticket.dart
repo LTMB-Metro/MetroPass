@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../themes/colors/colors.dart';
 import '../../apps/router/router_name.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfileTicketPage extends StatelessWidget {
   const ProfileTicketPage({Key? key}) : super(key: key);
@@ -18,9 +19,9 @@ class ProfileTicketPage extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Color(MyColor.pr9)),
           onPressed: () => context.goNamed(RouterName.profile),
         ),
-        title: const Text(
-          'Vé của tôi',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.myTickets,
+          style: const TextStyle(
             color: Color(MyColor.pr9),
             fontWeight: FontWeight.w500,
             fontSize: 20,
@@ -70,11 +71,13 @@ class ProfileTicketPage extends StatelessWidget {
                                 color: const Color(MyColor.grey),
                                 borderRadius: BorderRadius.circular(14),
                               ),
-                              child: const Padding(
+                              child:  Padding(
                                 padding: EdgeInsets.symmetric(vertical: 14),
                                 child: Center(
                                   child: Text(
-                                    'Vé hiện có',
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.ticketAvailable,
                                     style: TextStyle(
                                       color: Color(MyColor.white),
                                       fontWeight: FontWeight.bold,
@@ -88,7 +91,7 @@ class ProfileTicketPage extends StatelessWidget {
                           Expanded(
                             child: Center(
                               child: Text(
-                                'Vé đã sử dụng',
+                                AppLocalizations.of(context)!.ticketUsed,
                                 style: TextStyle(
                                   color: Color(MyColor.pr9),
                                   fontWeight: FontWeight.w500,
@@ -103,18 +106,18 @@ class ProfileTicketPage extends StatelessWidget {
                     const SizedBox(height: 22),
                     // Ticket cards
                     _TicketCard(
-                      title: 'Vé ngày',
+                      title: AppLocalizations.of(context)!.dayTicket,
                       date: '14/12/2025',
                       price: '40.000 VND',
-                      status: 'Còn hiệu lực',
+                      status: AppLocalizations.of(context)!.ticketAvailable,
                       borderColor: Color(MyColor.pr7),
                     ),
                     const SizedBox(height: 18),
                     _TicketCard(
-                      title: 'Vé tháng - Tuyến Bến Thành',
+                      title: AppLocalizations.of(context)!.monthTicket,
                       date: '08/6/2025',
                       price: '300.000 VND',
-                      status: 'Còn hiệu lực',
+                      status: AppLocalizations.of(context)!.ticketAvailable,
                       borderColor: Color(MyColor.red),
                     ),
                   ],
@@ -135,9 +138,9 @@ class ProfileTicketPage extends StatelessWidget {
                   child: const Icon(Icons.add, color: Color(MyColor.white)),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Mua vé mới',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context)!.buyNewTicket,
+                  style: const TextStyle(
                     color: Color(MyColor.pr8),
                     fontWeight: FontWeight.w500,
                     fontSize: 16,
@@ -196,8 +199,8 @@ class _TicketCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Hạn sử dụng:',
+                 Text(
+                  AppLocalizations.of(context)!.expiryDate,
                   style: TextStyle(color: Color(MyColor.grey), fontSize: 16),
                 ),
                 Text(
@@ -212,8 +215,8 @@ class _TicketCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Giá vé:',
+               Text(
+                  AppLocalizations.of(context)!.ticketPrice,
                   style: TextStyle(color: Color(MyColor.grey), fontSize: 16),
                 ),
                 Text(
@@ -228,8 +231,8 @@ class _TicketCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Trạng thái:',
+                 Text(
+                  AppLocalizations.of(context)!.status,
                   style: TextStyle(color: Color(MyColor.grey), fontSize: 16),
                 ),
                 Text(

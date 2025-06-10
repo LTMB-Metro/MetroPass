@@ -168,32 +168,32 @@ class _PaymentPageState extends State<PaymentPage> {
                 return;
               }
               await _userTicketController.createUserTicket(widget.ticket);
-              // print("🚀 Gọi hàm tạo link thanh toán...");
-              // final url = await createVNPayPayment(widget.ticket.price);
-              // if (!context.mounted) return;
-              // if (url != null) {
-              //   Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (_) => VNPayWebViewPage(
-              //         paymentUrl: url,
-              //         onPaymentComplete: (bool success) {
-              //           // ✅ Gọi khi WebView kết thúc và có kết quả
-              //           final message = success
-              //               ? 'Thanh toán thành công!'
-              //               : 'Thanh toán thất bại hoặc bị huỷ';
-              //           ScaffoldMessenger.of(context).showSnackBar(
-              //             SnackBar(content: Text(message)),
-              //           );
-              //         },
-              //       ),
-              //     ),
-              //   );
-              // } else {
-              //   ScaffoldMessenger.of(context).showSnackBar(
-              //     const SnackBar(content: Text("Không tạo được link thanh toán")),
-              //   );
-              // }
+            //   print("🚀 Gọi hàm tạo link thanh toán...");
+            //   final url = await createVNPayPayment(widget.ticket.price);
+            //   if (!context.mounted) return;
+            //   if (url != null) {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (_) => VNPayWebViewPage(
+            //           paymentUrl: url,
+            //           onPaymentComplete: (bool success) async {
+            //             final message = success
+            //                 ? 'Thanh toán thành công!'
+            //                 : 'Thanh toán thất bại hoặc bị huỷ';
+            //             ScaffoldMessenger.of(context).showSnackBar(
+            //               SnackBar(content: Text(message)),
+            //             );
+            //             if(success) await _userTicketController.createUserTicket(widget.ticket);
+            //           },
+            //         ),
+            //       ),
+            //     );
+            //   } else {
+            //     ScaffoldMessenger.of(context).showSnackBar(
+            //       const SnackBar(content: Text("Không tạo được link thanh toán")),
+            //     );
+            //   }
             },
             child: Text(
               'Thanh toán: ${NumberFormat('#,###', 'vi_VN').format(widget.ticket.price)} đ',
