@@ -159,5 +159,6 @@
   "authErrorWrongPassword": "Incorrect password",
   "authErrorInvalidCredential": "Invalid email or password",
   "authErrorTooManyRequests": "Too many attempts. Please try again later",
-  "authErrorGeneric": "Authentication error: {code}"
+  "authErrorGeneric": "Authentication error: {code}",
+  "atlas": "Atlas"
 } 
