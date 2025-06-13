@@ -9,17 +9,41 @@ class TicketQrDialog extends StatelessWidget {
   final String userTicketStatus;
   final String showName;
   final String showNote;
+  final bool? showQr;
   const TicketQrDialog({
     super.key,
     required this.userTicket,
     required this.userTicketStatus,
     required this.showName,
-    required this.showNote
+    required this.showNote,
+    this.showQr = true,
   });
 
   @override
   Widget build(BuildContext context) {
     final formatter = DateFormat('HH:mm dd/MM/yyyy');
+    final qrContent = '${userTicket.qrCodeContent}|${userTicket.userId}';
+
+    final infoTab = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          buildTitle('Loại vé: ', showName),
+          buildTitle('Trạng thái: ', showQr == true 
+          ? (userTicketStatus == 'unused' 
+            ? 'Chưa sử dụng' 
+            : 'Đang sử dụng') 
+          : 'Đã hết hạn'),
+          buildTitle('Giá: ', '${NumberFormat('#,###', 'vi_VN').format(userTicket.price)} đ'),
+          userTicketStatus == 'active'
+              ? buildTitle('Kích hoạt lúc: ', userTicket.activateTime == null ? 'Chưa xác định' : formatter.format(userTicket.activateTime!))
+              : buildTitle('Đặt lúc', formatter.format(userTicket.bookingTime)),
+          buildTitle('Lưu ý', showNote, Color(MyColor.red))
+        ],
+      ),
+    );
 
     return AlertDialog(
       contentPadding: const EdgeInsets.all(10),
@@ -27,7 +51,7 @@ class TicketQrDialog extends StatelessWidget {
         width: 300,
         height: 320,
         child: DefaultTabController(
-          length: 2,
+          length: showQr == true ? 2 : 1,
           child: Column(
             children: [
               Image.asset(
@@ -52,66 +76,71 @@ class TicketQrDialog extends StatelessWidget {
                   dividerColor: Colors.transparent,
                   labelColor: Colors.black,
                   unselectedLabelColor: Colors.black54,
-                  tabs: [
-                    Tab(
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 10),
-                        child: Text(
-                          "Mã QR", 
-                          style: TextStyle(
-                            color: Color(MyColor.pr9),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14
+                  tabs: showQr == true
+                    ? [
+                        Tab(
+                          child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: 10),
+                            child: Text(
+                              "Mã QR", 
+                              style: TextStyle(
+                                color: Color(MyColor.pr9),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    Tab(
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 10),
-                        child: Text(
-                          "Thông tin", 
-                          style: TextStyle(
-                            color: Color(MyColor.pr9),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14
+                        Tab(
+                          child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: 10),
+                            child: Text(
+                              "Thông tin", 
+                              style: TextStyle(
+                                color: Color(MyColor.pr9),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ],
+                      ]
+                    : [
+                        Tab(
+                          child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: 10),
+                            child: Text(
+                              "Thông tin", 
+                              style: TextStyle(
+                                color: Color(MyColor.pr9),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                 ),
               ),
               const SizedBox(height: 10),
               Expanded(
                 child: TabBarView(
-                  children: [
-                    // Tab 1: QR
-                    Center(
-                      child: QrImageView(
-                        data: userTicket.qrCodeContent,
-                        version: QrVersions.auto,
-                        size: 200.0,
-                      ),
-                    ),
-                    // Tab 2: Info
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          buildTitle('Loại vé: ', showName),
-                          buildTitle('Trạng thái: ', userTicketStatus == 'unused' ? 'Chưa sử dụng' : 'Đã sử dụng'),
-                          buildTitle('Giá: ', '${NumberFormat('#,###', 'vi_VN').format(userTicket.price)} đ'),
-                          userTicketStatus == 'used' 
-                            ? buildTitle('Kích hoạt lúc: ', userTicket.activateTime == null ? 'Chưa xác định' : formatter.format(userTicket.activateTime!)) 
-                            : buildTitle('Đặt lúc', formatter.format(userTicket.bookingTime)),
-                          buildTitle('Lưu ý', showNote, Color(MyColor.red))
-                        ],
-                      ),
-                    ),
-                  ],
+                  children: showQr == true
+                    ? [
+                        // Tab 1: QR
+                        Center(
+                          child: QrImageView(
+                            data: qrContent,
+                            version: QrVersions.auto,
+                            size: 200.0,
+                          ),
+                        ),
+                        // Tab 2: Info
+                        infoTab,
+                      ]
+                    : [
+                        infoTab,
+                      ],
                 ),
               ),
             ],

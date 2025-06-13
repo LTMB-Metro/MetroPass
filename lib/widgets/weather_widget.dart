@@ -58,7 +58,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                 fontWeight: FontWeight.bold, 
                 color: Colors.white
               )
-                        ),
+              ),
             ),
           ],
         ),

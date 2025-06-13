@@ -160,5 +160,6 @@
   "authErrorInvalidCredential": "Invalid email or password",
   "authErrorTooManyRequests": "Too many attempts. Please try again later",
   "authErrorGeneric": "Authentication error: {code}",
-  "atlas": "Atlas"
+  "atlas": "Atlas",
+  "expiredTicket" : "Expired ticket"
 } 

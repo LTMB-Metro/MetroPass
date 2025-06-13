@@ -34,7 +34,7 @@ class MyTicketCard extends StatelessWidget {
           showHsd = 'Tự động kích hoạt vào ${formatter.format(activatedTime)}';
         }
       }
-    }else{
+    }else if (userTicketStatus == 'active') {
       if (userTicket.ticketType == 'single') {
         showHsd = 'Vé sử dụng 1 lần';
         showName = userTicket.description;
@@ -43,11 +43,22 @@ class MyTicketCard extends StatelessWidget {
         showHsd = userTicket.note;
         if(userTicket.activateTime != null){
           final DateTime activatedTime = userTicket.activateTime!.add(Duration(days: userTicket.duration*24));
-          showHsd = 'Hết hiệu lúc vào lúc ${formatter.format(activatedTime)}';
+          showHsd = 'Hết hiệu lực vào lúc ${formatter.format(activatedTime)}';
         } else{
           showHsd = 'Chưa xác định';
         }
       }
+    } else{
+      if (userTicket.ticketType == 'single') {
+        showName = userTicket.description;
+      } else {
+        showName = userTicket.ticketName;
+      }
+        if(userTicket.inactiveTime != null){
+          showHsd = 'Hết hạn vào lúc ${formatter.format(userTicket.inactiveTime!)}';
+        } else{
+          showHsd = 'Chưa xác định';
+        }
     }
     
     return GestureDetector(
@@ -59,6 +70,7 @@ class MyTicketCard extends StatelessWidget {
             userTicketStatus: userTicketStatus,
             showName: showName,
             showNote: showHsd,
+            showQr: userTicketStatus == 'unused' || userTicketStatus == 'active' ? true : false,
           ),
         );
       },

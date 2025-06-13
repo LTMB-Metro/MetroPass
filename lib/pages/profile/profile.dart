@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:metropass/pages/my_ticket/expried_ticket_page.dart';
 import '../../themes/colors/colors.dart';
 import 'package:go_router/go_router.dart';
 import '../../apps/router/router_name.dart';
@@ -202,8 +203,13 @@ class ProfilePage extends StatelessWidget {
             ),
             _ProfileMenuItem(
               icon: Icons.confirmation_num,
-              text: AppLocalizations.of(context)!.myTickets,
-              onTap: () => context.pushNamed(RouterName.profileTicket),
+              text: AppLocalizations.of(context)!.expiredTicket,
+              onTap: () => Navigator.push(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) => const ExpriedTicketPage(),
+                ),
+              ),
             ),
             _ProfileMenuItem(
               icon: Icons.history,

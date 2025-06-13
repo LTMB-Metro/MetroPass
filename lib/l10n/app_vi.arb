@@ -148,5 +148,6 @@
   "authErrorInvalidCredential": "Email hoặc mật khẩu không hợp lệ",
   "authErrorTooManyRequests": "Quá nhiều lần thử. Vui lòng thử lại sau",
   "authErrorGeneric": "Lỗi xác thực: {code}",
-  "atlas": "Lộ trình"
+  "atlas": "Lộ trình",
+  "expiredTicket": "Vé hết hạn"
 } 
