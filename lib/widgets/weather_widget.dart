@@ -35,6 +35,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
     final temp = weatherData!['main']['temp'];
     final iconCode = weatherData!['weather'][0]['icon'];
+    print('aaaaaaaaaaaaaaaa $iconCode');
     final iconUrl = 'http://openweathermap.org/img/wn/$iconCode@2x.png';
 
     return Card(

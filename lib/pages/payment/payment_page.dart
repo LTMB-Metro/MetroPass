@@ -169,8 +169,6 @@ class _PaymentPageState extends State<PaymentPage> {
                 );
                 return;
               }
-              //await _userTicketController.createUserTicket(widget.ticket);
-            
               print("🚀 Gọi hàm tạo link thanh toán...");
               final url = await createVNPayPayment(widget.ticket.price);
               if (!context.mounted) return;

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:metropass/pages/atlas/atlas_page.dart';
 import 'package:metropass/pages/book_ticket/book_ticket_page.dart';
 import 'package:metropass/pages/book_ticket/stations_route_page.dart';
+import 'package:metropass/pages/chat_box/chat_box_page.dart';
 import 'package:metropass/pages/home/home_page.dart';
 import 'package:metropass/pages/my_ticket/my_ticket_page.dart';
 import 'package:metropass/pages/payment/payment_page.dart';

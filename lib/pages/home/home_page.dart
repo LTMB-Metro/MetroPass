@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:metropass/apps/router/router_name.dart';
 import 'package:metropass/pages/atlas/atlas_page.dart';
 import 'package:metropass/pages/book_ticket/book_ticket_page.dart';
+import 'package:metropass/pages/chat_box/chat_box_page.dart';
 import 'package:metropass/pages/map/map_page.dart';
 import 'package:metropass/pages/my_ticket/my_ticket_page.dart';
 import 'package:metropass/pages/profile/profile.dart';
@@ -178,10 +179,40 @@ class HomePage extends StatelessWidget {
                 top: 60,
                 left: 10,
                 child: WeatherWidget(),
-              )
+              ),
             ],
           ),
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            print("Đã nhấn nút chat");
+            Navigator.push(
+              context, 
+              MaterialPageRoute(builder: (_) => ChatBoxPage()
+            )
+            );
+          },
+          tooltip: 'Trợ lý AI',
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Container(
+            width: 45,
+            height: 45,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                image: AssetImage('assets/images/chat.png'),
+                fit: BoxFit.cover,
+              ),
+              border: Border.all(
+                color: Color(MyColor.pr9),
+                width: 2,
+              ),
+            ),
+          )
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
+
       ),
     );
   }
