@@ -14,6 +14,7 @@ import 'package:metropass/pages/instruction/instruction_page.dart';
 import 'package:metropass/route_information/route_information.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:metropass/widgets/ai_recommend.dart';
 import 'package:metropass/widgets/weather_widget.dart';
 
 
@@ -53,7 +54,10 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 200),
+                  const SizedBox(height: 180),
+                  SizedBox(
+                    child: AiRecommend(),
+                  ),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Padding(
@@ -175,6 +179,7 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               ),
+              
               Positioned(
                 top: 60,
                 left: 10,
@@ -185,7 +190,6 @@ class HomePage extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            print("Đã nhấn nút chat");
             Navigator.push(
               context, 
               MaterialPageRoute(builder: (_) => ChatBoxPage()
@@ -212,7 +216,6 @@ class HomePage extends StatelessWidget {
           )
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
-
       ),
     );
   }
@@ -244,14 +247,14 @@ class HomePage extends StatelessWidget {
                   children: [
                     Icon(Icons.lock_outline, color: Theme.of(context).primaryColor),
                     const SizedBox(width: 4),
-                    const Text("Bạn chưa đăng nhập", style: TextStyle(fontSize: 20, color: Color(MyColor.pr9)),),
+                    Text(AppLocalizations.of(context)!.notLogin, style: TextStyle(fontSize: 20, color: Color(MyColor.pr9)),),
                   ],
                 ),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children:[
                     Text(
-                      "Bạn cần đăng nhập để tiếp tục!",
+                      AppLocalizations.of(context)!.needLogin,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
@@ -267,7 +270,7 @@ class HomePage extends StatelessWidget {
                       foregroundColor: Colors.grey[600],
                     ),
                     onPressed: () => Navigator.pop(context),
-                    child: const Text("Hủy"),
+                    child:Text(AppLocalizations.of(context)!.cancel)
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -280,8 +283,8 @@ class HomePage extends StatelessWidget {
                       Navigator.pop(context);
                       context.goNamed(RouterName.login);
                     },
-                    child: const Text(
-                      "Đăng nhập",
+                    child: Text(
+                      AppLocalizations.of(context)!.login,
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     )
                   ),

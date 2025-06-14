@@ -149,5 +149,8 @@
   "authErrorTooManyRequests": "Quá nhiều lần thử. Vui lòng thử lại sau",
   "authErrorGeneric": "Lỗi xác thực: {code}",
   "atlas": "Lộ trình",
-  "expiredTicket": "Vé hết hạn"
+  "expiredTicket": "Vé hết hạn",
+  "notLogin": "Bạn chưa đăng nhập",
+  "needLogin": "Bạn cần đăng nhập để tiếp tục!",
+  "suggestion": "Gợi ý cho bạn"
 } 

@@ -161,5 +161,8 @@
   "authErrorTooManyRequests": "Too many attempts. Please try again later",
   "authErrorGeneric": "Authentication error: {code}",
   "atlas": "Atlas",
-  "expiredTicket" : "Expired ticket"
+  "expiredTicket" : "Expired ticket",
+  "notLogin": "You are not logged in yet",
+  "needLogin": "You need to login to continue!",
+  "suggestion": "Suggestion for you"
 } 

@@ -200,5 +200,44 @@ class UserTicketController {
       await checkAndUpdateAutoActivation(ticket);
     }
   }
+  Stream<List<UserTicketModel>> getUserTickets(String userId) {
+    return _db
+        .collection('users')
+        .doc(userId)
+        .collection('user_tickets')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => UserTicketModel.fromMap(doc.data(), doc.id))
+            .toList());
+  }
+
+
+  Stream<List<TicketTypeModel>> getTicketTypesFromUserTickets() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      // Nếu chưa đăng nhập, trả về stream rỗng hoặc throw tùy bạn xử lý
+      return const Stream.empty();
+    }
+
+    return getUserTickets(user.uid).map((userTickets) =>
+      userTickets.map((userTicket) => TicketTypeModel(
+        description: userTicket.description,
+        duration: userTicket.duration,
+        note: userTicket.note,
+        ticketName: userTicket.ticketType == 'single'
+            ? userTicket.description
+            : userTicket.ticketName,
+        type: userTicket.ticketType,
+        categories: userTicket.ticketType == 'HSSV' ? 'student' : 'normal',
+        price: userTicket.price,
+        fromCode: userTicket.startStationCode,
+        toCode: userTicket.endStationCode,
+        qrCodeURL: '',
+      )).toList()
+    );
+  }
+
 }
+
+
 
