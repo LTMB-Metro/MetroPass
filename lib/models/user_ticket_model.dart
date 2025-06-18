@@ -14,7 +14,10 @@ class UserTicketModel {
   final String status;
   final DateTime bookingTime;
   final DateTime? activateTime;
+  final DateTime? inactiveTime;
+  final DateTime? autoActivateTime;
   final String qrCodeContent;
+  final int? numberUsed;
 
   UserTicketModel({
     required this.userTicketId,
@@ -30,7 +33,10 @@ class UserTicketModel {
     required this.status,
     required this.bookingTime,
     this.activateTime,
+    this.inactiveTime,
     required this.qrCodeContent,
+    this.autoActivateTime,
+    this.numberUsed,
   });
 
   factory UserTicketModel.fromMap(Map<String, dynamic> map, String id) {
@@ -50,7 +56,14 @@ class UserTicketModel {
       activateTime: map['activate_time'] != null
           ? (map['activate_time'] as Timestamp).toDate()
           : null,
+      inactiveTime: map['inactive_time'] != null
+          ? (map['inactive_time'] as Timestamp).toDate()
+          : null,
       qrCodeContent: map['qr_code_content'] ?? '',
+      autoActivateTime: map['auto_activate_time'] != null
+          ? (map['auto_activate_time'] as Timestamp).toDate()
+          : null,
+      numberUsed: map['number_used'] != null ? map['number_used'] as int : null,
     );
   }
 
@@ -68,7 +81,11 @@ class UserTicketModel {
       'status': status,
       'booking_time': bookingTime,
       if (activateTime != null) 'activate_time': activateTime,
+      if (inactiveTime != null) 'inactive_time': inactiveTime,
+      if (autoActivateTime != null) 'auto_activate_time': autoActivateTime,
       'qr_code_content': qrCodeContent,
+      if (numberUsed != null) 'number_used': numberUsed,
     };
   }
+  
 }

@@ -35,34 +35,36 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
     final temp = weatherData!['main']['temp'];
     final iconCode = weatherData!['weather'][0]['icon'];
+    print('aaaaaaaaaaaaaaaa $iconCode');
     final iconUrl = 'http://openweathermap.org/img/wn/$iconCode@2x.png';
 
-    return Card(
-      color: Colors.transparent,
-      elevation: 3,
-      shadowColor: Color(MyColor.pr5),
-      margin: const EdgeInsets.all(5),
-      child: Padding(
-        padding: const EdgeInsets.all(1),
-        child: Row(
-          children: [
-            Image.network(iconUrl, 
-              scale: 2.5,
-            ),
-            const SizedBox(width: 8),
-            Align(
-              alignment: Alignment.center,
-              child: Text("${temp.toString()}°C", 
-              style: const TextStyle(
-                fontSize: 14, 
-                fontWeight: FontWeight.bold, 
-                color: Colors.white
-              )
-                        ),
-            ),
-          ],
-        ),
+    return Container(
+      height: 30,
+      padding: const EdgeInsets.all(1),
+      decoration: BoxDecoration(
+        color: Color.fromARGB(166, 114, 162, 202),
+        borderRadius: BorderRadius.circular(10),
       ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Center(
+            child: Image.network(iconUrl, scale: 2.5),
+          ),
+          Center(
+            child: Text(
+              "${temp.toString()}°C",
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(width: 3),
+        ],
+      ),
+    
     );
   }
 

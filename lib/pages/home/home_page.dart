@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:metropass/apps/router/router_name.dart';
 import 'package:metropass/pages/atlas/atlas_page.dart';
 import 'package:metropass/pages/book_ticket/book_ticket_page.dart';
+import 'package:metropass/pages/chat_box/chat_box_page.dart';
 import 'package:metropass/pages/map/map_page.dart';
 import 'package:metropass/pages/my_ticket/my_ticket_page.dart';
 import 'package:metropass/pages/profile/profile.dart';
@@ -13,6 +14,7 @@ import 'package:metropass/pages/instruction/instruction_page.dart';
 import 'package:metropass/route_information/route_information.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:metropass/widgets/ai_recommend.dart';
 import 'package:metropass/widgets/weather_widget.dart';
 
 
@@ -52,7 +54,10 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 200),
+                  const SizedBox(height: 180),
+                  SizedBox(
+                    child: AiRecommend(),
+                  ),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Padding(
@@ -174,14 +179,43 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               ),
+              
               Positioned(
                 top: 60,
                 left: 10,
                 child: WeatherWidget(),
-              )
+              ),
             ],
           ),
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context, 
+              MaterialPageRoute(builder: (_) => ChatBoxPage()
+            )
+            );
+          },
+          tooltip: 'Trợ lý AI',
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Container(
+            width: 45,
+            height: 45,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                image: AssetImage('assets/images/chat.png'),
+                fit: BoxFit.cover,
+              ),
+              border: Border.all(
+                color: Color(MyColor.pr9),
+                width: 2,
+              ),
+            ),
+          )
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       ),
     );
   }
@@ -213,14 +247,14 @@ class HomePage extends StatelessWidget {
                   children: [
                     Icon(Icons.lock_outline, color: Theme.of(context).primaryColor),
                     const SizedBox(width: 4),
-                    const Text("Bạn chưa đăng nhập", style: TextStyle(fontSize: 20, color: Color(MyColor.pr9)),),
+                    Text(AppLocalizations.of(context)!.notLogin, style: TextStyle(fontSize: 20, color: Color(MyColor.pr9)),),
                   ],
                 ),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children:[
                     Text(
-                      "Bạn cần đăng nhập để tiếp tục!",
+                      AppLocalizations.of(context)!.needLogin,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
@@ -236,7 +270,7 @@ class HomePage extends StatelessWidget {
                       foregroundColor: Colors.grey[600],
                     ),
                     onPressed: () => Navigator.pop(context),
-                    child: const Text("Hủy"),
+                    child:Text(AppLocalizations.of(context)!.cancel)
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -249,8 +283,8 @@ class HomePage extends StatelessWidget {
                       Navigator.pop(context);
                       context.goNamed(RouterName.login);
                     },
-                    child: const Text(
-                      "Đăng nhập",
+                    child: Text(
+                      AppLocalizations.of(context)!.login,
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     )
                   ),

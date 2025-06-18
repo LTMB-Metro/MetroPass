@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:metropass/apps/router/router_name.dart';
 import 'package:metropass/controller/payment_method_controller.dart';
 import 'package:metropass/controller/user_ticket_controller.dart';
 import 'package:metropass/models/payment_method_model.dart';
@@ -168,32 +170,93 @@ class _PaymentPageState extends State<PaymentPage> {
                 return;
               }
               await _userTicketController.createUserTicket(widget.ticket);
-            //   print("🚀 Gọi hàm tạo link thanh toán...");
-            //   final url = await createVNPayPayment(widget.ticket.price);
-            //   if (!context.mounted) return;
-            //   if (url != null) {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (_) => VNPayWebViewPage(
-            //           paymentUrl: url,
-            //           onPaymentComplete: (bool success) async {
-            //             final message = success
-            //                 ? 'Thanh toán thành công!'
-            //                 : 'Thanh toán thất bại hoặc bị huỷ';
-            //             ScaffoldMessenger.of(context).showSnackBar(
-            //               SnackBar(content: Text(message)),
-            //             );
-            //             if(success) await _userTicketController.createUserTicket(widget.ticket);
-            //           },
-            //         ),
-            //       ),
-            //     );
-            //   } else {
-            //     ScaffoldMessenger.of(context).showSnackBar(
-            //       const SnackBar(content: Text("Không tạo được link thanh toán")),
-            //     );
-            //   }
+              // print("🚀 Gọi hàm tạo link thanh toán...");
+              // final url = await createVNPayPayment(widget.ticket.price);
+              // if (!context.mounted) return;
+              // if (url != null) {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (_) => VNPayWebViewPage(
+              //         paymentUrl: url,
+              //         onPaymentComplete: (bool success) async {
+              //           final message = success
+              //               ? 'Thanh toán thành công!'
+              //               : 'Thanh toán thất bại hoặc bị huỷ';
+              //           ScaffoldMessenger.of(context).showSnackBar(
+              //             SnackBar(content: Text(message)),
+              //           );
+              //           if (success) {
+              //             await _userTicketController.createUserTicket(widget.ticket);
+              //             if (!mounted) return;
+              //             final result = await showDialog<bool>(
+              //               context: context,
+              //               builder: (context) => AlertDialog(
+              //                 backgroundColor: Color(MyColor.white), // Màu nền dialog
+              //                 shape: RoundedRectangleBorder(
+              //                   borderRadius: BorderRadius.circular(16),
+              //                 ),
+              //                 title: Row(
+              //                   children: [
+              //                     Icon(Icons.check_circle, color: Colors.green, size: 28),
+              //                     const SizedBox(width: 8),
+              //                     Text(
+              //                       'Thanh toán thành công',
+              //                       style: TextStyle(
+              //                         color: Color(MyColor.pr9), // Màu chữ tiêu đề
+              //                         fontWeight: FontWeight.bold,
+              //                         fontSize: 18,
+              //                       ),
+              //                     ),
+              //                   ],
+              //                 ),
+              //                 content: const Text(
+              //                   'Bạn có muốn chuyển đến trang vé của tôi không?',
+              //                   style: TextStyle(
+              //                     fontSize: 16,
+              //                     color: Color(MyColor.pr8), // Màu chữ nội dung
+              //                   ),
+              //                 ),
+              //                 actionsAlignment: MainAxisAlignment.end,
+              //                 actions: [
+              //                   TextButton(
+              //                     style: TextButton.styleFrom(
+              //                       foregroundColor: Color(MyColor.pr7), // Màu chữ nút Hủy
+              //                     ),
+              //                     onPressed: () => Navigator.of(context).pop(false),
+              //                     child: const Text('Hủy'),
+              //                   ),
+              //                   ElevatedButton(
+              //                     style: ElevatedButton.styleFrom(
+              //                       backgroundColor: Color(MyColor.pr8), // Màu nền nút Đồng ý
+              //                       foregroundColor: Color(MyColor.white), // Màu chữ nút Đồng ý
+              //                       shape: RoundedRectangleBorder(
+              //                         borderRadius: BorderRadius.circular(8),
+              //                       ),
+              //                     ),
+              //                     onPressed: () => Navigator.of(context).pop(true),
+              //                     child: const Text('Đồng ý'),
+              //                   ),
+              //                 ],
+              //               ),
+              //             );
+              //             if (!mounted) return; // Thêm dòng này trước khi dùng context.goNamed
+              //             if (result == true) {
+              //               context.goNamed(
+              //                 RouterName.my_ticket,
+              //                 queryParameters: {'tapIndex': '1'},
+              //               );
+              //             }
+              //           }
+              //         },
+              //       ),
+              //     ),
+              //   );
+              // } else {
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     const SnackBar(content: Text("Không tạo được link thanh toán")),
+              //   );
+              // }
             },
             child: Text(
               'Thanh toán: ${NumberFormat('#,###', 'vi_VN').format(widget.ticket.price)} đ',
