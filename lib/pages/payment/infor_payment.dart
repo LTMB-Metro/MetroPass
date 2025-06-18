@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:metropass/controller/get_station_controller.dart';
+import 'package:metropass/controllers/get_station_controller.dart';
 import 'package:metropass/models/ticket_type_model.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:metropass/widgets/skeleton/ticket_card_skeleton.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class InforPayment extends StatefulWidget {
   final TicketTypeModel ticket;
-  const InforPayment({
-    super.key,
-    required this.ticket
-    });
+  const InforPayment({super.key, required this.ticket});
 
   @override
   State<InforPayment> createState() => _InforPaymentState();
@@ -29,15 +27,28 @@ class _InforPaymentState extends State<InforPayment> {
     if (widget.ticket.type != 'single') {
       return widget.ticket.ticketName;
     } else {
-      final from = await GetStationController(ticketCode: widget.ticket.fromCode).getStationByCode();
-      final to = await GetStationController(ticketCode: widget.ticket.toCode).getStationByCode();
-      return 'Vé lượt: $from - $to';
+      final from =
+          await GetStationController(
+            ticketCode: widget.ticket.fromCode,
+          ).getStationByCode();
+      final to =
+          await GetStationController(
+            ticketCode: widget.ticket.toCode,
+          ).getStationByCode();
+      return '${AppLocalizations.of(context)!.singleTicket}: $from - $to';
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final String price = '${NumberFormat('#,###', 'vi_VN').format(widget.ticket.price)} đ';
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final cardColor =
+        isDarkMode ? const Color(0xFF1E1E1E) : const Color(MyColor.pr2);
+    final textColor = isDarkMode ? Colors.white : const Color(MyColor.pr8);
+    final valueColor = isDarkMode ? Colors.white70 : const Color(MyColor.black);
+
+    final String price =
+        '${NumberFormat('#,###', 'vi_VN').format(widget.ticket.price)} đ';
 
     return FutureBuilder<String>(
       future: _productNameFuture,
@@ -51,37 +62,37 @@ class _InforPaymentState extends State<InforPayment> {
           );
         }
 
-        final name = snapshot.data ?? 'Không rõ';
+        final name = snapshot.data ?? AppLocalizations.of(context)!.unknown;
 
         return Container(
           margin: const EdgeInsets.symmetric(vertical: 10),
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: Color(MyColor.pr2),
+            color: cardColor,
           ),
           child: Column(
             children: [
-              buildInfor('Sản phẩm', name),
-              buildInfor('Đơn giá:', price),
-              buildInfor('Số lượng:', '1'),
+              buildInfor(AppLocalizations.of(context)!.productLabel, name),
+              buildInfor(AppLocalizations.of(context)!.unitPrice, price),
+              buildInfor(AppLocalizations.of(context)!.quantity, '1'),
               Container(
                 height: 0.5,
-                margin: EdgeInsets.symmetric(horizontal: 15),
-                decoration: BoxDecoration(
-                  color: Color(MyColor.pr8)
-                ),
+                margin: const EdgeInsets.symmetric(horizontal: 15),
+                decoration: BoxDecoration(color: textColor),
               ),
-              const SizedBox(height: 1,),
+              const SizedBox(height: 1),
               Container(
                 height: 0.5,
-                margin: EdgeInsets.symmetric(horizontal: 15),
-                decoration: BoxDecoration(
-                  color: Color(MyColor.pr8)
-                ),
+                margin: const EdgeInsets.symmetric(horizontal: 15),
+                decoration: BoxDecoration(color: textColor),
               ),
               const SizedBox(height: 10),
-              buildInfor('Thành tiền:', price, color: Color(MyColor.pr8)),
+              buildInfor(
+                AppLocalizations.of(context)!.totalAmount,
+                price,
+                color: textColor,
+              ),
             ],
           ),
         );
@@ -89,10 +100,14 @@ class _InforPaymentState extends State<InforPayment> {
     );
   }
 
-  
-  Widget buildInfor(String label, String infor, {Color? color} ){
+  Widget buildInfor(String label, String infor, {Color? color}) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final labelColor = isDarkMode ? Colors.white70 : const Color(MyColor.pr8);
+    final defaultValueColor =
+        isDarkMode ? Colors.white : const Color(MyColor.black);
+
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       child: Row(
         children: [
           Expanded(
@@ -102,9 +117,9 @@ class _InforPaymentState extends State<InforPayment> {
               child: Text(
                 label,
                 style: TextStyle(
-                  color: Color(MyColor.pr8),
+                  color: color ?? labelColor,
                   fontSize: 13,
-                  fontWeight: FontWeight.w600
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -117,9 +132,9 @@ class _InforPaymentState extends State<InforPayment> {
                 infor,
                 textAlign: TextAlign.right,
                 style: TextStyle(
-                  color: color ?? Color(MyColor.black),
+                  color: color ?? defaultValueColor,
                   fontSize: 13,
-                  fontWeight: FontWeight.w400
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),

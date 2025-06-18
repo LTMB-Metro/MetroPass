@@ -40,7 +40,10 @@ class ProfileSettingPage extends StatelessWidget {
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: const Color(MyColor.pr8)),
+          child: Container(
+            height: 1,
+            color: isDarkMode ? Colors.grey[500] : const Color(MyColor.pr8),
+          ),
         ),
       ),
       body: Padding(
@@ -457,8 +460,9 @@ class ProfileSettingPage extends StatelessWidget {
                           side: BorderSide(
                             color:
                                 isDarkMode
-                                    ? const Color(0xFF424242)
+                                    ? Colors.grey[500]!
                                     : Colors.transparent,
+                            width: isDarkMode ? 1.5 : 1,
                           ),
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 14),
@@ -583,7 +587,10 @@ class _SettingItem extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              border: isDarkMode ? Border.all(color: Colors.grey[800]!) : null,
+              border:
+                  isDarkMode
+                      ? Border.all(color: Colors.grey[600]!, width: 1)
+                      : null,
             ),
             child: Row(
               children: [

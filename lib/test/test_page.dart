@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import 'package:metropass/controller/mapbox_route_controller.dart';
+import 'package:metropass/controllers/mapbox_route_controller.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});

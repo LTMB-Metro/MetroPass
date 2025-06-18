@@ -46,7 +46,7 @@ class InstructionPage extends StatelessWidget {
           preferredSize: Size.fromHeight(1),
           child: Container(
             height: 1,
-            color: isDarkMode ? Colors.grey[800] : const Color(MyColor.pr8),
+            color: isDarkMode ? Colors.grey[500] : const Color(MyColor.pr8),
           ),
         ),
       ),
@@ -74,6 +74,10 @@ class InstructionPage extends StatelessWidget {
                       color:
                           isDarkMode ? Colors.grey[900] : Color(MyColor.white),
                       borderRadius: BorderRadius.circular(16),
+                      border:
+                          isDarkMode
+                              ? Border.all(color: Colors.grey[600]!, width: 1)
+                              : null,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black12,
@@ -142,7 +146,8 @@ class InstructionPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color:
-                            isDarkMode ? Colors.grey[800]! : Color(MyColor.pr7),
+                            isDarkMode ? Colors.grey[500]! : Color(MyColor.pr7),
+                        width: isDarkMode ? 1.5 : 1,
                       ),
                     ),
                     child: Column(
@@ -205,72 +210,95 @@ class InstructionPage extends StatelessWidget {
                           side: BorderSide(
                             color:
                                 isDarkMode
-                                    ? const Color(0xFF424242)
+                                    ? Colors.grey[500]!
                                     : Colors.transparent,
+                            width: isDarkMode ? 1.5 : 1,
                           ),
                         ),
                       ),
-                      onPressed:(){
+                      onPressed: () {
                         final currentUser = FirebaseAuth.instance.currentUser;
                         if (currentUser == null) {
                           showDialog(
                             context: context,
-                            builder: (context) => AlertDialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              title: Row(
-                                children: [
-                                  Icon(Icons.lock_outline, color: Theme.of(context).primaryColor),
-                                  const SizedBox(width: 4),
-                                  const Text("Bạn chưa đăng nhập", style: TextStyle(fontSize: 20, color: Color(MyColor.pr9)),),
-                                ],
-                              ),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: const [
-                                  Text(
-                                    "Bạn cần đăng nhập để tiếp tục!",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Color(MyColor.pr8),
+                            builder:
+                                (context) => AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  title: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.lock_outline,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.notLoggedIn,
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          color: Color(MyColor.pr9),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.loginRequired,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Color(MyColor.pr8),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  actionsAlignment: MainAxisAlignment.center,
+                                  actions: [
+                                    TextButton(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: Colors.grey[600],
+                                      ),
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text(
+                                        AppLocalizations.of(context)!.cancel,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              actionsAlignment: MainAxisAlignment.center,
-                              actions: [
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.grey[600],
-                                  ),
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text("Hủy"),
-                                ),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Theme.of(context).primaryColor,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            Theme.of(context).primaryColor,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        context.goNamed(RouterName.login);
+                                      },
+                                      child: Text(
+                                        AppLocalizations.of(context)!.login,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    context.goNamed(RouterName.login);
-                                  },
-                                  child: const Text(
-                                    "Đăng nhập",
-                                    style: TextStyle(fontSize: 16, color: Colors.white),
-                                  )
+                                  ],
                                 ),
-                              ],
-                            ),
                           );
                           return;
                         }
                         Navigator.push(
-                          context, 
+                          context,
                           MaterialPageRoute(
                             builder: (context) => const BookTicketPage(),
                           ),
@@ -313,6 +341,8 @@ class InstructionPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDarkMode ? Colors.grey[900] : Color(MyColor.white),
         borderRadius: BorderRadius.circular(16),
+        border:
+            isDarkMode ? Border.all(color: Colors.grey[600]!, width: 1) : null,
         boxShadow: [
           BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2)),
         ],
@@ -325,7 +355,7 @@ class InstructionPage extends StatelessWidget {
               color:
                   isDarkMode
                       ? const Color(0xFF424242)
-                      : secondaryColor.withOpacity(0.1),
+                      : secondaryColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: iconColor, size: 24),

@@ -2,21 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-/// Information page displaying Metro Line 1 ticket pricing and related information
 class InformationPage extends StatelessWidget {
   const InformationPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor =
+
+    // AppBar colors
+    final appBarBackgroundColor =
         isDarkMode ? Colors.black : const Color(MyColor.pr2);
+
+    // Body background colors
+    final bodyBackgroundColor =
+        isDarkMode ? Colors.black : const Color(MyColor.white);
+
     final textColor = isDarkMode ? Colors.white : const Color(MyColor.pr9);
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: bodyBackgroundColor,
       appBar: AppBar(
-        backgroundColor: backgroundColor,
+        backgroundColor: appBarBackgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: textColor),
@@ -27,6 +33,14 @@ class InformationPage extends StatelessWidget {
           style: TextStyle(color: textColor, fontSize: 16),
         ),
         centerTitle: true,
+        // Add bottom border for dark mode
+        bottom:
+            isDarkMode
+                ? PreferredSize(
+                  preferredSize: const Size.fromHeight(1.0),
+                  child: Container(color: Colors.grey[700], height: 1.0),
+                )
+                : null,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:metropass/models/user_ticket_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TicketQrDialog extends StatelessWidget {
   final UserTicketModel userTicket;
@@ -14,7 +15,7 @@ class TicketQrDialog extends StatelessWidget {
     required this.userTicket,
     required this.userTicketStatus,
     required this.showName,
-    required this.showNote
+    required this.showNote,
   });
 
   @override
@@ -30,17 +31,14 @@ class TicketQrDialog extends StatelessWidget {
           length: 2,
           child: Column(
             children: [
-              Image.asset(
-                'assets/images/logo.png',
-                width: 70,
-              ),
+              Image.asset('assets/images/logo.png', width: 70),
               Container(
                 height: 40,
                 padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                 margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 decoration: BoxDecoration(
                   color: Color(MyColor.white),
-                  borderRadius: BorderRadius.circular(20)
+                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: TabBar(
                   padding: EdgeInsets.all(0),
@@ -57,11 +55,11 @@ class TicketQrDialog extends StatelessWidget {
                       child: Container(
                         margin: EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
-                          "Mã QR", 
+                          AppLocalizations.of(context)!.qrCode,
                           style: TextStyle(
                             color: Color(MyColor.pr9),
                             fontWeight: FontWeight.bold,
-                            fontSize: 14
+                            fontSize: 14,
                           ),
                         ),
                       ),
@@ -70,11 +68,11 @@ class TicketQrDialog extends StatelessWidget {
                       child: Container(
                         margin: EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
-                          "Thông tin", 
+                          AppLocalizations.of(context)!.information,
                           style: TextStyle(
                             color: Color(MyColor.pr9),
                             fontWeight: FontWeight.bold,
-                            fontSize: 14
+                            fontSize: 14,
                           ),
                         ),
                       ),
@@ -101,13 +99,40 @@ class TicketQrDialog extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          buildTitle('Loại vé: ', showName),
-                          buildTitle('Trạng thái: ', userTicketStatus == 'unused' ? 'Chưa sử dụng' : 'Đã sử dụng'),
-                          buildTitle('Giá: ', '${NumberFormat('#,###', 'vi_VN').format(userTicket.price)} đ'),
-                          userTicketStatus == 'used' 
-                            ? buildTitle('Kích hoạt lúc: ', userTicket.activateTime == null ? 'Chưa xác định' : formatter.format(userTicket.activateTime!)) 
-                            : buildTitle('Đặt lúc', formatter.format(userTicket.bookingTime)),
-                          buildTitle('Lưu ý', showNote, Color(MyColor.red))
+                          buildTitle(
+                            AppLocalizations.of(context)!.ticketType,
+                            showName,
+                          ),
+                          buildTitle(
+                            AppLocalizations.of(context)!.status,
+                            userTicketStatus == 'unused'
+                                ? AppLocalizations.of(context)!.unused
+                                : AppLocalizations.of(context)!.used,
+                          ),
+                          buildTitle(
+                            AppLocalizations.of(context)!.price,
+                            '${NumberFormat('#,###', 'vi_VN').format(userTicket.price)} đ',
+                          ),
+                          userTicketStatus == 'used'
+                              ? buildTitle(
+                                AppLocalizations.of(context)!.activatedAt,
+                                userTicket.activateTime == null
+                                    ? AppLocalizations.of(
+                                      context,
+                                    )!.notDetermined
+                                    : formatter.format(
+                                      userTicket.activateTime!,
+                                    ),
+                              )
+                              : buildTitle(
+                                AppLocalizations.of(context)!.bookedAt,
+                                formatter.format(userTicket.bookingTime),
+                              ),
+                          buildTitle(
+                            AppLocalizations.of(context)!.note,
+                            showNote,
+                            Color(MyColor.red),
+                          ),
                         ],
                       ),
                     ),
@@ -121,12 +146,19 @@ class TicketQrDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text("Đóng", style: TextStyle(fontWeight: FontWeight.bold, color: Color(MyColor.pr9)),),
+          child: Text(
+            AppLocalizations.of(context)!.close,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color(MyColor.pr9),
+            ),
+          ),
         ),
       ],
     );
   }
-  Widget buildTitle(String title, String main, [Color? color]){
+
+  Widget buildTitle(String title, String main, [Color? color]) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
@@ -138,7 +170,7 @@ class TicketQrDialog extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: color ?? Color(MyColor.pr9)
+                color: color ?? Color(MyColor.pr9),
               ),
             ),
           ),
@@ -150,7 +182,7 @@ class TicketQrDialog extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: color?? Color(MyColor.pr8)
+                color: color ?? Color(MyColor.pr8),
               ),
             ),
           ),
