@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../controllers/auth_controller.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:metropass/pages/profile/profile_transaction.dart';
 
 /// Main profile page displaying user information and navigation menu
 class ProfilePage extends StatelessWidget {
@@ -214,7 +215,14 @@ class ProfilePage extends StatelessWidget {
             _ProfileMenuItem(
               icon: Icons.history,
               text: AppLocalizations.of(context)!.transactionHistory,
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProfileTransactionPage(),
+                  ),
+                );
+              },
             ),
             _ProfileMenuItem(
               icon: Icons.settings,
