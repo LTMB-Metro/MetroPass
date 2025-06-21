@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:metropass/controller/station_controller.dart';
+import 'package:metropass/controllers/station_controller.dart';
 import 'package:metropass/models/station_model.dart';
 import 'package:metropass/pages/scan_qr/scan_qr.dart';
 

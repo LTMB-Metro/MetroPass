@@ -17,12 +17,16 @@ class BookTicketPage extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDarkMode ? Colors.white : const Color(MyColor.pr9);
 
+    // AppBar colors
+    final appBarBackgroundColor =
+        isDarkMode ? Colors.black : const Color(MyColor.pr2);
+
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      extendBodyBehindAppBar: false,
       appBar: AppBar(
         systemOverlayStyle:
             isDarkMode ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
-        backgroundColor: Colors.transparent,
+        backgroundColor: appBarBackgroundColor,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
@@ -41,100 +45,137 @@ class BookTicketPage extends StatelessWidget {
           Image.asset('assets/images/logo.png', width: 80, height: 25),
           const SizedBox(width: 10),
         ],
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Container(height: 1, color: Color(MyColor.pr8)),
-        ),
+        // Add bottom border for dark mode
+        bottom:
+            isDarkMode
+                ? PreferredSize(
+                  preferredSize: const Size.fromHeight(1.0),
+                  child: Container(color: Colors.grey[700], height: 1.0),
+                )
+                : null,
       ),
       body: Container(
         width: double.infinity,
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors:
-                isDarkMode
-                    ? [Colors.black, Colors.black]
-                    : [Color(MyColor.pr1), Color(MyColor.pr3)],
-          ),
+          color: isDarkMode ? Colors.black : null,
+          gradient:
+              isDarkMode
+                  ? null
+                  : const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Color(MyColor.pr1), Color(MyColor.pr3)],
+                  ),
         ),
         child: SafeArea(
           child: SingleChildScrollView(
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 17, vertical: 11),
+              margin: const EdgeInsets.symmetric(horizontal: 17, vertical: 11),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // hello
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 5,
+                      vertical: 5,
+                    ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(50),
                       color:
-                          isDarkMode ? Colors.grey[900] : Color(MyColor.white),
+                          isDarkMode
+                              ? const Color(0xFF1E1E1E)
+                              : const Color(MyColor.white),
                       border: Border.all(
                         color:
-                            isDarkMode ? Colors.grey[800]! : Color(MyColor.pr7),
+                            isDarkMode
+                                ? Colors.grey[600]!
+                                : const Color(MyColor.pr7),
+                        width: isDarkMode ? 1.5 : 1,
                       ),
                     ),
                     child: Row(
                       children: [
                         StreamBuilder<DocumentSnapshot>(
-                          stream: FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(FirebaseAuth.instance.currentUser!.uid)
-                              .snapshots(),
+                          stream:
+                              FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                                  .snapshots(),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
                               return Row(
                                 children: [
                                   Shimmer.fromColors(
-                                    baseColor: Colors.grey[300]!,
-                                    highlightColor: Colors.grey[100]!,
+                                    baseColor:
+                                        isDarkMode
+                                            ? Colors.grey[700]!
+                                            : Colors.grey[300]!,
+                                    highlightColor:
+                                        isDarkMode
+                                            ? Colors.grey[500]!
+                                            : Colors.grey[100]!,
                                     child: Container(
                                       width: 40,
                                       height: 40,
                                       decoration: BoxDecoration(
-                                        color: Colors.grey[400],
-                                        shape: BoxShape.circle
+                                        color:
+                                            isDarkMode
+                                                ? Colors.grey[600]
+                                                : Colors.grey[400],
+                                        shape: BoxShape.circle,
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 8,),
+                                  const SizedBox(width: 8),
                                   Shimmer.fromColors(
-                                    baseColor: Colors.grey[300]!,
-                                    highlightColor: Colors.grey[100]!,
+                                    baseColor:
+                                        isDarkMode
+                                            ? Colors.grey[700]!
+                                            : Colors.grey[300]!,
+                                    highlightColor:
+                                        isDarkMode
+                                            ? Colors.grey[500]!
+                                            : Colors.grey[100]!,
                                     child: Container(
                                       height: 16,
                                       width: 200,
-                                      color: Colors.grey[400],
+                                      color:
+                                          isDarkMode
+                                              ? Colors.grey[600]
+                                              : Colors.grey[400],
                                     ),
                                   ),
                                 ],
                               );
                             }
-                            final data = snapshot.data!.data() as Map<String, dynamic>;
+                            final data =
+                                snapshot.data!.data() as Map<String, dynamic>;
                             final name = data['username'] ?? 'Người dùng';
                             return Row(
                               children: [
                                 CircleAvatar(
                                   radius: 20,
-                                  backgroundImage: NetworkImage(data['photoURL']),
+                                  backgroundImage: NetworkImage(
+                                    data['photoURL'],
+                                  ),
                                 ),
-                                const SizedBox(width: 8,),
+                                const SizedBox(width: 8),
                                 Text(
-                                  'Chào mừng, $name!',
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.welcomeUser(name),
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
-                                    color: Color(MyColor.pr9),
+                                    color: textColor,
                                   ),
                                 ),
                               ],
                             );
                           },
-                        )
+                        ),
                       ],
                     ),
                   ),

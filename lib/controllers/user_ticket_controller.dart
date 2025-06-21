@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:metropass/models/ticket_type_model.dart';
 import 'package:metropass/models/user_ticket_model.dart';
-
 class UserTicketController {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
@@ -102,6 +101,8 @@ class UserTicketController {
       if(ticket.numberUsed == null || ticket.numberUsed! < 1) {
         if (ticket.startStationCode == stationCode) {
           return true;
+        }else{
+          return false;
         }
       }
       if(ticket.numberUsed == null || ticket.numberUsed! == 1) {
@@ -238,6 +239,4 @@ class UserTicketController {
   }
 
 }
-
-
 

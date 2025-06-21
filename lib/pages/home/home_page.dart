@@ -17,7 +17,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:metropass/widgets/ai_recommend.dart';
 import 'package:metropass/widgets/weather_widget.dart';
 
-
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -92,6 +91,10 @@ class HomePage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isDarkMode ? Colors.black : Color(MyColor.pr1),
                     borderRadius: BorderRadius.circular(24),
+                    border:
+                        isDarkMode
+                            ? Border.all(color: Colors.white, width: 1)
+                            : null,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black26,
@@ -231,65 +234,74 @@ class HomePage extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        if (lable == AppLocalizations.of(context)!.bookTicket 
-          || lable == AppLocalizations.of(context)!.myTickets
-          || lable == AppLocalizations.of(context)!.account
-        ) {
+        if (lable == AppLocalizations.of(context)!.bookTicket ||
+            lable == AppLocalizations.of(context)!.myTickets ||
+            lable == AppLocalizations.of(context)!.account) {
           final currentUser = FirebaseAuth.instance.currentUser;
           if (currentUser == null) {
             showDialog(
               context: context,
-              builder: (context) => AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                title: Row(
-                  children: [
-                    Icon(Icons.lock_outline, color: Theme.of(context).primaryColor),
-                    const SizedBox(width: 4),
-                    Text(AppLocalizations.of(context)!.notLogin, style: TextStyle(fontSize: 20, color: Color(MyColor.pr9)),),
-                  ],
-                ),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children:[
-                    Text(
-                      AppLocalizations.of(context)!.needLogin,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color(MyColor.pr8),
+              builder:
+                  (context) => AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    title: Row(
+                      children: [
+                        Icon(
+                          Icons.lock_outline,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          AppLocalizations.of(context)!.notLoggedIn,
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Color(MyColor.pr9),
+                          ),
+                        ),
+                      ],
+                    ),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)!.loginRequired,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(MyColor.pr8),
+                          ),
+                        ),
+                      ],
+                    ),
+                    actionsAlignment: MainAxisAlignment.center,
+                    actions: [
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.grey[600],
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(AppLocalizations.of(context)!.cancel),
                       ),
-                    ),
-                  ],
-                ),
-                actionsAlignment: MainAxisAlignment.center,
-                actions: [
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.grey[600],
-                    ),
-                    onPressed: () => Navigator.pop(context),
-                    child:Text(AppLocalizations.of(context)!.cancel)
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          context.goNamed(RouterName.login);
+                        },
+                        child: Text(
+                          AppLocalizations.of(context)!.login,
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
                       ),
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      context.goNamed(RouterName.login);
-                    },
-                    child: Text(
-                      AppLocalizations.of(context)!.login,
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                    )
+                    ],
                   ),
-                ],
-              ),
             );
             return;
           }

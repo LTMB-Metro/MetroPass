@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:metropass/controller/create_ticket_type.dart';
+import 'package:metropass/controllers/create_ticket_type.dart';
 import 'package:metropass/models/station_model.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:metropass/widgets/skeleton/ticket_card_skeleton.dart';

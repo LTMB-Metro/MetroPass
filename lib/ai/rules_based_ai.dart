@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'package:metropass/controller/station_controller.dart';
-import 'package:metropass/controller/ticket_type_controller.dart';
+import 'package:metropass/controllers/station_controller.dart';
 import 'package:metropass/models/station_model.dart';
 
 Future<String> getAIResponse(String input) async {

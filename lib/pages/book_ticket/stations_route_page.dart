@@ -3,52 +3,74 @@ import 'package:flutter/services.dart';
 import 'package:metropass/models/route_model.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:metropass/widgets/station_list.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class StationsRoutePage extends StatelessWidget {
   final RouteModel route;
-  const StationsRoutePage({
-    super.key,
-    required this.route
-  });
+  const StationsRoutePage({super.key, required this.route});
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDarkMode ? Colors.white : const Color(MyColor.pr9);
+    
+    // AppBar colors
+    final appBarBackgroundColor = isDarkMode 
+        ? Colors.black 
+        : const Color(MyColor.pr2);
+
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      extendBodyBehindAppBar: false,
       appBar: AppBar(
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        backgroundColor: Colors.transparent,
+        systemOverlayStyle:
+            isDarkMode ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+        backgroundColor: appBarBackgroundColor,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back)
+          icon: Icon(Icons.arrow_back, color: textColor),
         ),
         title: Text(
-          route.name, 
+          route.name,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w500,
-            color: Color(MyColor.pr9)
+            color: textColor,
           ),
         ),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1), 
+        // Add bottom border for dark mode
+        bottom: isDarkMode ? PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
-            height: 1,
-            color: Color(MyColor.pr8),
-          )
-        ),
+            color: Colors.grey[700],
+            height: 1.0,
+          ),
+        ) : null,
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            margin: EdgeInsets.symmetric(horizontal: 17, vertical: 11),
-            child: Column(
-              children: [
-                StationList(route: route),
-                const SizedBox(height: 20,)
-              ],
+      body: Container(
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+          color: isDarkMode ? Colors.black : null,
+          gradient: isDarkMode
+              ? null
+              : const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(MyColor.pr1), Color(MyColor.pr3)],
+                ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 17, vertical: 11),
+              child: Column(
+                children: [
+                  StationList(route: route),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         ),
