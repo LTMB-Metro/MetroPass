@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:metropass/apps/router/router_name.dart';
 import 'package:metropass/pages/atlas/atlas_page.dart';
 import 'package:metropass/pages/book_ticket/book_ticket_page.dart';
+import 'package:metropass/pages/chat_box/chat_box_page.dart';
 import 'package:metropass/pages/map/map_page.dart';
 import 'package:metropass/pages/my_ticket/my_ticket_page.dart';
 import 'package:metropass/pages/profile/profile.dart';
@@ -13,6 +14,7 @@ import 'package:metropass/pages/instruction/instruction_page.dart';
 import 'package:metropass/route_information/route_information.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:metropass/widgets/ai_recommend.dart';
 import 'package:metropass/widgets/weather_widget.dart';
 
 class HomePage extends StatelessWidget {
@@ -51,7 +53,10 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 200),
+                  const SizedBox(height: 180),
+                  SizedBox(
+                    child: AiRecommend(),
+                  ),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Padding(
@@ -177,10 +182,43 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               ),
-              Positioned(top: 60, left: 10, child: WeatherWidget()),
+              
+              Positioned(
+                top: 60,
+                left: 10,
+                child: WeatherWidget(),
+              ),
             ],
           ),
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context, 
+              MaterialPageRoute(builder: (_) => ChatBoxPage()
+            )
+            );
+          },
+          tooltip: 'Trợ lý AI',
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Container(
+            width: 45,
+            height: 45,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                image: AssetImage('assets/images/chat.png'),
+                fit: BoxFit.cover,
+              ),
+              border: Border.all(
+                color: Color(MyColor.pr9),
+                width: 2,
+              ),
+            ),
+          )
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       ),
     );
   }

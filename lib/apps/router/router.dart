@@ -3,9 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:metropass/pages/atlas/atlas_page.dart';
 import 'package:metropass/pages/book_ticket/book_ticket_page.dart';
 import 'package:metropass/pages/book_ticket/stations_route_page.dart';
+import 'package:metropass/pages/chat_box/chat_box_page.dart';
 import 'package:metropass/pages/home/home_page.dart';
 import 'package:metropass/pages/my_ticket/my_ticket_page.dart';
 import 'package:metropass/pages/payment/payment_page.dart';
+import 'package:metropass/pages/scan_qr/scan_qr.dart';
+import 'package:metropass/pages/scan_qr/scan_qr_page.dart';
 import 'package:metropass/pages/welcome/welcome_page.dart';
 import 'package:metropass/pages/login/login.dart';
 import 'package:metropass/pages/register/register.dart';
@@ -30,7 +33,7 @@ class RouterCustom {
         path: '/',
         name: RouterName.welcome,
         builder: (BuildContext context, GoRouterState state) {
-          return HomePage();
+          return ScanQrPage();
         },
       ),
       GoRoute(
@@ -67,7 +70,18 @@ class RouterCustom {
         builder: (BuildContext context, GoRouterState state) {
           return const HomePage();
         },
+        routes: <RouteBase>[
+          GoRoute(
+            path: 'my_ticket',
+            name: RouterName.my_ticket,
+            builder: (BuildContext context, GoRouterState state) {
+              final tapIndex = int.tryParse(state.uri.queryParameters['tapIndex'] ?? '0');
+              return MyTicketPage(tapIndex: tapIndex);
+            },
+          ),
+        ]
       ),
+
       GoRoute(
         path: '/profile-information',
         name: RouterName.profileInformation,
@@ -110,6 +124,5 @@ class RouterCustom {
           return const RouteInformationPage();
         },
       ),
-    ],
-  );
+  ]);
 }

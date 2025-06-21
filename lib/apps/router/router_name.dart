@@ -3,6 +3,7 @@ class RouterName {
   static const String login = 'login';
   static const String register = 'register';
   static const String home = 'home';
+  static const String my_ticket = 'my-ticket';
   static const String forgotPassword = 'forgot-password';
   static const String changePassword = 'changePassword';
   static const String profile = 'profile';
