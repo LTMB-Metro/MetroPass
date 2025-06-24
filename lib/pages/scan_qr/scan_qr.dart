@@ -76,6 +76,7 @@ class _ScanQrState extends State<ScanQr> {
                       final parts = code.split('|');
                       final userTicketId = parts.isNotEmpty ? parts[0] : '';
                       final userId = parts.length > 1 ? parts[1] : '';
+                      print('==== qr $userTicketId');
                       if (userTicketId.isEmpty || userId.isEmpty) {
                         _showOverlay(false);
                         return;

@@ -77,9 +77,6 @@ class UserTicketController {
   }
   
   Future<UserTicketModel?> getUserTicketById(String userTicketId, String userId) async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) return null;
-
     final doc = await _db
         .collection('users')
         .doc(userId)
