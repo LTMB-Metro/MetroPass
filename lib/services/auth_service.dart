@@ -25,6 +25,7 @@ class AuthService {
 
       if (userCredential.user != null) {
         await userCredential.user!.updateDisplayName(username);
+        await _createUserDocument(userCredential.user!, email, username);
         return AuthResult.success(
           message: AppLocalizations.of(context)!.registerSuccess,
           user: userCredential.user,
@@ -159,11 +160,15 @@ class AuthService {
   }
 
   /// Create user document in Firestore
-  Future<void> _createUserDocument(User user, String email) async {
+  Future<void> _createUserDocument(
+    User user,
+    String email,
+    String username,
+  ) async {
     try {
       final userModel = UserModel(
         email: email,
-        username: user.displayName ?? 'Người dùng',
+        username: username,
         phonenumber: "",
         photoURL:
             user.photoURL ??
