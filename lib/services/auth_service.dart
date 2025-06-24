@@ -83,15 +83,39 @@ class AuthService {
       );
 
       final userCredential = await _auth.signInWithCredential(credential);
+      final user = userCredential.user;
+      if (user == null) {
+        return AuthResult.failure(
+          AppLocalizations.of(context)!.googleSignInFailed,
+        );
+      }
+
+      // Check if user profile exists in Firestore
+      final userDoc = await _db.collection("users").doc(user.uid).get();
+      if (!userDoc.exists) {
+        // Create new user profile
+        final userModel = UserModel(
+          email: user.email ?? '',
+          username: user.displayName ?? '',
+          phonenumber: '',
+          photoURL:
+              user.photoURL ??
+              "https://img.lovepik.com/free-png/20211204/lovepik-cartoon-avatar-png-image_401302777_wh1200.png",
+          createdAt: DateTime.now(),
+        );
+        await _db.collection("users").doc(user.uid).set(userModel.toMap());
+        print('Tạo tài liệu người dùng mới cho UID: \\${user.uid}');
+      }
+
       return AuthResult.success(
         message: AppLocalizations.of(context)!.googleSignInSuccess,
-        user: userCredential.user,
+        user: user,
       );
     } on FirebaseAuthException catch (e) {
-      print('Lỗi Firebase Auth khi đăng nhập Google: ${e.code}');
+      print('Lỗi Firebase Auth khi đăng nhập Google: \\${e.code}');
       return AuthResult.failure(_getAuthErrorMessage(e.code, context));
     } catch (e) {
-      print('Lỗi chung khi đăng nhập Google: $e');
+      print('Lỗi chung khi đăng nhập Google: \\${e}');
       return AuthResult.failure(
         AppLocalizations.of(context)!.googleSignInFailed,
       );
