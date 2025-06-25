@@ -183,7 +183,7 @@ class AppTextField extends StatelessWidget {
             controller: controller,
             obscureText: isPassword,
             keyboardType: keyboardType,
-            style: style ?? const TextStyle(fontSize: 16),
+            style: style ?? const TextStyle(fontSize: 16, color: Colors.black),
             validator: validator,
             enabled: enabled,
             maxLength: maxLength,

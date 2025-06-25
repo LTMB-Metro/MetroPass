@@ -127,6 +127,37 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
     );
   }
 
+  Future<void> _selectBirthday() async {
+    DateTime? initialDate;
+    try {
+      if (birthdayController.text.isNotEmpty) {
+        final parts = birthdayController.text.split('/');
+        if (parts.length == 3) {
+          final day = int.parse(parts[0]);
+          final month = int.parse(parts[1]);
+          final year = int.parse(parts[2]);
+          initialDate = DateTime(year, month, day);
+        }
+      }
+    } catch (_) {}
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate ?? DateTime(now.year - 18, now.month, now.day),
+      firstDate: DateTime(1900),
+      lastDate: now,
+      helpText: AppLocalizations.of(context)!.birthday,
+      locale: Localizations.localeOf(context),
+    );
+    if (picked != null) {
+      final formatted =
+          '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
+      setState(() {
+        birthdayController.text = formatted;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -260,14 +291,16 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
                     focusNode: birthdayFocusNode,
                     hintText: 'dd/mm/yy',
                     keyboardType: TextInputType.datetime,
-                    readOnly: !isEditingBirthday,
-                    showEditIcon: !isEditingBirthday,
-                    onEdit: () {
-                      setState(() {
-                        isEditingBirthday = true;
-                        FocusScope.of(context).requestFocus(birthdayFocusNode);
-                      });
-                    },
+                    readOnly: true,
+                    showEditIcon: true,
+                    onEdit: _selectBirthday,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        Icons.calendar_today,
+                        color: Color(MyColor.pr8),
+                      ),
+                      onPressed: _selectBirthday,
+                    ),
                   ),
                   // CCCD/CMND
                   _EditableField(

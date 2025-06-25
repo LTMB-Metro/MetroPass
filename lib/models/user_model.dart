@@ -8,6 +8,7 @@ class UserModel {
   final DateTime? createdAt;
   final String birthday;
   final String cccd;
+  final String role;
 
   UserModel({
     required this.email,
@@ -17,6 +18,7 @@ class UserModel {
     this.createdAt,
     this.birthday = '',
     this.cccd = '',
+    this.role = 'user',
   });
 
   /// Convert object to map for saving
@@ -29,6 +31,7 @@ class UserModel {
       'createdAt': createdAt ?? DateTime.now(),
       'birthday': birthday,
       'cccd': cccd,
+      'role': role,
     };
   }
 
@@ -42,6 +45,7 @@ class UserModel {
       createdAt: map['createdAt']?.toDate(),
       birthday: map['birthday'] ?? '',
       cccd: map['cccd'] ?? '',
+      role: map['role'] ?? 'user',
     );
   }
 
@@ -60,6 +64,7 @@ class UserModel {
     DateTime? createdAt,
     String? birthday,
     String? cccd,
+    String? role,
   }) {
     return UserModel(
       email: email ?? this.email,
@@ -69,11 +74,12 @@ class UserModel {
       createdAt: createdAt ?? this.createdAt,
       birthday: birthday ?? this.birthday,
       cccd: cccd ?? this.cccd,
+      role: role ?? this.role,
     );
   }
 
   @override
   String toString() {
-    return 'UserModel(email: $email, username: $username, phonenumber: $phonenumber, photoURL: $photoURL, createdAt: $createdAt)';
+    return 'UserModel(email: $email, username: $username, phonenumber: $phonenumber, photoURL: $photoURL, createdAt: $createdAt, role: $role)';
   }
 }
