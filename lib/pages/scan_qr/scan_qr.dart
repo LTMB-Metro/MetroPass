@@ -1,14 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:metropass/controllers/user_ticket_controller.dart';
 import 'package:metropass/models/station_model.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class ScanQr extends StatefulWidget {
   final StationModel station;
+  final String typeScan;
   const ScanQr({
     super.key,
     required this.station,
+    required this.typeScan
   });
 
   @override
@@ -21,33 +23,54 @@ class _ScanQrState extends State<ScanQr> {
   bool showResultOverlay = false;
   bool isSuccess = false;
 
-  Future<void> _validateTicket(String code, String userId ) async {
-    final ticket = await UserTicketController().getUserTicketById(code, userId);
+  Future<void> _validateTicket(String userTicketId, String userId) async {
+    final ticket = await UserTicketController().getUserTicketById(userTicketId, userId);
     if (ticket == null) {
       _showOverlay(false);
       return;
     }
+
     final result = await UserTicketController().validateAndUseTicket(
-      userTicketId: code,
+      userTicketId: userTicketId,
       userId: userId,
       stationCode: widget.station.code,
+      typeScan: widget.typeScan,
     );
-    _showOverlay(result);
+
+    // Giả sử đây là dữ liệu bạn muốn cập nhật sau 3 giây
+    final updateData = {
+      'is_scan': 'null',
+    };
+
+    _showOverlay(result, userId: userId, userTicketId: userTicketId, updateData: updateData);
   }
 
-  void _showOverlay(bool success) {
+
+  void _showOverlay(bool success, {
+  String? userId,
+  String? userTicketId,
+  Map<String, dynamic>? updateData,
+  }) {
     if (!mounted) return;
     setState(() {
       showResultOverlay = true;
       isSuccess = success;
     });
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 4), () async {
       if (!mounted) return;
       setState(() {
         showResultOverlay = false;
         isScanned = false;
         scannedCode = null;
       });
+      if (success && userId != null && userTicketId != null && updateData != null) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .collection('user_tickets')
+            .doc(userTicketId)
+            .update(updateData);
+      }
     });
   }
 

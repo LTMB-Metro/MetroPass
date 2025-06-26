@@ -38,14 +38,18 @@ class UserModel {
   /// Create UserModel from Map (from Firestore)
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      email: map['email'] ?? '',
-      username: map['username'] ?? '',
-      phonenumber: map['phonenumber'] ?? '',
-      photoURL: map['photoURL'] ?? '',
-      createdAt: map['createdAt']?.toDate(),
-      birthday: map['birthday'] ?? '',
-      cccd: map['cccd'] ?? '',
-      role: map['role'] ?? 'user',
+      email: map['email']?.toString() ?? '',
+      username: map['username']?.toString() ?? '',
+      phonenumber: map['phonenumber']?.toString() ?? '',
+      photoURL: map['photoURL']?.toString() ?? '',
+      createdAt: map['createdAt'] is Timestamp
+          ? (map['createdAt'] as Timestamp).toDate()
+          : (map['createdAt'] is String
+              ? DateTime.tryParse(map['createdAt'])
+              : null),
+      birthday: map['birthday']?.toString() ?? '',
+      cccd: map['cccd']?.toString() ?? '',
+      role: map['role']?.toString() ?? 'user',
     );
   }
 
