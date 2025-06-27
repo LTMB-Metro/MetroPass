@@ -1,14 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:metropass/apps/router/router_name.dart';
+import 'package:metropass/controllers/auth_controller.dart';
+import 'package:metropass/services/storage_service.dart';
+import 'package:provider/provider.dart';
 import '../../themes/colors/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class WelcomePage extends StatelessWidget {
+class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
 
   @override
+  State<WelcomePage> createState() => _WelcomePageState();
+}
+
+class _WelcomePageState extends State<WelcomePage> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final auth = Provider.of<AuthController>(context, listen: false);
+
+      await Future.delayed(const Duration(seconds: 1));
+      await auth.autoLogoutSilently();
+
+      if (!mounted) return;
+
+      // ✅ Chờ tối đa 3 giây để status chuyển sang authenticated
+      for (int i = 0; i < 30; i++) {
+        if (auth.status == AuthStatus.authenticated || auth.status == AuthStatus.unauthenticated) {
+          break;
+        }
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
+
+      if (!mounted) return;
+
+      if (auth.status == AuthStatus.authenticated) {
+        await StorageService().updateLastOpenTime();
+        context.goNamed(RouterName.home);
+      } else {
+        context.goNamed(RouterName.login);
+      }
+    });
+  }
+
+
+
+  @override
   Widget build(BuildContext context) {
+    print('===== welcome');
     return PopScope(
       canPop: false, 
       onPopInvokedWithResult: (didPop, result) {
@@ -91,13 +133,13 @@ class WelcomePage extends StatelessWidget {
                   ),
                   const Spacer(),
                   // Button start
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 40),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: _buildStartButton(context),
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.only(bottom: 40),
+                  //   child: Align(
+                  //     alignment: Alignment.centerRight,
+                  //     child: _buildStartButton(context),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

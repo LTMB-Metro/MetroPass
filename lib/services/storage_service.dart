@@ -4,6 +4,7 @@ class StorageService {
   static const String _rememberMeKey = 'remember_me';
   static const String _savedEmailKey = 'saved_email';
   static const String _savedPasswordKey = 'saved_password';
+  static const String _lastOpenKey = 'last_open_time';
 
   /// Save login credentials to local storage
   Future<void> saveLoginCredentials({
@@ -31,6 +32,28 @@ class StorageService {
       print('Lỗi khi lưu thông tin đăng nhập: $e');
       throw Exception('Lỗi lưu thông tin đăng nhập: $e');
     }
+  }
+
+  Future<void> updateLastOpenTime() async {
+    print('==== update');
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_lastOpenKey, DateTime.now().millisecondsSinceEpoch);
+  }
+
+  Future<bool> shouldAutoLogout() async {
+    print('==== should');
+    final prefs = await SharedPreferences.getInstance();
+    final lastOpenMillis = prefs.getInt(_lastOpenKey);
+    print('===🕒 last_open_time = $lastOpenMillis → ${DateTime.fromMillisecondsSinceEpoch(lastOpenMillis ?? 0)}');
+
+    if (lastOpenMillis == null) return false;
+
+    final lastOpenTime = DateTime.fromMillisecondsSinceEpoch(lastOpenMillis);
+    final now = DateTime.now();
+    final differenceInDays = now.difference(lastOpenTime).inDays;
+      return differenceInDays >= 7;
+      // final differenceInMinutes = now.difference(lastOpenTime).inMinutes;
+      // return differenceInMinutes >= 5;
   }
 
   /// Get saved login credentials

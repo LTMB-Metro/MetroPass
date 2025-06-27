@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:metropass/controllers/auth_controller.dart';
 import 'package:metropass/pages/atlas/atlas_page.dart';
 import 'package:metropass/pages/book_ticket/book_ticket_page.dart';
 import 'package:metropass/pages/book_ticket/stations_route_page.dart';
@@ -18,6 +19,7 @@ import 'package:metropass/apps/router/router_name.dart';
 import 'package:metropass/test/test_page.dart';
 import 'package:metropass/widgets/skeleton/ticket_card_skeleton.dart';
 import 'package:metropass/widgets/ticket_normal_list.dart';
+import 'package:provider/provider.dart';
 import '../../pages/profile/profile.dart';
 import 'package:metropass/pages/profile/profile_infomation.dart';
 import 'package:metropass/pages/profile/profile_ticket.dart';
@@ -33,7 +35,7 @@ class RouterCustom {
         path: '/',
         name: RouterName.welcome,
         builder: (BuildContext context, GoRouterState state) {
-          return HomePage();
+          return WelcomePage();
         },
       ),
       GoRoute(
