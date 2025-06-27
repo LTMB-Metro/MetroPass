@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:metropass/controllers/user_ticket_controller.dart';
 import 'package:metropass/models/user_ticket_model.dart';
+import 'package:metropass/pages/my_ticket/success_page.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:metropass/widgets/ticket_qr_dialog.dart';
 
@@ -42,8 +44,8 @@ class MyTicketCard extends StatelessWidget {
         showName = userTicket.ticketName;
         showHsd = userTicket.note;
         if(userTicket.activateTime != null){
-          final DateTime activatedTime = userTicket.activateTime!.add(Duration(days: userTicket.duration*24));
-          showHsd = 'Hết hiệu lực vào lúc ${formatter.format(activatedTime)}';
+          final DateTime inactiveTime = userTicket.inactiveTime!;
+          showHsd = 'Hết hiệu lực vào lúc ${formatter.format(inactiveTime)}';
         } else{
           showHsd = 'Chưa xác định';
         }
@@ -65,13 +67,57 @@ class MyTicketCard extends StatelessWidget {
       onTap: () {
         showDialog(
           context: context,
-          builder: (context) => TicketQrDialog(
-            userTicket: userTicket,
-            userTicketStatus: userTicketStatus,
-            showName: showName,
-            showNote: showHsd,
-            showQr: userTicketStatus == 'unused' || userTicketStatus == 'active' ? true : false,
-          ),
+          builder: (context) {
+            final statusStream = UserTicketController().watchTicketStatusChange(
+              userId: userTicket.userId,
+              userTicketId: userTicket.userTicketId,
+              initialStatus: userTicketStatus,
+            );
+
+            final isScanStream = UserTicketController().watchTicketScanStatusChange(
+              userId: userTicket.userId,
+              userTicketId: userTicket.userTicketId,
+              initialIsScan: userTicket.isScan?.toString(),
+            );
+
+            return StreamBuilder<bool>(
+              stream: statusStream,
+              builder: (context, statusSnapshot) {
+                if (statusSnapshot.hasData && statusSnapshot.data == true) {
+                  // ✅ Đóng dialog nếu status thay đổi
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).pop();
+                    }
+                  });
+                }
+                return StreamBuilder<String>(
+                  stream: isScanStream,
+                  builder: (context, scanSnapshot) {
+                    final value = scanSnapshot.data;
+
+                    if ((value == "true" || value == "false")) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Future.microtask(() {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (context) => SuccessPage(isScan: value,)),
+                          );
+                        });
+                      });
+                    }
+
+                    return TicketQrDialog(
+                      userTicket: userTicket,
+                      userTicketStatus: userTicketStatus,
+                      showName: showName,
+                      showNote: showHsd,
+                      showQr: userTicketStatus == 'unused' || userTicketStatus == 'active',
+                    );
+                  },
+                );
+              },
+            );
+          },
         );
       },
       child: Container(

@@ -19,16 +19,23 @@ class StationModel {
     required this.type,
     required this.zone,
   });
-  factory StationModel.fromMap(Map<String, dynamic> map, String id){
+  factory StationModel.fromMap(Map<String, dynamic> map, String id) {
+    final dynamic locationData = map['location'];
+    final GeoPoint safeLocation = locationData is GeoPoint
+        ? locationData
+        : const GeoPoint(0.0, 0.0);
+
     return StationModel(
       id: id,
-      code: map['code'] ?? '', 
-      location: map['location'] ?? const GeoPoint(0.0, 0.0), 
-      orderIndex: map['order_index'] ?? 0,
-      stationName: map['station_name'] ?? '',
-      status: map['status'] ?? '',
-      type: map['type'] ?? '',
-      zone: map['zone'] ?? '',
+      code: map['code']?.toString() ?? '',
+      location: safeLocation,
+      orderIndex: map['order_index'] is int
+          ? map['order_index']
+          : int.tryParse(map['order_index'].toString()) ?? 0,
+      stationName: map['station_name']?.toString() ?? '',
+      status: map['status']?.toString() ?? '',
+      type: map['type']?.toString() ?? '',
+      zone: map['zone']?.toString() ?? '',
     );
   }
 }

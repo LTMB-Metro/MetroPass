@@ -18,6 +18,8 @@ class UserTicketModel {
   final DateTime? autoActivateTime;
   final String qrCodeContent;
   final int? numberUsed;
+  final String? typeScan;
+  final String? isScan;
 
   UserTicketModel({
     required this.userTicketId,
@@ -37,21 +39,23 @@ class UserTicketModel {
     required this.qrCodeContent,
     this.autoActivateTime,
     this.numberUsed,
+    this.typeScan,
+    this.isScan
   });
 
   factory UserTicketModel.fromMap(Map<String, dynamic> map, String id) {
     return UserTicketModel(
-      userTicketId: id, 
-      userId: map['user_id'] ?? '',
-      ticketName: map['ticket_name'] ?? '',
-      ticketType: map['ticket_type'] ?? '',
-      note: map['note'] ?? '',
-      price: map['price'] ?? 0,
-      description: map['description'] ?? '',
-      duration: map['duration'] ?? 0,
-      startStationCode: map['start_station_code'] ?? '',
-      endStationCode: map['end_station_code'] ?? '',
-      status: map['status'] ?? 'unused',
+      userTicketId: id,
+      userId: map['user_id']?.toString() ?? '',
+      ticketName: map['ticket_name']?.toString() ?? '',
+      ticketType: map['ticket_type']?.toString() ?? '',
+      note: map['note']?.toString() ?? '',
+      description: map['description']?.toString() ?? '',
+      price: map['price'] is int ? map['price'] : int.tryParse(map['price'].toString()) ?? 0,
+      duration: map['duration'] is int ? map['duration'] : int.tryParse(map['duration'].toString()) ?? 0,
+      startStationCode: map['start_station_code']?.toString() ?? '',
+      endStationCode: map['end_station_code']?.toString() ?? '',
+      status: map['status']?.toString() ?? 'unused',
       bookingTime: (map['booking_time'] as Timestamp).toDate(),
       activateTime: map['activate_time'] != null
           ? (map['activate_time'] as Timestamp).toDate()
@@ -59,13 +63,16 @@ class UserTicketModel {
       inactiveTime: map['inactive_time'] != null
           ? (map['inactive_time'] as Timestamp).toDate()
           : null,
-      qrCodeContent: map['qr_code_content'] ?? '',
+      qrCodeContent: map['qr_code_content']?.toString() ?? '',
       autoActivateTime: map['auto_activate_time'] != null
           ? (map['auto_activate_time'] as Timestamp).toDate()
           : null,
-      numberUsed: map['number_used'] != null ? map['number_used'] as int : null,
+      numberUsed: map['number_used'] is int ? map['number_used'] : int.tryParse(map['number_used'].toString()),
+      typeScan: map['type_scan']?.toString(),
+      isScan: map['is_scan']?.toString() ?? '',
     );
   }
+
 
   Map<String, dynamic> toMap() {
     return {
@@ -85,6 +92,8 @@ class UserTicketModel {
       if (autoActivateTime != null) 'auto_activate_time': autoActivateTime,
       'qr_code_content': qrCodeContent,
       if (numberUsed != null) 'number_used': numberUsed,
+      'type_scan': typeScan,
+      if (isScan != null) 'is_scan': isScan,
     };
   }
   
