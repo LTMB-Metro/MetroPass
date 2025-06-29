@@ -46,6 +46,7 @@ class _ProfileTransactionPageState extends State<ProfileTransactionPage> {
 
     try {
       await _loadTransactionsFromUserTickets();
+      _formatTransactionDescriptions();
     } catch (e) {
       debugPrint('Lỗi khi tải giao dịch: $e');
     } finally {
@@ -106,6 +107,31 @@ class _ProfileTransactionPageState extends State<ProfileTransactionPage> {
       _allTransactions = [];
       _filteredTransactions = [];
     }
+  }
+
+  void _formatTransactionDescriptions() {
+    final localizations = AppLocalizations.of(context)!;
+    _allTransactions =
+        _allTransactions.map((transaction) {
+          if (transaction.type == 'ticket_purchase') {
+            // Extract ticket name from description (remove "Mua " prefix)
+            final ticketName = transaction.description.replaceFirst('Mua ', '');
+            return TransactionModel(
+              transactionId: transaction.transactionId,
+              userId: transaction.userId,
+              type: transaction.type,
+              description: localizations.purchaseTicket(ticketName),
+              amount: transaction.amount,
+              transactionCode: transaction.transactionCode,
+              createdAt: transaction.createdAt,
+              status: transaction.status,
+              relatedTicketId: transaction.relatedTicketId,
+              metadata: transaction.metadata,
+            );
+          }
+          return transaction;
+        }).toList();
+    _filteredTransactions = List.from(_allTransactions);
   }
 
   String _mapTicketStatusToTransactionStatus(String ticketStatus) {
@@ -217,7 +243,7 @@ class _ProfileTransactionPageState extends State<ProfileTransactionPage> {
           IconButton(
             icon: const Icon(Icons.refresh_outlined),
             onPressed: _loadTransactions,
-            tooltip: 'Làm mới',
+            tooltip: localizations.refresh,
           ),
         ],
       ),
@@ -334,7 +360,7 @@ class _ProfileTransactionPageState extends State<ProfileTransactionPage> {
             ),
             const SizedBox(height: 24),
             Text(
-              'Chưa có giao dịch nào',
+              localizations.noTransactions,
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w600,
                 color:
@@ -345,7 +371,7 @@ class _ProfileTransactionPageState extends State<ProfileTransactionPage> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Hãy mua vé để xem lịch sử giao dịch của bạn',
+              localizations.noTransactionsMessage,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color:

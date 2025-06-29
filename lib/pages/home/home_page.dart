@@ -16,6 +16,8 @@ import 'package:metropass/themes/colors/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:metropass/widgets/ai_recommend.dart';
 import 'package:metropass/widgets/weather_widget.dart';
+import 'package:provider/provider.dart';
+import 'package:metropass/pages/my_app.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -26,200 +28,290 @@ class HomePage extends StatelessWidget {
     final backgroundColor = isDarkMode ? Colors.black : Colors.white;
     final textColor = isDarkMode ? Colors.white : const Color(MyColor.black);
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-      ),
-      child: Scaffold(
-        backgroundColor: backgroundColor,
-        extendBody: true,
-        body: SingleChildScrollView(
-          child: Stack(
-            children: [
-              Column(
+    return Stack(
+      children: [
+        AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.dark.copyWith(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.light,
+          ),
+          child: Scaffold(
+            backgroundColor: backgroundColor,
+            extendBody: true,
+            body: SingleChildScrollView(
+              child: Stack(
                 children: [
-                  Container(
-                    height: 376,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/metromap.png'),
-                        fit: BoxFit.cover,
-                      ),
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(25),
-                        bottomRight: Radius.circular(25),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 180),
-                  SizedBox(
-                    child: AiRecommend(),
-                  ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 10),
-                      child: Row(
-                        children: [
-                          buildhelp(
-                            context,
-                            AssetImage('assets/images/help.png'),
-                            AppLocalizations.of(context)!.help1,
-                            InstructionPage(),
+                  Column(
+                    children: [
+                      Container(
+                        height: 376,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/Metromap.png'),
+                            fit: BoxFit.cover,
                           ),
-                          buildhelp(
-                            context,
-                            AssetImage('assets/images/help2.png'),
-                            AppLocalizations.of(context)!.help2,
-                            RouteInformationPage(),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(25),
+                            bottomRight: Radius.circular(25),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 180),
+                      SizedBox(child: AiRecommend()),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Row(
+                            children: [
+                              buildhelp(
+                                context,
+                                AssetImage('assets/images/help.png'),
+                                AppLocalizations.of(context)!.help1,
+                                InstructionPage(),
+                              ),
+                              buildhelp(
+                                context,
+                                AssetImage('assets/images/help2.png'),
+                                AppLocalizations.of(context)!.help2,
+                                RouteInformationPage(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                    ],
+                  ),
+                  Positioned(
+                    top: 312,
+                    left: 17,
+                    right: 17,
+                    child: Container(
+                      padding: EdgeInsets.only(bottom: 10),
+                      decoration: BoxDecoration(
+                        color: isDarkMode ? Colors.black : Color(MyColor.pr1),
+                        borderRadius: BorderRadius.circular(24),
+                        border:
+                            isDarkMode
+                                ? Border.all(color: Colors.white, width: 1)
+                                : null,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 5,
+                            offset: Offset(0, 1),
                           ),
                         ],
                       ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 0),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 5),
+                            Image.asset(
+                              'assets/images/logo.png',
+                              width: 79,
+                              height: 25,
+                            ),
+                            const SizedBox(height: 24),
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: buildIcon(
+                                    context,
+                                    Image.asset('assets/images/ticket1.png'),
+                                    AppLocalizations.of(context)!.bookTicket,
+                                    BookTicketPage(),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: buildIcon(
+                                    context,
+                                    Image.asset('assets/images/ticket2.png'),
+                                    AppLocalizations.of(context)!.myTickets,
+                                    MyTicketPage(),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: buildIcon(
+                                    context,
+                                    Image.asset('assets/images/ticket3.png'),
+                                    AppLocalizations.of(context)!.info,
+                                    InformationPage(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: buildIcon(
+                                    context,
+                                    Image.asset('assets/images/map1.png'),
+                                    AppLocalizations.of(context)!.atlas,
+                                    AtlasPage(),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: buildIcon(
+                                    context,
+                                    Image.asset('assets/images/map2.png'),
+                                    AppLocalizations.of(context)!.map,
+                                    MapPage(),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: buildIcon(
+                                    context,
+                                    Image.asset('assets/images/profile.png'),
+                                    AppLocalizations.of(context)!.account,
+                                    ProfilePage(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  Positioned(top: 60, left: 10, child: WeatherWidget()),
                 ],
               ),
-              Positioned(
-                top: 312,
-                left: 17,
-                right: 17,
-                child: Container(
-                  padding: EdgeInsets.only(bottom: 10),
-                  decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.black : Color(MyColor.pr1),
-                    borderRadius: BorderRadius.circular(24),
-                    border:
-                        isDarkMode
-                            ? Border.all(color: Colors.white, width: 1)
-                            : null,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 5,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => ChatBoxPage()),
+                );
+              },
+              tooltip: 'Trợ lý AI',
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              child: Container(
+                width: 45,
+                height: 45,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/chat.png'),
+                    fit: BoxFit.cover,
                   ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 0),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 5),
-                        Image.asset(
-                          'assets/images/logo.png',
-                          width: 79,
-                          height: 25,
-                        ),
-                        const SizedBox(height: 24),
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: buildIcon(
-                                context,
-                                Image.asset('assets/images/ticket1.png'),
-                                AppLocalizations.of(context)!.bookTicket,
-                                BookTicketPage(),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: buildIcon(
-                                context,
-                                Image.asset('assets/images/ticket2.png'),
-                                AppLocalizations.of(context)!.myTickets,
-                                MyTicketPage(),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: buildIcon(
-                                context,
-                                Image.asset('assets/images/ticket3.png'),
-                                AppLocalizations.of(context)!.info,
-                                InformationPage(),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: buildIcon(
-                                context,
-                                Image.asset('assets/images/map1.png'),
-                                AppLocalizations.of(context)!.atlas,
-                                AtlasPage(),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: buildIcon(
-                                context,
-                                Image.asset('assets/images/map2.png'),
-                                AppLocalizations.of(context)!.map,
-                                MapPage(),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: buildIcon(
-                                context,
-                                Image.asset('assets/images/profile.png'),
-                                AppLocalizations.of(context)!.account,
-                                ProfilePage(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                  border: Border.all(color: Color(MyColor.pr9), width: 2),
                 ),
               ),
-              
-              Positioned(
-                top: 60,
-                left: 10,
-                child: WeatherWidget(),
-              ),
-            ],
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.miniEndTop,
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context, 
-              MaterialPageRoute(builder: (_) => ChatBoxPage()
-            )
-            );
-          },
-          tooltip: 'Trợ lý AI',
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: Container(
-            width: 45,
-            height: 45,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                image: AssetImage('assets/images/chat.png'),
-                fit: BoxFit.cover,
-              ),
-              border: Border.all(
-                color: Color(MyColor.pr9),
-                width: 2,
-              ),
-            ),
-          )
+        // Icon quả địa cầu luôn cố định góc phải trên cùng
+        Positioned(
+          top: 110,
+          right: 20,
+          child: Builder(
+            builder: (context) {
+              return Container(
+                width: 45,
+                height: 45,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.85),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.blueAccent, width: 2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.language,
+                    color: Colors.blueAccent,
+                    size: 26,
+                  ),
+                  tooltip: 'Language',
+                  onPressed: () async {
+                    final localeProvider = Provider.of<LocaleProvider>(
+                      context,
+                      listen: false,
+                    );
+                    final currentLocale = localeProvider.locale.languageCode;
+                    final selected = await showDialog<String>(
+                      context: context,
+                      builder:
+                          (context) => AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            title: Text(
+                              AppLocalizations.of(context)!.language,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListTile(
+                                  leading: Text(
+                                    '🇻🇳',
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  title: Text(
+                                    AppLocalizations.of(context)!.vietnamese,
+                                  ),
+                                  trailing:
+                                      currentLocale == 'vi'
+                                          ? Icon(
+                                            Icons.check,
+                                            color: Colors.green,
+                                          )
+                                          : null,
+                                  onTap: () => Navigator.pop(context, 'vi'),
+                                ),
+                                SizedBox(height: 8),
+                                ListTile(
+                                  leading: Text(
+                                    '🇺🇸',
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  title: Text(
+                                    AppLocalizations.of(context)!.english,
+                                  ),
+                                  trailing:
+                                      currentLocale == 'en'
+                                          ? Icon(
+                                            Icons.check,
+                                            color: Colors.green,
+                                          )
+                                          : null,
+                                  onTap: () => Navigator.pop(context, 'en'),
+                                ),
+                              ],
+                            ),
+                          ),
+                    );
+                    if (selected != null && selected != currentLocale) {
+                      await localeProvider.setLocale(Locale(selected));
+                    }
+                  },
+                ),
+              );
+            },
+          ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
-      ),
+      ],
     );
   }
 

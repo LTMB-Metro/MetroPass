@@ -60,6 +60,7 @@ class _OptimizedVerificationPageState
     await handleAsyncAction(
       () => resetController.verifyOTPAndSendResetEmail(
         _codeController.text.trim(),
+        context,
       ),
       successMessage: AppLocalizations.of(context)!.verificationSuccess,
       errorMessage:

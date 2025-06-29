@@ -34,6 +34,17 @@ class _OptimizedForgotPasswordPageState
     _emailController.addListener(_validateEmail);
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Cleanup OTPs khi vào trang
+    final resetController = Provider.of<PasswordResetController>(
+      context,
+      listen: false,
+    );
+    resetController.cleanupExpiredOTPs();
+  }
+
   void _validateEmail() {
     setState(() {
       _emailError = Validators.validateEmail(_emailController.text);
