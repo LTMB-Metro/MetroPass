@@ -8,6 +8,7 @@ class UserModel {
   final DateTime? createdAt;
   final String birthday;
   final String cccd;
+  final String role;
 
   UserModel({
     required this.email,
@@ -17,6 +18,7 @@ class UserModel {
     this.createdAt,
     this.birthday = '',
     this.cccd = '',
+    this.role = 'user',
   });
 
   /// Convert object to map for saving
@@ -29,19 +31,25 @@ class UserModel {
       'createdAt': createdAt ?? DateTime.now(),
       'birthday': birthday,
       'cccd': cccd,
+      'role': role,
     };
   }
 
   /// Create UserModel from Map (from Firestore)
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      email: map['email'] ?? '',
-      username: map['username'] ?? '',
-      phonenumber: map['phonenumber'] ?? '',
-      photoURL: map['photoURL'] ?? '',
-      createdAt: map['createdAt']?.toDate(),
-      birthday: map['birthday'] ?? '',
-      cccd: map['cccd'] ?? '',
+      email: map['email']?.toString() ?? '',
+      username: map['username']?.toString() ?? '',
+      phonenumber: map['phonenumber']?.toString() ?? '',
+      photoURL: map['photoURL']?.toString() ?? '',
+      createdAt: map['createdAt'] is Timestamp
+          ? (map['createdAt'] as Timestamp).toDate()
+          : (map['createdAt'] is String
+              ? DateTime.tryParse(map['createdAt'])
+              : null),
+      birthday: map['birthday']?.toString() ?? '',
+      cccd: map['cccd']?.toString() ?? '',
+      role: map['role']?.toString() ?? 'user',
     );
   }
 
@@ -60,6 +68,7 @@ class UserModel {
     DateTime? createdAt,
     String? birthday,
     String? cccd,
+    String? role,
   }) {
     return UserModel(
       email: email ?? this.email,
@@ -69,11 +78,12 @@ class UserModel {
       createdAt: createdAt ?? this.createdAt,
       birthday: birthday ?? this.birthday,
       cccd: cccd ?? this.cccd,
+      role: role ?? this.role,
     );
   }
 
   @override
   String toString() {
-    return 'UserModel(email: $email, username: $username, phonenumber: $phonenumber, photoURL: $photoURL, createdAt: $createdAt)';
+    return 'UserModel(email: $email, username: $username, phonenumber: $phonenumber, photoURL: $photoURL, createdAt: $createdAt, role: $role)';
   }
 }

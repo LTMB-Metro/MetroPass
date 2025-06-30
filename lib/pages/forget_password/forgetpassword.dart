@@ -6,7 +6,6 @@ import 'package:metropass/constants/app_constants.dart';
 import 'package:metropass/pages/base_auth_page.dart';
 import 'package:metropass/widgets/shared_widgets.dart';
 import '../../controllers/password_reset_controller.dart';
-import '../../themes/colors/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../utils/validators.dart';
 
@@ -33,6 +32,17 @@ class _OptimizedForgotPasswordPageState
   void initState() {
     super.initState();
     _emailController.addListener(_validateEmail);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Cleanup OTPs khi vào trang
+    final resetController = Provider.of<PasswordResetController>(
+      context,
+      listen: false,
+    );
+    resetController.cleanupExpiredOTPs();
   }
 
   void _validateEmail() {

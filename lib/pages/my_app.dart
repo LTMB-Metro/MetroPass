@@ -6,15 +6,68 @@ import '../controllers/password_reset_controller.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../themes/theme_provider.dart';
+import '../services/storage_service.dart';
 
 /// Provider class for managing application locale
 class LocaleProvider extends ChangeNotifier {
   Locale _locale = const Locale('vi');
+  final StorageService _storageService = StorageService();
+
   Locale get locale => _locale;
-  void setLocale(Locale locale) {
+
+  LocaleProvider() {
+    _loadSavedLocale();
+  }
+
+  /// Load saved locale from storage
+  Future<void> _loadSavedLocale() async {
+    try {
+      final savedLocale = await _storageService.getLocale();
+      if (savedLocale != null) {
+        _locale = Locale(savedLocale);
+        notifyListeners();
+      } else {
+        // If no saved locale, try to detect system locale
+        await _detectSystemLocale();
+      }
+    } catch (e) {
+      // Fallback to Vietnamese
+      _locale = const Locale('vi');
+      notifyListeners();
+    }
+  }
+
+  /// Detect system locale and set appropriate language
+  Future<void> _detectSystemLocale() async {
+    try {
+      // Use Platform.localeName to get system locale
+      final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
+      if (systemLocale.languageCode == 'vi') {
+        _locale = const Locale('vi');
+      } else {
+        _locale = const Locale('en');
+      }
+      notifyListeners();
+    } catch (e) {
+      // Fallback to Vietnamese
+      _locale = const Locale('vi');
+      notifyListeners();
+    }
+  }
+
+  /// Set locale and save to storage
+  Future<void> setLocale(Locale locale) async {
     if (_locale == locale) return;
+
     _locale = locale;
     notifyListeners();
+
+    // Save to storage
+    try {
+      await _storageService.saveLocale(locale.languageCode);
+    } catch (e) {
+      print('Failed to save locale: $e');
+    }
   }
 }
 
@@ -88,7 +141,7 @@ class MyApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            supportedLocales: const [Locale('en'), Locale('vi')],
+            supportedLocales: const [Locale('vi'), Locale('en')],
           );
         },
       ),

@@ -40,7 +40,10 @@ class ProfileSettingPage extends StatelessWidget {
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: const Color(MyColor.pr8)),
+          child: Container(
+            height: 1,
+            color: isDarkMode ? Colors.grey[500] : const Color(MyColor.pr8),
+          ),
         ),
       ),
       body: Padding(
@@ -350,51 +353,73 @@ class ProfileSettingPage extends StatelessWidget {
                     final selected = await showDialog<String>(
                       context: context,
                       builder:
-                          (context) => SimpleDialog(
-                            title: Text(AppLocalizations.of(context)!.language),
-                            children: [
-                              SimpleDialogOption(
-                                onPressed: () => Navigator.pop(context, 'vi'),
-                                child: Row(
-                                  children: [
-                                    if (currentLocale == 'vi')
-                                      Icon(Icons.check, color: Colors.green),
-                                    const SizedBox(width: 8),
-                                    Text(
+                          (context) => AlertDialog(
+                            backgroundColor: backgroundColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            title: Text(
+                              AppLocalizations.of(context)!.language,
+                              style: TextStyle(
+                                color: textColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _LanguageOption(
+                                  title:
                                       AppLocalizations.of(context)!.vietnamese,
-                                    ),
-                                  ],
+                                  subtitle: 'Tiếng Việt',
+                                  flag: '🇻🇳',
+                                  isSelected: currentLocale == 'vi',
+                                  onTap: () => Navigator.pop(context, 'vi'),
+                                  textColor: textColor,
                                 ),
-                              ),
-                              SimpleDialogOption(
-                                onPressed: () => Navigator.pop(context, 'en'),
-                                child: Row(
-                                  children: [
-                                    if (currentLocale == 'en')
-                                      Icon(Icons.check, color: Colors.green),
-                                    const SizedBox(width: 8),
-                                    Text(AppLocalizations.of(context)!.english),
-                                  ],
+                                const SizedBox(height: 12),
+                                _LanguageOption(
+                                  title: AppLocalizations.of(context)!.english,
+                                  subtitle: 'English',
+                                  flag: '🇺🇸',
+                                  isSelected: currentLocale == 'en',
+                                  onTap: () => Navigator.pop(context, 'en'),
+                                  textColor: textColor,
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                     );
                     if (selected != null && selected != currentLocale) {
-                      localeProvider.setLocale(Locale(selected));
+                      await localeProvider.setLocale(Locale(selected));
                     }
                   },
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        Provider.of<LocaleProvider>(
-                                  context,
-                                ).locale.languageCode ==
-                                'en'
-                            ? AppLocalizations.of(context)!.english
-                            : AppLocalizations.of(context)!.vietnamese,
-                        style: TextStyle(color: textColor, fontSize: 15),
+                      Consumer<LocaleProvider>(
+                        builder: (context, localeProvider, _) {
+                          final currentLocale =
+                              localeProvider.locale.languageCode;
+                          return Row(
+                            children: [
+                              Text(
+                                currentLocale == 'vi' ? '🇻🇳' : '🇺🇸',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                currentLocale == 'en'
+                                    ? AppLocalizations.of(context)!.english
+                                    : AppLocalizations.of(context)!.vietnamese,
+                                style: TextStyle(
+                                  color: textColor,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                       const SizedBox(width: 4),
                       Icon(
@@ -457,8 +482,9 @@ class ProfileSettingPage extends StatelessWidget {
                           side: BorderSide(
                             color:
                                 isDarkMode
-                                    ? const Color(0xFF424242)
+                                    ? Colors.grey[500]!
                                     : Colors.transparent,
+                            width: isDarkMode ? 1.5 : 1,
                           ),
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 14),
@@ -583,7 +609,10 @@ class _SettingItem extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              border: isDarkMode ? Border.all(color: Colors.grey[800]!) : null,
+              border:
+                  isDarkMode
+                      ? Border.all(color: Colors.grey[600]!, width: 1)
+                      : null,
             ),
             child: Row(
               children: [
@@ -603,6 +632,42 @@ class _SettingItem extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _LanguageOption extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String flag;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final Color textColor;
+
+  const _LanguageOption({
+    required this.title,
+    required this.subtitle,
+    required this.flag,
+    required this.isSelected,
+    required this.onTap,
+    required this.textColor,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(
+        title,
+        style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(color: textColor, fontSize: 14),
+      ),
+      leading: Text(flag, style: const TextStyle(fontSize: 20)),
+      trailing: isSelected ? Icon(Icons.check, color: Colors.green) : null,
+      onTap: onTap,
     );
   }
 }

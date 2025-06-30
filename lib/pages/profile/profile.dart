@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../controllers/auth_controller.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:metropass/pages/profile/profile_transaction.dart';
 
 /// Main profile page displaying user information and navigation menu
 class ProfilePage extends StatelessWidget {
@@ -53,7 +54,10 @@ class ProfilePage extends StatelessWidget {
           ],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1),
-            child: Container(height: 1, color: const Color(MyColor.pr8)),
+            child: Container(
+              height: 1,
+              color: isDarkMode ? Colors.grey[500] : const Color(MyColor.pr8),
+            ),
           ),
         ),
       ),
@@ -95,7 +99,10 @@ class ProfilePage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                           border:
                               isDarkMode
-                                  ? Border.all(color: Colors.grey[800]!)
+                                  ? Border.all(
+                                    color: Colors.grey[600]!,
+                                    width: 1,
+                                  )
                                   : null,
                         ),
                         child: Row(
@@ -151,7 +158,7 @@ class ProfilePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                         border:
                             isDarkMode
-                                ? Border.all(color: Colors.grey[800]!)
+                                ? Border.all(color: Colors.grey[600]!, width: 1)
                                 : null,
                       ),
                       child: Row(
@@ -214,7 +221,14 @@ class ProfilePage extends StatelessWidget {
             _ProfileMenuItem(
               icon: Icons.history,
               text: AppLocalizations.of(context)!.transactionHistory,
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProfileTransactionPage(),
+                  ),
+                );
+              },
             ),
             _ProfileMenuItem(
               icon: Icons.settings,
@@ -260,7 +274,10 @@ class _ProfileMenuItem extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              border: isDarkMode ? Border.all(color: Colors.grey[800]!) : null,
+              border:
+                  isDarkMode
+                      ? Border.all(color: Colors.grey[600]!, width: 1)
+                      : null,
             ),
             child: Row(
               children: [

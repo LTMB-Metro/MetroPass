@@ -5,13 +5,13 @@ import 'package:metropass/themes/colors/colors.dart';
 
 class StationCard extends StatelessWidget {
   final StationModel station;
-  const StationCard({
-    super.key,
-    required this.station
-  });
+  const StationCard({super.key, required this.station});
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final stationTextColor = isDarkMode ? Colors.white : Color(MyColor.pr9);
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -23,7 +23,7 @@ class StationCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: Color(MyColor.pr9)
+                color: stationTextColor,
               ),
             ),
           ),
@@ -32,10 +32,10 @@ class StationCard extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 Navigator.push(
-                  context, 
+                  context,
                   MaterialPageRoute(
-                    builder: (_) => StationsTo(station: station)
-                  )
+                    builder: (_) => StationsTo(station: station),
+                  ),
                 );
               },
               child: Align(
@@ -45,12 +45,12 @@ class StationCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: Color(MyColor.pr8)
+                    color: Color(MyColor.pr8),
                   ),
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

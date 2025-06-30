@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:metropass/services/weather_service.dart';
-import 'package:metropass/themes/colors/colors.dart';
 import 'package:metropass/widgets/skeleton/weather_skeleton.dart';
 
 class WeatherWidget extends StatefulWidget {

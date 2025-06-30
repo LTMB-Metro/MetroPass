@@ -72,12 +72,12 @@ class RouteInformationPage extends StatelessWidget {
                   _buildInfoRow(l10n.routeLength, '${route.length} ${l10n.km}'),
                   if (route.undergroundLength > 0)
                     _buildInfoRow(
-                      'Chiều dài ngầm',
+                      l10n.undergroundLength,
                       '${route.undergroundLength} ${l10n.km}',
                     ),
                   if (route.elevatedLength > 0)
                     _buildInfoRow(
-                      'Chiều dài trên cao',
+                      l10n.elevatedLength,
                       '${route.elevatedLength} ${l10n.km}',
                     ),
                   _buildInfoRow(
@@ -86,12 +86,12 @@ class RouteInformationPage extends StatelessWidget {
                   ),
                   if (route.undergroundStationCount > 0)
                     _buildInfoRow(
-                      'Số ga ngầm',
+                      l10n.undergroundStationCount,
                       '${route.undergroundStationCount} ${l10n.stations}',
                     ),
                   if (route.elevatedStationCount > 0)
                     _buildInfoRow(
-                      'Số ga trên cao',
+                      l10n.elevatedStationCount,
                       '${route.elevatedStationCount} ${l10n.stations}',
                     ),
                   _buildInfoRow(l10n.depot, route.depot),

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:metropass/models/ticket_type_model.dart';
 import 'package:metropass/models/user_ticket_model.dart';
-
 class UserTicketController {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
@@ -78,9 +77,6 @@ class UserTicketController {
   }
   
   Future<UserTicketModel?> getUserTicketById(String userTicketId, String userId) async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) return null;
-
     final doc = await _db
         .collection('users')
         .doc(userId)
@@ -93,8 +89,14 @@ class UserTicketController {
     }
     return null;
   }
-  bool isValidStationForTicket(UserTicketModel ticket, String stationCode) {
+  bool isValidStationForTicket(UserTicketModel ticket, String stationCode, String typeScan) {
     if(ticket.status == 'expired') return false;
+    if(ticket.typeScan == typeScan) return false;
+    if(typeScan == 'scanout'){
+      if(ticket.typeScan != 'scanin'){
+        return false;
+      }
+    }
     if(ticket.inactiveTime == null || ticket.inactiveTime!.isAfter(DateTime.now())) {
       if (ticket.startStationCode == 'all' || ticket.endStationCode == 'all') {
         return true;
@@ -102,6 +104,8 @@ class UserTicketController {
       if(ticket.numberUsed == null || ticket.numberUsed! < 1) {
         if (ticket.startStationCode == stationCode) {
           return true;
+        }else{
+          return false;
         }
       }
       if(ticket.numberUsed == null || ticket.numberUsed! == 1) {
@@ -117,12 +121,23 @@ class UserTicketController {
     required String userTicketId,
     required String userId,
     required String stationCode,
+    required String typeScan
   }) async {
     final ticket = await getUserTicketById(userTicketId, userId);
     if (ticket == null) return false;
 
-    if (!isValidStationForTicket(ticket, stationCode)) return false;
-
+    if (!isValidStationForTicket(ticket, stationCode, typeScan)) {
+      final updateData = <String, dynamic>{
+        'is_scan': 'false',
+      };
+      await _db
+        .collection('users')
+        .doc(userId)
+        .collection('user_tickets')
+        .doc(userTicketId)
+        .update(updateData);
+      return false;
+    };
     Timestamp? inactiveTime;
     if (ticket.ticketType == 'single') {
       inactiveTime = null;
@@ -143,6 +158,8 @@ class UserTicketController {
         updateData['status'] = 'expired';
       }
     }
+    updateData['type_scan'] = typeScan;
+    updateData['is_scan'] = 'true';
 
     await _db
         .collection('users')
@@ -150,7 +167,6 @@ class UserTicketController {
         .collection('user_tickets')
         .doc(userTicketId)
         .update(updateData);
-
     return true;
   }
   
@@ -236,8 +252,54 @@ class UserTicketController {
       )).toList()
     );
   }
+  Stream<bool> watchTicketStatusChange({
+    required String userId,
+    required String userTicketId,
+    required String initialStatus,
+  }) {
+    return _db
+      .collection('users')
+      .doc(userId)
+      .collection('user_tickets')
+      .doc(userTicketId)
+      .snapshots()
+      .map((snapshot) {
+        if (!snapshot.exists) return false;
+        final currentStatus = snapshot.data()?['status'];
+        return currentStatus != initialStatus;
+      });
+  }
+  Stream<String> watchTicketScanStatusChange({
+  required String userId,
+  required String userTicketId,
+  String? initialIsScan,
+}) {
+  String? lastValue = initialIsScan;
 
+  return _db
+      .collection('users')
+      .doc(userId)
+      .collection('user_tickets')
+      .doc(userTicketId)
+      .snapshots()
+      .where((snapshot) {
+        if (!snapshot.exists) return false;
+
+        final currentScan = snapshot.data()?['is_scan'];
+        final currentValue = currentScan?.toString() ?? "null";
+
+        // Emit nếu khác với lần cuối
+        return currentValue != lastValue;
+      })
+      .map((snapshot) {
+        final currentScan = snapshot.data()?['is_scan'];
+        final currentValue = currentScan?.toString() ?? "null";
+
+        lastValue = currentValue;
+        return currentValue;
+      });
 }
 
 
+}
 

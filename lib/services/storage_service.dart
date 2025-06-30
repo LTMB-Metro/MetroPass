@@ -4,6 +4,8 @@ class StorageService {
   static const String _rememberMeKey = 'remember_me';
   static const String _savedEmailKey = 'saved_email';
   static const String _savedPasswordKey = 'saved_password';
+  static const String _localeKey = 'app_locale';
+  static const String _lastOpenKey = 'last_open_time';
 
   /// Save login credentials to local storage
   Future<void> saveLoginCredentials({
@@ -14,10 +16,10 @@ class StorageService {
     try {
       print('Bắt đầu lưu thông tin đăng nhập');
       final prefs = await SharedPreferences.getInstance();
-      
+
       await prefs.setBool(_rememberMeKey, rememberMe);
       print('Lưu trạng thái "Ghi nhớ đăng nhập": $rememberMe');
-      
+
       if (rememberMe) {
         await prefs.setString(_savedEmailKey, email);
         await prefs.setString(_savedPasswordKey, password);
@@ -33,19 +35,43 @@ class StorageService {
     }
   }
 
+  Future<void> updateLastOpenTime() async {
+    print('==== update');
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_lastOpenKey, DateTime.now().millisecondsSinceEpoch);
+  }
+
+  Future<bool> shouldAutoLogout() async {
+    print('==== should');
+    final prefs = await SharedPreferences.getInstance();
+    final lastOpenMillis = prefs.getInt(_lastOpenKey);
+    print('===🕒 last_open_time = $lastOpenMillis → ${DateTime.fromMillisecondsSinceEpoch(lastOpenMillis ?? 0)}');
+
+    if (lastOpenMillis == null) return false;
+
+    final lastOpenTime = DateTime.fromMillisecondsSinceEpoch(lastOpenMillis);
+    final now = DateTime.now();
+    final differenceInDays = now.difference(lastOpenTime).inDays;
+      return differenceInDays >= 7;
+      // final differenceInMinutes = now.difference(lastOpenTime).inMinutes;
+      // return differenceInMinutes >= 5;
+  }
+
   /// Get saved login credentials
   Future<LoginCredentials> getLoginCredentials() async {
     try {
       print('Lấy thông tin đăng nhập đã lưu');
       final prefs = await SharedPreferences.getInstance();
-      
+
       final credentials = LoginCredentials(
         rememberMe: prefs.getBool(_rememberMeKey) ?? false,
         email: prefs.getString(_savedEmailKey) ?? '',
         password: prefs.getString(_savedPasswordKey) ?? '',
       );
-      
-      print('Lấy thông tin đăng nhập: Remember Me = ${credentials.rememberMe}, Has Credentials = ${credentials.hasCredentials}');
+
+      print(
+        'Lấy thông tin đăng nhập: Remember Me = ${credentials.rememberMe}, Has Credentials = ${credentials.hasCredentials}',
+      );
       return credentials;
     } catch (e) {
       print('Lỗi khi lấy thông tin đăng nhập: $e');
@@ -58,11 +84,11 @@ class StorageService {
     try {
       print('Bắt đầu xóa tất cả thông tin đăng nhập');
       final prefs = await SharedPreferences.getInstance();
-      
+
       await prefs.remove(_rememberMeKey);
       await prefs.remove(_savedEmailKey);
       await prefs.remove(_savedPasswordKey);
-      
+
       print('Xóa tất cả thông tin đăng nhập thành công');
     } catch (e) {
       print('Lỗi khi xóa thông tin đăng nhập: $e');
@@ -88,7 +114,7 @@ class StorageService {
     try {
       print('Lưu tùy chọn người dùng: $key = $value');
       final prefs = await SharedPreferences.getInstance();
-      
+
       if (value is String) {
         await prefs.setString(key, value);
       } else if (value is bool) {
@@ -101,7 +127,7 @@ class StorageService {
         print('Loại dữ liệu không được hỗ trợ: ${value.runtimeType}');
         throw Exception('Loại dữ liệu không được hỗ trợ');
       }
-      
+
       print('Lưu tùy chọn người dùng thành công: $key');
     } catch (e) {
       print('Lỗi khi lưu tùy chọn người dùng: $e');
@@ -114,7 +140,7 @@ class StorageService {
     try {
       print('Lấy tùy chọn người dùng: $key');
       final prefs = await SharedPreferences.getInstance();
-      
+
       T? result;
       if (T == String) {
         result = prefs.getString(key) as T?;
@@ -127,7 +153,7 @@ class StorageService {
       } else {
         print('Loại dữ liệu không được hỗ trợ: $T');
       }
-      
+
       print('Lấy tùy chọn người dùng: $key = $result');
       return result;
     } catch (e) {
@@ -146,6 +172,31 @@ class StorageService {
     } catch (e) {
       print('Lỗi khi xóa tùy chọn người dùng: $e');
       throw Exception('Lỗi xóa tùy chọn: $e');
+    }
+  }
+
+  /// Save app locale
+  Future<void> saveLocale(String localeCode) async {
+    try {
+      print('Lưu locale: $localeCode');
+      await saveUserPreference(_localeKey, localeCode);
+      print('Lưu locale thành công: $localeCode');
+    } catch (e) {
+      print('Lỗi khi lưu locale: $e');
+      throw Exception('Lỗi lưu locale: $e');
+    }
+  }
+
+  /// Get saved app locale
+  Future<String?> getLocale() async {
+    try {
+      print('Lấy locale đã lưu');
+      final locale = await getUserPreference<String>(_localeKey);
+      print('Locale đã lưu: $locale');
+      return locale;
+    } catch (e) {
+      print('Lỗi khi lấy locale: $e');
+      return null;
     }
   }
 

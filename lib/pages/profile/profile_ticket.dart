@@ -1,248 +1,96 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import '../../themes/colors/colors.dart';
-import '../../apps/router/router_name.dart';
+import 'package:metropass/themes/colors/colors.dart';
+import 'package:metropass/widgets/my_ticket_list.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfileTicketPage extends StatelessWidget {
-  const ProfileTicketPage({Key? key}) : super(key: key);
+  const ProfileTicketPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(MyColor.pr2),
-      appBar: AppBar(
-        backgroundColor: const Color(MyColor.pr2),
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(MyColor.pr9)),
-          onPressed: () => context.goNamed(RouterName.profile),
-        ),
-        title: Text(
-          AppLocalizations.of(context)!.myTickets,
-          style: const TextStyle(
-            color: Color(MyColor.pr9),
-            fontWeight: FontWeight.w500,
-            fontSize: 20,
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? Colors.black : Color(MyColor.pr1);
+    final textColor = isDarkMode ? Colors.white : Color(MyColor.pr9);
+
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: backgroundColor,
+        appBar: AppBar(
+          title: Text(
+            AppLocalizations.of(context)!.myTicketsWithEmoji,
+            style: TextStyle(color: textColor),
           ),
+          centerTitle: true,
+          backgroundColor: backgroundColor,
+          iconTheme: IconThemeData(color: textColor),
+          elevation: 0,
         ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: const Color(MyColor.pr8)),
-        ),
-      ),
-      body: Stack(
-        children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 24),
-              child: Container(
-                width: 400,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 24,
+        body: Column(
+          children: [
+            Container(
+              height: 40,
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+              margin: EdgeInsets.symmetric(horizontal: 30),
+              decoration: BoxDecoration(
+                color: isDarkMode ? Colors.grey[800] : Color(MyColor.white),
+                borderRadius: BorderRadius.circular(20),
+                border:
+                    isDarkMode
+                        ? Border.all(
+                          color: Colors.white.withOpacity(0.3),
+                          width: 1,
+                        )
+                        : null,
+              ),
+              child: TabBar(
+                padding: EdgeInsets.all(0),
+                indicator: BoxDecoration(
+                  color: isDarkMode ? Colors.grey[700] : Color(MyColor.pr4),
+                  borderRadius: BorderRadius.circular(15),
                 ),
-                decoration: BoxDecoration(
-                  color: const Color(MyColor.white),
-                  borderRadius: BorderRadius.circular(28),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 12,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Tabs
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 6),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              margin: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: const Color(MyColor.grey),
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              child:  Padding(
-                                padding: EdgeInsets.symmetric(vertical: 14),
-                                child: Center(
-                                  child: Text(
-                                    AppLocalizations.of(
-                                      context,
-                                    )!.ticketAvailable,
-                                    style: TextStyle(
-                                      color: Color(MyColor.white),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Center(
-                              child: Text(
-                                AppLocalizations.of(context)!.ticketUsed,
-                                style: TextStyle(
-                                  color: Color(MyColor.pr9),
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                indicatorColor: Colors.transparent,
+                dividerColor: Colors.transparent,
+                labelColor: isDarkMode ? Colors.white : Colors.black,
+                unselectedLabelColor:
+                    isDarkMode ? Colors.grey[400] : Colors.black54,
+                tabs: [
+                  Tab(
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        AppLocalizations.of(context)!.inUse,
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white : Color(MyColor.pr9),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 22),
-                    // Ticket cards
-                    _TicketCard(
-                      title: AppLocalizations.of(context)!.dayTicket,
-                      date: '14/12/2025',
-                      price: '40.000 VND',
-                      status: AppLocalizations.of(context)!.ticketAvailable,
-                      borderColor: Color(MyColor.pr7),
+                  ),
+                  Tab(
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        AppLocalizations.of(context)!.unused,
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white : Color(MyColor.pr9),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 18),
-                    _TicketCard(
-                      title: AppLocalizations.of(context)!.monthTicket,
-                      date: '08/6/2025',
-                      price: '300.000 VND',
-                      status: AppLocalizations.of(context)!.ticketAvailable,
-                      borderColor: Color(MyColor.red),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ),
-          // Button
-          Positioned(
-            bottom: 32,
-            left: 0,
-            right: 0,
-            child: Column(
-              children: [
-                FloatingActionButton(
-                  backgroundColor: const Color(MyColor.pr8),
-                  onPressed: () {},
-                  child: const Icon(Icons.add, color: Color(MyColor.white)),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  AppLocalizations.of(context)!.buyNewTicket,
-                  style: const TextStyle(
-                    color: Color(MyColor.pr8),
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _TicketCard extends StatelessWidget {
-  final String title;
-  final String date;
-  final String price;
-  final String status;
-  final Color borderColor;
-  const _TicketCard({
-    required this.title,
-    required this.date,
-    required this.price,
-    required this.status,
-    required this.borderColor,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 2),
-      decoration: BoxDecoration(
-        color: const Color(MyColor.pr1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border(left: BorderSide(color: borderColor, width: 5)),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 3)),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: Color(MyColor.pr9),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  MyTicketList(userTicketStatus: 'used'),
+                  MyTicketList(userTicketStatus: 'unused'),
+                ],
               ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                 Text(
-                  AppLocalizations.of(context)!.expiryDate,
-                  style: TextStyle(color: Color(MyColor.grey), fontSize: 16),
-                ),
-                Text(
-                  date,
-                  style: const TextStyle(
-                    color: Color(MyColor.pr9),
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-               Text(
-                  AppLocalizations.of(context)!.ticketPrice,
-                  style: TextStyle(color: Color(MyColor.grey), fontSize: 16),
-                ),
-                Text(
-                  price,
-                  style: const TextStyle(
-                    color: Color(MyColor.pr9),
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                 Text(
-                  AppLocalizations.of(context)!.status,
-                  style: TextStyle(color: Color(MyColor.grey), fontSize: 16),
-                ),
-                Text(
-                  status,
-                  style: const TextStyle(
-                    color: Color(MyColor.pr9),
-                    fontSize: 16,
-                  ),
-                ),
-              ],
             ),
           ],
         ),
