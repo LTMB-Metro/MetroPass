@@ -20,7 +20,6 @@ class PasswordResetController extends ChangeNotifier {
   String? _errorMessage;
   bool _isLoading = false;
   int _otpResendCooldown = 0;
-  BuildContext? _context;
 
   // Getters
   PasswordResetStep get currentStep => _currentStep;
@@ -30,13 +29,14 @@ class PasswordResetController extends ChangeNotifier {
   bool get canResendOTP => _otpResendCooldown == 0;
   int get otpResendCooldown => _otpResendCooldown;
 
-  /// Set context for the controller
-  void setContext(BuildContext context) {
-    _context = context;
+  /// Gọi dọn dẹp OTP hết hạn
+  Future<void> cleanupExpiredOTPs() async {
+    await _emailService.cleanupExpiredOTPs();
   }
 
   /// Send OTP to email
   Future<bool> sendOTP(String email) async {
+    await cleanupExpiredOTPs(); // Cleanup trước khi gửi OTP
     _setLoading(true);
     _clearError();
     _email = email;
@@ -66,12 +66,11 @@ class PasswordResetController extends ChangeNotifier {
   }
 
   /// Verify OTP code and send password reset email
-  Future<bool> verifyOTPAndSendResetEmail(String otpCode) async {
-    if (_context == null) {
-      _setError('Context is not set');
-      return false;
-    }
-
+  Future<bool> verifyOTPAndSendResetEmail(
+    String otpCode,
+    BuildContext context,
+  ) async {
+    await cleanupExpiredOTPs(); // Cleanup trước khi xác thực OTP
     _setLoading(true);
     _clearError();
 
@@ -83,7 +82,7 @@ class PasswordResetController extends ChangeNotifier {
         print('Xác thực OTP thành công, gửi email đặt lại mật khẩu');
 
         // Send password reset email after successful OTP verification
-        final resetResult = await _authService.resetPassword(_email, _context!);
+        final resetResult = await _authService.resetPassword(_email, context);
 
         if (resetResult['success']) {
           print('Gửi email đặt lại mật khẩu thành công');

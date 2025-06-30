@@ -264,5 +264,10 @@
   "verificationCodeResent": "Verification code has been resent",
   "instruction": "Instructions",
   "undergroundLength": "Underground Length",
-  "elevatedLength": "Elevated Length"
+  "elevatedLength": "Elevated Length",
+  "refresh": "Refresh",
+  "noTransactions": "No transactions yet",
+  "noTransactionsMessage": "Buy tickets to see your transaction history",
+  "metroTicket": "metro ticket",
+  "purchaseTicket": "Purchase {ticketName}"
 } 
