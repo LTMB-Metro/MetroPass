@@ -98,6 +98,7 @@ class AuthController extends ChangeNotifier {
             password: password,
             rememberMe: true,
           );
+          await StorageService().updateLastOpenTime();
         }
 
         context.goNamed(RouterName.home);
@@ -132,6 +133,7 @@ class AuthController extends ChangeNotifier {
         context.goNamed(RouterName.home);
         _setError(null);
         _setLoading(false);
+        await StorageService().updateLastOpenTime();
         return true;
       } else {
         print('Đăng nhập Google thất bại: ${result.message}');
@@ -293,4 +295,14 @@ class AuthController extends ChangeNotifier {
       await _loadUserData(_firebaseUser!.uid);
     }
   }
+  
+  Future<void> autoLogoutSilently() async {
+    print('=== autologout');
+    final shouldLogout = await _storageService.shouldAutoLogout();
+    if (shouldLogout) {
+      print('🕒 Đã quá 7 ngày không dùng app → auto logout (không điều hướng)');
+      await signOut(); // Xoá phiên đăng nhập
+    }
+  }
+
 }

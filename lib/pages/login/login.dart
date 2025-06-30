@@ -115,14 +115,14 @@ class _OptimizedLoginPageState extends BaseAuthPageState<LoginPage> {
     return Consumer<AuthController>(
       builder: (context, authController, child) {
         return buildPageStructure(
-          onBackPressed: () => context.goNamed(RouterName.welcome),
+          onBackPressed: () => context.goNamed(RouterName.home),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
               AuthHeader(
                 title: AppLocalizations.of(context)!.login,
-                onBackPressed: () => context.goNamed(RouterName.welcome),
+                onBackPressed: () => context.goNamed(RouterName.home),
                 isKeyboardOpen: isKeyboardOpen,
               ),
 
