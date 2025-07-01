@@ -67,4 +67,5 @@ class CreateTicketType {
       yield tickets;
     }
   }
+
 }

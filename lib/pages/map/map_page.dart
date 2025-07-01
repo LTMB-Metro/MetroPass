@@ -1,10 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'package:metropass/apps/router/router_name.dart';
+import 'package:metropass/controllers/create_ticket_type.dart';
 import 'package:metropass/controllers/map_contrller.dart';
 import 'package:metropass/controllers/station_controller.dart';
 import 'package:metropass/models/station_model.dart';
+import 'package:metropass/models/ticket_type_model.dart';
+import 'package:metropass/pages/payment/payment_page.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:metropass/widgets/skeleton/atlas_skeleton.dart';
 
@@ -15,7 +22,7 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => _MapPageState();
 }
 
-class _MapPageState extends State<MapPage> {
+class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   late MapboxMap _mapboxMap;
   final MapContrller _mapContrller = MapContrller();
   final StationController _stationController = StationController();
@@ -25,14 +32,39 @@ class _MapPageState extends State<MapPage> {
   List<String> _startSuggestions = [];
   List<String> _endSuggestions = [];
   bool _isTypingStart = true;
+  bool isKeyboardVisible = false;
   StationModel? findstartStation;
   StationModel? findendStation;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    final bottomInset = WidgetsBinding.instance.window.viewInsets.bottom;
+    final isVisible = bottomInset > 0.0;
+    if (isKeyboardVisible != isVisible) {
+      setState(() {
+        isKeyboardVisible = isVisible;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: true,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
@@ -45,6 +77,7 @@ class _MapPageState extends State<MapPage> {
             return const Center(child: AtlasSkeleton());
           }
           final stations = snapshot.data!;
+
           return Stack(
             children: [
               MapWidget(
@@ -67,17 +100,15 @@ class _MapPageState extends State<MapPage> {
                     1.0,
                     MbxImage(data: bytes, width: 34, height: 34),
                     false,
-                    const [],
-                    const [],
-                    null,
+                    const [], const [], null,
                   );
                   await _mapContrller.drawStationRoute(
                     stations: stations,
-                    map: _mapboxMap, 
-                    color: Colors.orange, 
-                    sourceId: 'station_route_source', 
-                    layerId: 'station_route_layer'
-                    );
+                    map: _mapboxMap,
+                    color: Colors.orange,
+                    sourceId: 'station_route_source',
+                    layerId: 'station_route_layer',
+                  );
                   await _mapContrller.addStationMarkers(stations, _mapboxMap);
                   await _mapContrller.fitCameraToStationsAndIntermediatePoints(stations, _mapboxMap);
                   _annotationManager = await _mapboxMap.annotations.createPointAnnotationManager();
@@ -96,21 +127,22 @@ class _MapPageState extends State<MapPage> {
                         children: [
                           IconButton(
                             onPressed: () => Navigator.pop(context),
-                            icon: Icon(Icons.arrow_back),
+                            icon: const Icon(Icons.arrow_back),
                           ),
                           Expanded(child: _buiInputContainer(stations)),
-                            ],
+                        ],
                       ),
                     ),
                   ),
                 ),
               ),
-              Positioned(
-                bottom: 50,
-                left: 0,
-                right: 0,
-                child: _buildRecommen(stations)
-              )
+              if (!isKeyboardVisible)
+                Positioned(
+                  bottom: 50,
+                  left: 0,
+                  right: 0,
+                  child: _buildRecommen(stations, context),
+                ),
             ],
           );
         },
@@ -276,17 +308,46 @@ class _MapPageState extends State<MapPage> {
       ),
     );
   }
-
-  Widget _buildRecommen(List<StationModel> stations){
-    if(findstartStation == null || findendStation == null){
-      return Container();
-    } else{
-      
+  Widget _buildRecommen(List<StationModel> stations, BuildContext context) {
+    if (findstartStation == null || findendStation == null) {
+      return const SizedBox.shrink();
     }
-    return 
-    Container(
-      margin: EdgeInsets.only(right: 20, left: 20),
-      padding: EdgeInsets.symmetric(horizontal: 5),
+
+    final startStation = findstartStation!;
+    final endStation = findendStation!;
+
+    return FutureBuilder<int>(
+      future: calculatePrice(startStation.orderIndex, endStation.orderIndex),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const SizedBox.shrink(); // hoặc CircularProgressIndicator
+        }
+
+        final price = snapshot.data!;
+
+        final ticket = TicketTypeModel(
+          description: 'Vé lượt: ${startStation.stationName} - ${endStation.stationName}',
+          duration: 30,
+          note: 'Vé sử dụng một lần',
+          ticketName: 'Vé lượt',
+          type: 'single',
+          categories: 'normal',
+          price: price,
+          fromCode: startStation.code,
+          toCode: endStation.code,
+          qrCodeURL: '',
+        );
+
+        return _buildRecommendCard(ticket, context, startStation, endStation);
+      },
+    );
+  }
+
+
+  Widget _buildRecommendCard(TicketTypeModel ticket, BuildContext context, StationModel start, StationModel end) {
+    return Container(
+      margin: const EdgeInsets.only(right: 20, left: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
         color: Color(MyColor.pr2),
         borderRadius: BorderRadius.circular(8),
@@ -295,9 +356,9 @@ class _MapPageState extends State<MapPage> {
         children: [
           Row(
             children: [
-              Expanded(
+              const Expanded(
                 flex: 2,
-                child: Container(
+                child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 10),
                   child: Text(
                     'Gợi \ný',
@@ -305,9 +366,9 @@ class _MapPageState extends State<MapPage> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color(MyColor.pr9)
+                      color: Color(MyColor.pr9),
                     ),
-                  )
+                  ),
                 ),
               ),
               Expanded(
@@ -315,79 +376,123 @@ class _MapPageState extends State<MapPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 5),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 4,
-                            child: Text(
-                              'Đi từ ga: ',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Color(MyColor.pr9)
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 7,
-                            child: Text(
-                              findstartStation?.stationName ?? 'Chưa xác định',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Color(MyColor.pr9)
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      height: 1,
-                      decoration: BoxDecoration(
-                        color: Color(MyColor.pr8)
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 5),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 4,
-                            child: Text(
-                              'Đi đến ga: ',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Color(MyColor.pr9)
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 7,
-                            child: Text(
-                              findendStation?.stationName ?? 'Chưa xác định',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Color(MyColor.pr9)
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    _buildRowInfo('Đi từ ga:', start.stationName),
+                    Container(height: 1, color: Color(MyColor.pr8)),
+                    _buildRowInfo('Đi đến ga:', end.stationName),
                   ],
                 ),
-              )
+              ),
             ],
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(MyColor.pr8),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+              elevation: 2,
+            ),
+            onPressed: () {
+              final currentUser = FirebaseAuth.instance.currentUser;
+              if (currentUser == null) {
+                showDialog(
+                  context: context,
+                  builder: (_) => _buildLoginDialog(context),
+                );
+                return;
+              }
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PaymentPage(ticket: ticket),
+                ),
+              );
+            },
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.payment, size: 20, color: Colors.white),
+                SizedBox(width: 8),
+                Text('Đặt vé', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
+
+  Widget _buildRowInfo(String label, String value) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 4,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Color(MyColor.pr9),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 7,
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(MyColor.pr9),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoginDialog(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Row(
+        children: [
+          Icon(Icons.lock_outline, color: Theme.of(context).primaryColor),
+          const SizedBox(width: 4),
+          const Text("Bạn chưa đăng nhập", style: TextStyle(fontSize: 20, color: Color(MyColor.pr9))),
+        ],
+      ),
+      content: const Text(
+        "Bạn cần đăng nhập để tiếp tục!",
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 16, color: Color(MyColor.pr8)),
+      ),
+      actionsAlignment: MainAxisAlignment.center,
+      actions: [
+        TextButton(
+          style: TextButton.styleFrom(foregroundColor: Colors.grey[600]),
+          onPressed: () => Navigator.pop(context),
+          child: const Text("Hủy"),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Theme.of(context).primaryColor,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            context.goNamed(RouterName.login);
+          },
+          child: const Text("Đăng nhập", style: TextStyle(fontSize: 16, color: Colors.white)),
+        ),
+      ],
+    );
+  }
+
+
 
   Future<void> _findNearestStations(List<StationModel> stations) async {
     final startText = _startController.text.trim();
@@ -411,5 +516,27 @@ class _MapPageState extends State<MapPage> {
       findendStation = endStation;
     });
   }
+  Future<int> calculatePrice(int fromIndex, int toIndex) async {
+    final priceSettingSnap = await FirebaseFirestore.instance
+        .collection('price_setting')
+        .where('name', isEqualTo: 'original_price')
+        .limit(1)
+        .get();
 
+    final originalPrice = priceSettingSnap.docs.isNotEmpty
+        ? priceSettingSnap.docs.first['price'] as int
+        : 0;
+
+    final originalGrap = priceSettingSnap.docs.isNotEmpty
+        ? priceSettingSnap.docs.first['original_grap'] as int
+        : 0;
+
+    final grap = (fromIndex - toIndex).abs();
+
+    if (grap <= originalGrap) {
+      return originalPrice;
+    } else {
+      return originalPrice + (grap - originalGrap) * 1000;
+    }
+  }
 }
