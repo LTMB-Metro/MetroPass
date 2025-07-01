@@ -34,7 +34,7 @@ Future<String> fallbackToOpenRouter(String prompt) async {
     final data = jsonDecode(response.body);
     return data['choices'][0]['message']['content']?.trim() ?? 'Không có phản hồi từ OpenRouter.';
   } else {
-    return 'Tôi chưa hiểu câu hỏi của bạn cho lắm. Bạn muốn mình hooxo trợ về gì?'
+    return 'Tôi chưa hiểu câu hỏi của bạn cho lắm. Bạn muốn mình hỗ trợ về gì?'
     '\n-Thông tin giá vé'
     '\n-Thông tin các ga'
     '\n...';

@@ -46,15 +46,19 @@
 
 ## 📦 Hướng dẫn cài đặt
 
-> **Yêu cầu**: Flutter 3.13 trở lên, Dart SDK, và thiết bị/emulator đã cấu hình.
+> **Yêu cầu**: Flutter 3.13+, Dart SDK, thiết bị/emulator đã cấu hình.
 
 ```bash
-# Clone dự án
+# 1. Clone dự án
 git clone https://github.com/LTMB-Metro/MetroPass.git
 cd MetroPass
 
-# Cài đặt các gói thư viện
+# 2. Cài đặt thư viện
 flutter pub get
 
-# Chạy trên thiết bị/emulator
+# 3. Tạo file cấu hình môi trường
+cp .env.example .env
+# rồi sửa file `.env` với các API Key cá nhân
+
+# 4. Chạy ứng dụng
 flutter run
