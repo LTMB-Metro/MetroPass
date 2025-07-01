@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:metropass/controllers/station_controller.dart';
 import 'package:metropass/models/station_model.dart';
 
@@ -234,6 +235,61 @@ Future<String> getAIResponse(String input) async {
   if (_matchesAny(text, ['cảm ơn', 'thank', 'thanks'])) {
     return 'Rất vui được hỗ trợ bạn! Nếu bạn cần thêm thông tin, đừng ngại hỏi tôi nhé.';
   }
+  // Đặt vé từ ga A đến ga B
+  final travelReg = RegExp(r'(?:đi|từ)\s*ga\s*(.+?)\s*(?:đến|->)\s*ga\s*(.+)', caseSensitive: false, unicode: true);
+  final travelMatch = travelReg.firstMatch(text);
+  if (travelMatch != null) {
+    final fromName = travelMatch.group(1)?.trim();
+    final toName = travelMatch.group(2)?.trim();
+    final stations = await StationController().getAllStations();
+
+    try {
+      final fromStation = stations.firstWhere((s) => s.stationName.toLowerCase() == fromName?.toLowerCase());
+      final toStation = stations.firstWhere((s) => s.stationName.toLowerCase() == toName?.toLowerCase());
+
+      final priceSettingSnap = await FirebaseFirestore.instance
+          .collection('price_setting')
+          .where('name', isEqualTo: 'original_price')
+          .limit(1)
+          .get();
+
+      final originalPrice = priceSettingSnap.docs.isNotEmpty
+          ? priceSettingSnap.docs.first['price'] as int
+          : 0;
+
+      final originalGrap = priceSettingSnap.docs.isNotEmpty
+          ? priceSettingSnap.docs.first['original_grap'] as int
+          : 0;
+
+      final grap = (fromStation.orderIndex - toStation.orderIndex).abs();
+      final price = grap <= originalGrap
+          ? originalPrice
+          : originalPrice + (grap - originalGrap) * 1000;
+
+      return jsonEncode({
+        'message': 'Vé lượt từ ${fromStation.stationName} đến ${toStation.stationName}: ${price.toString()}đ\nBạn có muốn đặt vé này không?',
+        'action': 'payment',
+        'ticket': {
+          'description': 'Vé lượt: ${fromStation.stationName} - ${toStation.stationName}',
+          'duration': 30,
+          'note': 'Vé sử dụng một lần',
+          'ticket_name': 'Vé lượt',
+          'type': 'single',
+          'categories': 'normal',
+          'price': price,
+          'from_code': fromStation.code,
+          'to_code': toStation.code,
+          'qr_code_URL': ''
+        }
+      });
+
+    } catch (_) {
+      final stationNames = stations.map((s) => '- ${s.stationName}').join('\n');
+      return 'Không tìm thấy ga mà bạn yêu cầu.\n'
+          'Vui lòng kiểm tra lại chính tả.\n'
+          'Danh sách các ga hợp lệ:\n$stationNames';
+    }
+  }
 
   // Mặc định
   return 'Xin lỗi, tôi chưa hiểu ý bạn. Bạn có thể:\n'
@@ -264,4 +320,5 @@ String _getOrdinalSuffix(int number) {
     default:
       return 'th';
   }
+  
 }
