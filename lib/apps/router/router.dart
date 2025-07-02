@@ -35,7 +35,7 @@ class RouterCustom {
         path: '/',
         name: RouterName.welcome,
         builder: (BuildContext context, GoRouterState state) {
-          return WelcomePage();
+          return ScanQrPage();
         },
       ),
       GoRoute(
