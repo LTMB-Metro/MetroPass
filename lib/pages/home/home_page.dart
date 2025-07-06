@@ -398,7 +398,11 @@ class HomePage extends StatelessWidget {
             return;
           }
         }
-        Navigator.push(context, MaterialPageRoute(builder: (_) => targetpage));
+        if (lable == AppLocalizations.of(context)!.myTickets) {
+          context.goNamed(RouterName.my_ticket, queryParameters: {'tapIndex': '0'});
+        } else {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => targetpage));
+        }
       },
       child: Column(
         children: [

@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:metropass/apps/router/router_name.dart';
 import 'package:metropass/controllers/user_ticket_controller.dart';
+import 'package:metropass/pages/home/home_page.dart';
 import 'package:metropass/pages/my_ticket/expried_ticket_page.dart';
 import 'package:metropass/themes/colors/colors.dart';
 import 'package:metropass/widgets/my_ticket_list.dart';
@@ -35,6 +38,12 @@ class MyTicketPage extends StatelessWidget {
           child: Scaffold(
             backgroundColor: Color(MyColor.pr1),
             appBar: AppBar(
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back, color: textColor),
+                onPressed: () {
+                  context.go('/home');
+                },
+              ),
               title: Text(
                 AppLocalizations.of(context)!.myTicketsWithEmoji, 
                 style: TextStyle(color: Color(MyColor.pr9))),
