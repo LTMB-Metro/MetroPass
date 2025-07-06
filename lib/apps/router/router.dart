@@ -72,18 +72,15 @@ class RouterCustom {
         builder: (BuildContext context, GoRouterState state) {
           return const HomePage();
         },
-        routes: <RouteBase>[
-          GoRoute(
-            path: 'my_ticket',
-            name: RouterName.my_ticket,
-            builder: (BuildContext context, GoRouterState state) {
-              final tapIndex = int.tryParse(state.uri.queryParameters['tapIndex'] ?? '0');
-              return MyTicketPage(tapIndex: tapIndex);
-            },
-          ),
-        ]
       ),
-
+      GoRoute(
+        path: '/my_ticket',
+        name: RouterName.my_ticket,
+        builder: (BuildContext context, GoRouterState state) {
+          final tapIndex = int.tryParse(state.uri.queryParameters['tapIndex'] ?? '0');
+          return MyTicketPage(tapIndex: tapIndex);
+        },
+      ),
       GoRoute(
         path: '/profile-information',
         name: RouterName.profileInformation,

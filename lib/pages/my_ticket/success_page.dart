@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SuccessPage extends StatefulWidget {
   final String? isScan;
-  const SuccessPage({super.key, this.isScan});
+  final String? userId;
+  final String? userTicketId;
+
+  const SuccessPage({
+    super.key,
+    this.isScan,
+    this.userId,
+    this.userTicketId,
+  });
 
   @override
   State<SuccessPage> createState() => _SuccessPageState();
@@ -18,13 +27,11 @@ class _SuccessPageState extends State<SuccessPage> {
 
     _audioPlayer = AudioPlayer();
 
-    // Đảm bảo widget đã được render trước khi phát âm thanh
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _playSound();
     });
 
-    // Tự động quay lại màn trước sau 3 giây
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () async {
       if (mounted && Navigator.of(context).canPop()) {
         Navigator.of(context).pop();
       }
@@ -43,8 +50,28 @@ class _SuccessPageState extends State<SuccessPage> {
     }
   }
 
+  Future<void> _resetIsScanToNull() async {
+    if ((widget.isScan == 'true' || widget.isScan == 'false') &&
+        widget.userId != null &&
+        widget.userTicketId != null) {
+      try {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(widget.userId!)
+            .collection('user_tickets')
+            .doc(widget.userTicketId!)
+            .update({'is_scan': null});
+        debugPrint('✅ Đặt lại is_scan = null thành công');
+      } catch (e) {
+        debugPrint('⚠️ Lỗi khi đặt lại is_scan = null: $e');
+      }
+    }
+  }
+
+
   @override
   void dispose() {
+    _resetIsScanToNull(); // cập nhật về null khi thoát
     _audioPlayer.dispose();
     super.dispose();
   }

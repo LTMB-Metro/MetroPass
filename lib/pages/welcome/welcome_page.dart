@@ -84,6 +84,8 @@ class _WelcomePageState extends State<WelcomePage> {
       child: Scaffold(
         // Set background
         body: Container(
+          width: double.infinity,
+          height: double.infinity,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(MyColor.pr2), Color(MyColor.white)],

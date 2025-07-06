@@ -29,7 +29,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
   @override
   Widget build(BuildContext context) {
     if (weatherData == null) {
-      return WeatherSkeleton();
+      return Container();
     }
 
     final temp = weatherData!['main']['temp'];

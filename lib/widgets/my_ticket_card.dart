@@ -64,10 +64,11 @@ class MyTicketCard extends StatelessWidget {
     }
     
     return GestureDetector(
-      onTap: () {
-        showDialog(
+      onTap: () async {
+        final result = await showDialog<String>(
           context: context,
-          builder: (context) {
+          barrierDismissible: false,
+          builder: (dialogContext) {
             final statusStream = UserTicketController().watchTicketStatusChange(
               userId: userTicket.userId,
               userTicketId: userTicket.userTicketId,
@@ -83,26 +84,17 @@ class MyTicketCard extends StatelessWidget {
             return StreamBuilder<bool>(
               stream: statusStream,
               builder: (context, statusSnapshot) {
-                if (statusSnapshot.hasData && statusSnapshot.data == true) {
-                  // ✅ Đóng dialog nếu status thay đổi
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (Navigator.of(context).canPop()) {
-                      Navigator.of(context).pop();
-                    }
-                  });
-                }
                 return StreamBuilder<String>(
                   stream: isScanStream,
                   builder: (context, scanSnapshot) {
                     final value = scanSnapshot.data;
 
                     if ((value == "true" || value == "false")) {
+                      // ✅ Đóng dialog và trả kết quả
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        Future.microtask(() {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (context) => SuccessPage(isScan: value,)),
-                          );
-                        });
+                        if (Navigator.of(dialogContext).canPop()) {
+                          Navigator.of(dialogContext).pop(value); // trả về isScan
+                        }
                       });
                     }
 
@@ -119,6 +111,15 @@ class MyTicketCard extends StatelessWidget {
             );
           },
         );
+
+        /// ✅ Sau khi dialog đã đóng -> chuyển trang nếu có result
+        if (result == "true" || result == "false") {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => SuccessPage(isScan: result, userId: userTicket.userId, userTicketId: userTicket.userTicketId,),
+            ),
+          );
+        }
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
