@@ -48,7 +48,7 @@ class HomePage extends StatelessWidget {
                         width: double.infinity,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: AssetImage('assets/images/metromap.png'),
+                            image: AssetImage('assets/images/Metromap.png'),
                             fit: BoxFit.cover,
                           ),
                           borderRadius: BorderRadius.only(
