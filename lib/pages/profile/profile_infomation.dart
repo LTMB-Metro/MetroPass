@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../themes/colors/colors.dart';
 import 'package:go_router/go_router.dart';
 import '../../apps/router/router_name.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/auth_controller.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../utils/validators.dart';
 
 /// Profile information page for viewing and editing user details
 class ProfileInformationPage extends StatefulWidget {
@@ -35,6 +37,10 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
   bool isEditingBirthday = false;
   bool isEditingCCCD = false;
 
+  // Error messages for validation
+  String? nameError;
+  String? phoneError;
+
   @override
   void initState() {
     super.initState();
@@ -58,6 +64,7 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
       if (!nameFocusNode.hasFocus && isEditingName) {
         setState(() {
           isEditingName = false;
+          nameError = Validators.validateName(nameController.text);
         });
       }
     });
@@ -65,6 +72,7 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
       if (!phoneFocusNode.hasFocus && isEditingPhone) {
         setState(() {
           isEditingPhone = false;
+          phoneError = Validators.validatePhoneNumber(phoneController.text);
         });
       }
     });
@@ -79,6 +87,23 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
       if (!cccdFocusNode.hasFocus && isEditingCCCD) {
         setState(() {
           isEditingCCCD = false;
+        });
+      }
+    });
+
+    // Add text change listeners for real-time validation
+    phoneController.addListener(() {
+      if (isEditingPhone) {
+        setState(() {
+          phoneError = Validators.validatePhoneNumber(phoneController.text);
+        });
+      }
+    });
+
+    nameController.addListener(() {
+      if (isEditingName) {
+        setState(() {
+          nameError = Validators.validateName(nameController.text);
         });
       }
     });
@@ -107,6 +132,28 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
 
   /// Update user profile information
   Future<void> _updateProfile() async {
+    // Validate all fields before updating
+    final nameValidation = Validators.validateName(nameController.text);
+    final phoneValidation = Validators.validatePhoneNumber(
+      phoneController.text,
+    );
+
+    setState(() {
+      nameError = nameValidation;
+      phoneError = phoneValidation;
+    });
+
+    // Check if there are any validation errors
+    if (nameValidation != null || phoneValidation != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Vui lòng kiểm tra lại thông tin đã nhập'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     setState(() => isLoading = true);
     final authController = Provider.of<AuthController>(context, listen: false);
     final success = await authController.updateProfile(
@@ -253,9 +300,11 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
                     focusNode: nameFocusNode,
                     readOnly: !isEditingName,
                     showEditIcon: !isEditingName,
+                    errorText: nameError,
                     onEdit: () {
                       setState(() {
                         isEditingName = true;
+                        nameError = null; // Clear error when starting to edit
                         FocusScope.of(context).requestFocus(nameFocusNode);
                       });
                     },
@@ -268,9 +317,15 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
                     focusNode: phoneFocusNode,
                     readOnly: !isEditingPhone,
                     showEditIcon: !isEditingPhone,
+                    errorText: phoneError,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                    ],
                     onEdit: () {
                       setState(() {
                         isEditingPhone = true;
+                        phoneError = null; // Clear error when starting to edit
                         FocusScope.of(context).requestFocus(phoneFocusNode);
                       });
                     },
@@ -392,6 +447,8 @@ class _EditableField extends StatelessWidget {
   final Widget? suffixIcon;
   final bool showEditIcon;
   final VoidCallback? onEdit;
+  final String? errorText;
+  final List<TextInputFormatter>? inputFormatters;
   const _EditableField({
     required this.label,
     required this.controller,
@@ -403,6 +460,8 @@ class _EditableField extends StatelessWidget {
     this.suffixIcon,
     this.showEditIcon = false,
     this.onEdit,
+    this.errorText,
+    this.inputFormatters,
     Key? key,
   }) : super(key: key);
 
@@ -413,6 +472,7 @@ class _EditableField extends StatelessWidget {
     final fieldColor = isDarkMode ? Colors.black : const Color(MyColor.white);
     final labelColor =
         isDarkMode ? Colors.grey[400] : const Color(MyColor.grey);
+    final errorColor = Colors.red;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 18),
@@ -437,6 +497,7 @@ class _EditableField extends StatelessWidget {
                 readOnly: readOnly,
                 obscureText: obscureText,
                 keyboardType: keyboardType,
+                inputFormatters: inputFormatters,
                 style: TextStyle(
                   color: readOnly ? labelColor : textColor,
                   fontSize: 16,
@@ -447,32 +508,49 @@ class _EditableField extends StatelessWidget {
                 ),
                 decoration: InputDecoration(
                   hintText: hintText,
+                  errorText: errorText,
+                  errorStyle: TextStyle(color: errorColor, fontSize: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide(
                       color:
-                          isDarkMode
-                              ? Colors.grey[800]!
-                              : const Color(MyColor.pr8),
+                          errorText != null
+                              ? errorColor
+                              : (isDarkMode
+                                  ? Colors.grey[800]!
+                                  : const Color(MyColor.pr8)),
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide(
                       color:
-                          isDarkMode
-                              ? Colors.grey[800]!
-                              : const Color(MyColor.pr8),
+                          errorText != null
+                              ? errorColor
+                              : (isDarkMode
+                                  ? Colors.grey[800]!
+                                  : const Color(MyColor.pr8)),
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide(
                       color:
-                          isDarkMode
-                              ? Colors.grey[800]!
-                              : const Color(MyColor.pr8),
+                          errorText != null
+                              ? errorColor
+                              : (isDarkMode
+                                  ? Colors.grey[800]!
+                                  : const Color(MyColor.pr8)),
+                      width: 2,
                     ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: errorColor),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: errorColor, width: 2),
                   ),
                   filled: true,
                   fillColor: fieldColor,
