@@ -1,4 +1,4 @@
-package com.example.metropass
+package com.phunpun.metropass
 
 import io.flutter.embedding.android.FlutterActivity
 
